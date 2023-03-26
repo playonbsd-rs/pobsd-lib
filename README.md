@@ -5,7 +5,7 @@
 
 ## pobsd-db
 pobsd-db provides a primitive database relying on HashMap and
-providing a set of method to interogate and filter the PlayOnBSD
+providing a set of methods to interogate and filter the PlayOnBSD
 database.
 
 See [docs.rs](https://docs.rs/pobsd-db) for the details.
