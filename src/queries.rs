@@ -21,7 +21,10 @@ macro_rules! get_game_by {
                 }
             }
             games.sort();
-            QueryResult { items: games }
+            QueryResult {
+                count: games.len(),
+                items: games,
+            }
         }
     };
     (name) => {
@@ -67,9 +70,15 @@ macro_rules! get_game_by {
                             }
                         }
                         games.sort();
-                        QueryResult{ items: games}
+                        QueryResult{
+                            count: games.len(),
+                            items: games
+                        }
                     }
-                    None => QueryResult{ items : vec![]},
+                    None => QueryResult{
+                        count: 0,
+                        items : vec![]
+                    },
                 }
             }
         }
@@ -86,7 +95,10 @@ macro_rules! search_game_by {
                     games.push(game)
                 }
             }
-            QueryResult { items: games }
+            QueryResult {
+                count: games.len(),
+                items: games,
+            }
         }
     };
     ($field:ident) => {
@@ -101,7 +113,10 @@ macro_rules! search_game_by {
                         }
                     }
                 }
-                QueryResult { items: games }
+                QueryResult {
+                    count: games.len(),
+                    items: games
+                }
             }
         }
     };
@@ -117,7 +132,10 @@ macro_rules! search_game_by {
                         }
                     }
                 }
-                QueryResult { items: games }
+                QueryResult {
+                    count: games.len(),
+                    items: games
+                }
             }
         }
     };
@@ -129,7 +147,10 @@ macro_rules! get_all {
         pub fn get_all_games(&self) -> QueryResult<&Game> {
             let mut games: Vec<&Game> = self.games.values().collect();
             games.sort();
-            QueryResult { items: games }
+            QueryResult {
+                count: games.len(),
+                items: games,
+            }
         }
     };
     ($field:ident) => {
@@ -138,7 +159,10 @@ macro_rules! get_all {
             pub fn [<get_all_ $field>](&self) -> QueryResult<&String> {
                 let mut items: Vec<&String> = self.$field.keys().collect();
                 items.sort();
-                QueryResult{items}
+                QueryResult{
+                    count: items.len(),
+                    items,
+                }
             }
         }
     };
