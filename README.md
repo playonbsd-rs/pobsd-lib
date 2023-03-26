@@ -1,3 +1,6 @@
+[![Build](https://github.com/playonbsd-rs/pobsd-parser/actions/workflows/rust.yml/badge.svg)](https://github.com/playonbsd-rs/pobsd-parser/actions/workflows/rust.yml)
+[![Clippy](https://github.com/playonbsd-rs/pobsd-parser/actions/workflows/rust-clippy.yml/badge.svg)](https://github.com/playonbsd-rs/pobsd-parser/actions/workflows/rust-clippy.yml)
+
 ## pobsd-parser
 
 pobsd-parser is a parsing library for parsing the PlayOnBSD Database.
