@@ -1,4 +1,4 @@
-//! This parser provides a simplistic [`Parser`] that converts
+//! Provides a simplistic [`Parser`] that converts
 //! the [PlayOnBSD Database](https://github.com/playonbsd/OpenBSD-Games-Database)
 //! (either provided as a string or as a file) into a vector of [`Game`] objects.
 //!

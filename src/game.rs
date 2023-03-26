@@ -1,3 +1,4 @@
+//! Provides a representations of the game in the PlayOnBSD database.
 use crate::store_links::StoreLinks;
 use std::cmp::{Ordering, PartialOrd};
 use std::fmt;

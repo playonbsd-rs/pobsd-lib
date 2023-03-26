@@ -102,3 +102,6 @@ pub use self::game::Game;
 pub use self::parser::Parser;
 pub use self::parser::ParserResult;
 pub use self::parser::ParsingMode;
+pub use self::store_links::Store;
+pub use self::store_links::StoreLink;
+pub use self::store_links::StoreLinks;
