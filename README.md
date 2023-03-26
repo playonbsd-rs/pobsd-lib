@@ -1,6 +1,6 @@
 [![Build](https://github.com/playonbsd-rs/pobsd-parser/actions/workflows/rust.yml/badge.svg)](https://github.com/playonbsd-rs/pobsd-parser/actions/workflows/rust.yml)
 [![Clippy](https://github.com/playonbsd-rs/pobsd-parser/actions/workflows/rust-clippy.yml/badge.svg)](https://github.com/playonbsd-rs/pobsd-parser/actions/workflows/rust-clippy.yml)
-[![Crates.io (latest)](https://img.shields.io/crates/v/pobsd-parser?style=plastic)](https://crates.io/crates/pobsd-parser)
+[![Crates.io (latest)](https://img.shields.io/crates/v/pobsd-parser?style=flat)](https://crates.io/crates/pobsd-parser)
 
 ## pobsd-parser
 
