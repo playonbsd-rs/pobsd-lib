@@ -1,11 +1,18 @@
 [package]
 name = "pobsd-db"
+description = "Primitive database to query the PlayOnBSD database "
+authors = ["Hukadan <me@hukadan.org>"]
 version = "0.1.0"
 edition = "2021"
+homepage = "https://github.com/playonbsd-rs/pobsd-parser"
+documentation = "https://docs.rs/pobsd-parser"
+license = "MIT"
+readme = "README.md"
+keywords = ["OpenBSD", "PlayOnBSD"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 hash32 = "0.3.1"
 paste = "1.0.12"
-pobsd-parser = "0.2.0"
+pobsd-parser = "0.3.0"

@@ -91,6 +91,16 @@ fn test_get_by_publi() {
 }
 
 #[test]
+fn test_get_by_steam_id() {
+    let db = get_db_strict();
+    let game = db.get_game_by_steam_id(1869200);
+    match game {
+        Some(game) => assert_eq!(game.name, "The Adventures of Mr. Hat".to_string()),
+        None => panic!(),
+    }
+}
+
+#[test]
 fn test_get_all_tags() {
     let db = get_db_strict();
     let tag_query = db.get_all_tags();

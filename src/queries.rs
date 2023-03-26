@@ -1,6 +1,6 @@
 use crate::query_result::QueryResult;
 use paste::paste;
-use pobsd_parser::Game;
+use pobsd_parser::{Game, Store};
 
 use crate::database::GameDataBase;
 
@@ -30,6 +30,25 @@ macro_rules! get_game_by {
             for game in self.games.values() {
                 if game.name.eq(name) {
                     return Some(game);
+                }
+            }
+            None
+        }
+    };
+    (steam_id) => {
+        /// Return the game with the given steam_id (case sensitive)
+        pub fn get_game_by_steam_id(&self, steam_id: usize) -> Option<&Game> {
+            for game in self.games.values() {
+                if let Some(stores) = &game.stores {
+                    for store in stores.inner_ref() {
+                        if store.store.eq(&Store::Steam) {
+                            if let Some(id) = store.get_id() {
+                                if id.eq(&steam_id) {
+                                    return Some(game);
+                                }
+                            }
+                        }
+                    }
                 }
             }
             None
@@ -138,6 +157,7 @@ impl GameDataBase {
     get_game_by!(genre);
     get_game_by!(dev);
     get_game_by!(publi);
+    get_game_by!(steam_id);
 
     search_game_by!(name);
     search_game_by!(year);

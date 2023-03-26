@@ -8,6 +8,7 @@ use pobsd_parser::Game;
 macro_rules! get_game_by {
     ($field:ident) => {
         paste! {
+            /// Get game by field name (case sensitive)
             pub fn [<get_game_by_ $field>](self, field: &str) -> QueryResult<&'a Game> {
                 let mut items: Vec<&Game> = self
                     .items
@@ -16,12 +17,16 @@ macro_rules! get_game_by {
                     .filter(|a| a.$field.eq(&Some(field.to_string())))
                     .collect();
                 items.sort();
-                QueryResult{items}
+                QueryResult{
+                    count: items.len(),
+                    items
+                }
             }
         }
     };
     (array $field:ident) => {
         paste! {
+            /// Get game by field name (case sensitive)
             pub fn [<get_game_by_ $field>](self, field: &str) -> QueryResult<&'a Game> {
                 let mut items: Vec<&Game> = self
                     .items
@@ -33,43 +38,60 @@ macro_rules! get_game_by {
                     })
                     .collect();
                 items.sort();
-                QueryResult{items}
+                QueryResult{
+                    count: items.len(),
+                    items
+                }
             }
         }
     };
 }
 
+/// Representation of the result of a query
 pub struct QueryResult<T> {
+    /// Number of items in the query result
+    pub count: usize,
+    /// Vector of items
     pub items: Vec<T>,
 }
 
 impl QueryResult<Item> {
+    /// Get item by name (case sensitive)
     pub fn get_item_by_name(&self, name: &str) -> Option<Item> {
         let mut items: Vec<&Item> = self.items.iter().filter(|a| a.eq(&name)).collect();
         items.pop().cloned()
     }
+    /// Search items by name (case insensitive)
     pub fn search_item_by_name(self, name: &str) -> QueryResult<Item> {
         let items: Vec<Item> = self
             .items
             .into_iter()
-            .filter(|a| a.contains(name))
+            .filter(|a| a.to_lowercase().contains(&name.to_lowercase()))
             .collect();
-        QueryResult { items }
+        QueryResult {
+            count: items.len(),
+            items,
+        }
     }
 }
 
 impl<'a> QueryResult<&'a Game> {
+    /// Get game by name (case sensitive)
     pub fn get_game_by_name(self, name: &str) -> Option<&'a Game> {
         let mut items: Vec<&Game> = self.items.into_iter().filter(|a| a.name.eq(name)).collect();
         items.pop()
     }
+    /// Search games by name (case insensitive)
     pub fn search_game_by_name(self, name: &str) -> QueryResult<&'a Game> {
         let items: Vec<&Game> = self
             .items
             .into_iter()
-            .filter(|a| a.name.contains(name))
+            .filter(|a| a.name.to_lowercase().contains(&name.to_lowercase()))
             .collect();
-        QueryResult { items }
+        QueryResult {
+            count: items.len(),
+            items,
+        }
     }
     get_game_by!(runtime);
     get_game_by!(year);

@@ -38,19 +38,30 @@ macro_rules! push {
     };
 }
 
+/// Representation of the PlayOnBSD database that provides
+/// a set of methods to query and filter the games.
 #[derive(Default)]
 pub struct GameDataBase {
+    /// HashMap using the game uid as key and the corresponding game as value
     pub(crate) games: HashMap<u32, Game>,
+    /// HashMap using the engine name as key and vector of game uid corresponding to said engine as value
     pub(crate) engines: HashMap<String, Vec<u32>>,
+    /// HashMap using the runtime name as key and vector of game uid corresponding to said engine as value
     pub(crate) runtimes: HashMap<String, Vec<u32>>,
+    /// HashMap using the genre name as key and vector of game uid corresponding to said engine as value
     pub(crate) genres: HashMap<String, Vec<u32>>,
+    /// HashMap using the tag name as key and vector of game uid corresponding to said engine as value
     pub(crate) tags: HashMap<String, Vec<u32>>,
+    /// HashMap using the year as key and vector of game uid corresponding to said engine as value
     pub(crate) years: HashMap<String, Vec<u32>>,
+    /// HashMap using the dev name as key and vector of game uid corresponding to said engine as value
     pub(crate) devs: HashMap<String, Vec<u32>>,
+    /// HashMap using the pub name as key and vector of game uid corresponding to said engine as value
     pub(crate) publis: HashMap<String, Vec<u32>>,
 }
 
 impl GameDataBase {
+    /// Create a database for the given vector of games
     pub fn new(games: Vec<Game>) -> Self {
         let mut db = GameDataBase::default();
         for game in games {
@@ -58,6 +69,7 @@ impl GameDataBase {
         }
         db
     }
+    /// Load the given game in the database
     pub fn load_game(&mut self, game: Game) {
         let uid = game.uid;
         self.add_game(game);

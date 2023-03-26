@@ -8,4 +8,5 @@ pub mod query_result;
 pub use database::GameDataBase;
 pub use query_result::QueryResult;
 
-type Item = String;
+/// Representation of items such as pub, tags, etc.
+pub type Item = String;
