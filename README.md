@@ -1,51 +1,90 @@
-[![Rust](https://github.com/Hukadan/pobsd-rs/actions/workflows/rust.yml/badge.svg)](https://github.com/Hukadan/pobsd-rs/actions/workflows/rust.yml)
-[![rust-clippy analyze](https://github.com/Hukadan/pobsd-rs/actions/workflows/rust-clippy.yml/badge.svg)](https://github.com/Hukadan/pobsd-rs/actions/workflows/rust-clippy.yml)
+## pobsd-parser
 
-## pobsd
-pobsd is a tool written in Rust designed to interact with the PlayOnBSD
-database that can be find [here](https://github.com/playonbsd/OpenBSD-Games-Database)
+pobsd-parser is a parsing library for parsing the PlayOnBSD Database.
 
-It makes use of both `plege(2)` and `unveil(2)`.
+This library provides:
+* A `Parser` struct handling the parsing
+* A `ParsingMode` enum to choose between a strict or a relax parsing mode
+* A `ParserResult` struct to handle parsing with and without error
+* A `Game` struct representing a game of a database
 
-At the moment, it provides three functionalities:
-- checking the database integrity (at the moment, in a minimal way)
-- exporting the database in a different format (at the moment, only json)
-- browsing the database (at the moment, only in read-only mode)
-
-
-### Installing
-You can install it using `cargo` with `cargo install pobsd`.
-Make sure to update to your `$PATH` to be able to use 
-it (usually by adding `$HOME/.cargo/bin`).
-
-### Checking the database integrity
-For now, it boils down to checking if the parser can
-parse the database and tells where the parser found
-errors. 
+### Examples
+Here is a first example loading a file in relaxed mode (by default).
 ```
-$ pobsd check games.db 
-> 356 games parsed without error
-$ pobsd check faulty-games.db
-> 356 games parsed
-> Errors occured at lines 15, 24.
-```
-If there is an error, it should be fixed before using the
-other functions of pobsd since this could lead to wrong
-data being displayed or exported.
-
-### Exporting the database
-At the moment, the only format available is json.
-```
-$ pobsd export games.db games.json 
+extern crate pobsd_parser;
+use pobsd_parser::{Parser, ParserResult};
+// Create a parser
+let parser = Parser::default();
+// Load the database
+let parser_result = parser.load_from_file("/path/to/games.db")
+       .expect("Problem trying to open the file");
+let games = match parser_result {
+       ParserResult::WithoutError(games) => games,
+       ParserResult::WithError(games, _) => games,
+};
 ```
 
-### Browsing
-The last (but not the least) function is the browse function.
-It provides a nice yet simple terminal interface for browsing
-and searching the database.
-[![asciicast](https://asciinema.org/a/563130.svg)](https://asciinema.org/a/563130)
+The parser can also use a strict mode in which it will stop when encountering
+a parsing error and returning the games it has processed.
+```
+extern crate pobsd_parser;
+use pobsd_parser::{Parser, ParserResult, ParsingMode};
 
-### Credits
-Reading [https://github.com/graymind75/passmng](https://github.com/graymind75/passmng) source
-code helped me a lot to implement the TUI.
+// Create a paser in strict mode
+let parser = Parser::new(ParsingMode::Strict);
+// Load the database
+let parser_result = parser.load_from_file("/path/to/games.db")
+       .expect("Problem trying to open the file");
+let games = match parser_result {
+    ParserResult::WithoutError(games) => games,
+    ParserResult::WithError(games, _) => games,
+};
+```
 
+The parser can also load from a &str or a String.
+```
+extern crate pobsd_parser;
+use pobsd_parser::{Parser, ParserResult, ParsingMode};
+
+let games = r#"Game	AaaaaAAaaaAAAaaAAAAaAAAAA!!! for the Awesome
+Cover	AaaaaA_for_the_Awesome_Cover.jpg
+Engine
+Setup
+Runtime	HumblePlay
+Store	https://www.humblebundle.com/store/aaaaaaaaaaaaaaaaaaaaaaaaa-for-the-awesome
+Hints	Demo on HumbleBundle store page
+Genre
+Tags
+Year	2011
+Dev
+Pub
+Version
+Status
+Added	1970-01-01
+Updated	1970-01-01
+IgdbId	12
+Game	The Adventures of Mr. Hat
+Cover
+Engine	godot
+Setup
+Runtime	godot
+Store	https://store.steampowered.com/app/1869200/The_Adventures_of_Mr_Hat/
+Hints
+Genre	Puzzle Platformer
+Tags	indie
+Year
+Dev	AX-GAME
+Pub	Fun Quarter
+Version	Early Access
+Status	runs (2022-05-13)
+Added	2022-05-13
+Updated	2022-05-13
+IgdbId	13"#;
+
+let parser = Parser::default();
+let games = match parser.load_from_string(games) {
+    ParserResult::WithoutError(games) => games,
+    // Should not panic since the data are fine
+    ParserResult::WithError(_, _) => panic!(),
+};
+ ```
