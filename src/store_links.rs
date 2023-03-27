@@ -50,9 +50,10 @@ impl StoreLink {
         let re = Regex::new(r"https://store.steampowered.com/app/(\d+)(/?.+)?").unwrap();
         match &self.store {
             Store::Steam => {
-                let cap = re.captures(&self.url).unwrap();
-                if let Some(cap) = cap.get(1) {
-                    return cap.as_str().parse::<usize>().ok();
+                if let Some(cap) = re.captures(&self.url) {
+                    if let Some(cap) = cap.get(1) {
+                        return cap.as_str().parse::<usize>().ok();
+                    };
                 };
                 None
             }
