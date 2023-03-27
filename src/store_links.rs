@@ -20,6 +20,8 @@ pub struct StoreLink {
     pub store: Store,
     /// Link where the game can be found
     pub url: String,
+    /// Id of the game for the store
+    pub id: Option<usize>,
 }
 
 impl StoreLink {
@@ -30,36 +32,32 @@ impl StoreLink {
             Self {
                 store: Store::Steam,
                 url: url.to_string(),
+                id: get_steam_id(url),
             }
         } else if url.contains("gog.com") {
             Self {
                 store: Store::Gog,
                 url: url.to_string(),
+                id: None,
             }
         } else {
             Self {
                 store: Store::Unknown,
                 url: url.to_string(),
+                id: None,
             }
         }
     }
-    /// Return the id of the game for a given store.
-    /// Only works for Steam at the moment and return
-    /// None for other stores.
-    pub fn get_id(&self) -> Option<usize> {
-        let re = Regex::new(r"https://store.steampowered.com/app/(\d+)(/?.+)?").unwrap();
-        match &self.store {
-            Store::Steam => {
-                if let Some(cap) = re.captures(&self.url) {
-                    if let Some(cap) = cap.get(1) {
-                        return cap.as_str().parse::<usize>().ok();
-                    };
-                };
-                None
-            }
-            _ => None,
-        }
-    }
+}
+
+fn get_steam_id(url: &str) -> Option<usize> {
+    let re = Regex::new(r"https://store.steampowered.com/app/(\d+)(/?.+)?").unwrap();
+    if let Some(cap) = re.captures(url) {
+        if let Some(cap) = cap.get(1) {
+            return cap.as_str().parse::<usize>().ok();
+        };
+    };
+    None
 }
 
 /// Represent a collection of store links
@@ -94,36 +92,21 @@ mod store_link_tests {
     use super::*;
     #[test]
     fn test_get_id_steam() {
-        let store = StoreLink {
-            store: Store::Steam,
-            url: "https://store.steampowered.com/app/1878910/LoupLaine/".to_string(),
-        };
-        assert_eq!(store.get_id(), Some(1878910));
+        let store = StoreLink::from("https://store.steampowered.com/app/1878910/LoupLaine/");
+        assert_eq!(store.id, Some(1878910));
 
-        let store = StoreLink {
-            store: Store::Steam,
-            url: "https://store.steampowered.com/app/1878910".to_string(),
-        };
-        assert_eq!(store.get_id(), Some(1878910));
+        let store = StoreLink::from("https://store.steampowered.com/app/1878910");
+        assert_eq!(store.id, Some(1878910));
 
-        let store = StoreLink {
-            store: Store::Steam,
-            url: "https://store.steampowered.com/app/1878910/".to_string(),
-        };
-        assert_eq!(store.get_id(), Some(1878910));
+        let store = StoreLink::from("https://store.steampowered.com/app/1878910/");
+        assert_eq!(store.id, Some(1878910));
 
-        let store = StoreLink {
-            store: Store::Steam,
-            url: "https://store.steampowered.com/app/1878910/LoupLaine".to_string(),
-        };
-        assert_eq!(store.get_id(), Some(1878910));
+        let store = StoreLink::from("https://store.steampowered.com/app/1878910/LoupLaine");
+        assert_eq!(store.id, Some(1878910));
     }
     #[test]
     fn test_get_id_gog() {
-        let store = StoreLink {
-            store: Store::Gog,
-            url: "https://store.steampowered.com/app/1878910/LoupLaine/".to_string(),
-        };
-        assert_eq!(store.get_id(), None);
+        let store = StoreLink::from("https://gog.com/app/1878910/LoupLaine/");
+        assert_eq!(store.id, None);
     }
 }
