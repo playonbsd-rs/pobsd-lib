@@ -55,6 +55,21 @@ pub struct QueryResult<T> {
     pub items: Vec<T>,
 }
 
+impl<T> QueryResult<T> {
+    // Returns a reference to an element or subslice depending on the type of index
+    pub fn get(&self, index: usize) -> Option<&T> {
+        self.items.get(index)
+    }
+    // Returns a mutable reference to an element or subslice depending on the type of index
+    pub fn get_mut(&mut self, index: usize) -> Option<&mut T> {
+        self.items.get_mut(index)
+    }
+    // Return the vector of items stored in the query result
+    pub fn into_inner(self) -> Vec<T> {
+        self.items
+    }
+}
+
 impl QueryResult<Item> {
     /// Get item by name (case sensitive)
     pub fn get_item_by_name(&self, name: &str) -> Option<Item> {
