@@ -1,7 +1,7 @@
 //! This library provides a set of methods to interogate the PlayOnBSD
 //! database in a friendly manner, without having to deal with a SQL
 //! database.
-//! ## Exemples
+//! ## Examples
 //! Create a GameDataBase from the PlayOnBSD database.
 //! ```no_run
 //! extern crate pobsd_db;
