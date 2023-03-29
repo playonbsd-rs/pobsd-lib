@@ -50,6 +50,7 @@ impl StoreLink {
     }
 }
 
+// Return the steam id from a store url
 fn get_steam_id(url: &str) -> Option<usize> {
     let re = Regex::new(r"https://store.steampowered.com/app/(\d+)(/?.+)?").unwrap();
     if let Some(cap) = re.captures(url) {
@@ -84,6 +85,18 @@ impl StoreLinks {
     /// Return the vector of StoreLink.
     pub fn into_inner(self) -> Vec<StoreLink> {
         self.0
+    }
+    /// Return true if a Steam game is present, false otherwise
+    pub fn has_steam(&self) -> bool {
+        let links = self.inner_ref();
+        let res: Vec<&StoreLink> = links.iter().filter(|a| a.store.eq(&Store::Steam)).collect();
+        !res.is_empty()
+    }
+    /// Return true if a Steam game is present, false otherwise
+    pub fn has_gog(&self) -> bool {
+        let links = self.inner_ref();
+        let res: Vec<&StoreLink> = links.iter().filter(|a| a.store.eq(&Store::Gog)).collect();
+        !res.is_empty()
     }
 }
 
