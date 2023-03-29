@@ -44,12 +44,8 @@ macro_rules! get_game_by {
             for game in self.games.values() {
                 if let Some(stores) = &game.stores {
                     for store in stores.inner_ref() {
-                        if store.store.eq(&Store::Steam) {
-                            if let Some(id) = store.get_id() {
-                                if id.eq(&steam_id) {
-                                    return Some(game);
-                                }
-                            }
+                        if store.store.eq(&Store::Steam) && store.id.eq(&Some(steam_id)) {
+                            return Some(game);
                         }
                     }
                 }
