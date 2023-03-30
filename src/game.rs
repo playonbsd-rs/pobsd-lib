@@ -141,7 +141,7 @@ impl fmt::Display for Game {
                 "Store\t{}",
                 stores
                     .inner_ref()
-                    .into_iter()
+                    .iter()
                     .map(|a| a.url.to_string())
                     .collect::<Vec<String>>()
                     .join(" ")
