@@ -9,8 +9,8 @@
 //! ### Examples
 //! Here is a first example loading a file in relaxed mode (by default).
 //! ```no_run
-//! extern crate pobsd_parser;
-//! use pobsd_parser::{Parser, ParserResult};
+//! extern crate libpobsd;
+//! use libpobsd::parser::{Parser, ParserResult};
 //!
 //! // Create a parser
 //! let parser = Parser::default();
@@ -25,8 +25,8 @@
 //! The parser can also use a strict mode in which it will stop when encountering
 //! a parsing error and returning the games it has processed.
 //! ```no_run
-//! extern crate pobsd_parser;
-//! use pobsd_parser::{Parser, ParserResult, ParsingMode};
+//! extern crate libpobsd;
+//! use libpobsd::parser::{Parser, ParserResult, ParsingMode};
 //!
 //! // Create a paser in strict mode
 //! let parser = Parser::new(ParsingMode::Strict);
@@ -40,8 +40,8 @@
 //! ```
 //! The parser can also load from a &str or a String.
 //! ```
-//! extern crate pobsd_parser;
-//! use pobsd_parser::{Parser, ParserResult, ParsingMode};
+//! extern crate libpobsd;
+//! use libpobsd::parser::{Parser, ParserResult, ParsingMode};
 //!
 //! let games = r#"Game	AaaaaAAaaaAAAaaAAAAaAAAAA!!! for the Awesome
 //! Cover	AaaaaA_for_the_Awesome_Cover.jpg
@@ -86,10 +86,6 @@
 //! };
 //!
 //! ```
-#[macro_use]
-extern crate serde_derive;
-extern crate serde_json;
-
 #[macro_use]
 pub(crate) mod parser_macros;
 pub(crate) mod field;

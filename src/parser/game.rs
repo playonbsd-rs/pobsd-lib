@@ -1,5 +1,5 @@
 //! Provides a representations of the game in the PlayOnBSD database.
-use crate::store_links::StoreLinks;
+use super::store_links::StoreLinks;
 use std::cmp::{Ordering, PartialOrd};
 use std::fmt;
 
@@ -220,7 +220,7 @@ impl fmt::Display for Game {
 
 #[cfg(test)]
 mod game_tests {
-    use crate::store_links::StoreLink;
+    use crate::parser::store_links::StoreLink;
 
     use super::*;
     fn create_game() -> Game {

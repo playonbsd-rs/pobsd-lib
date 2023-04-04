@@ -1,8 +1,8 @@
-use crate::query_result::QueryResult;
+use super::query_result::QueryResult;
+use crate::parser::{Game, Store};
 use paste::paste;
-use pobsd_parser::{Game, Store};
 
-use crate::database::GameDataBase;
+use super::database::GameDataBase;
 
 macro_rules! get_game_by {
     (id) => {

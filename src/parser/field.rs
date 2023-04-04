@@ -1,5 +1,5 @@
 use super::split_line::split_line;
-use crate::store_links::{StoreLink, StoreLinks};
+use super::store_links::{StoreLink, StoreLinks};
 use std::fmt;
 
 /* ------------------------ FIELD ENUM -----------------------*/

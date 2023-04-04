@@ -1,7 +1,7 @@
 //! Provide a representation of the PlayOnBSD database than can be
 //! queried using a set of predefined methods.
+use crate::parser::Game;
 use paste::paste;
-use pobsd_parser::Game;
 use std::collections::HashMap;
 
 macro_rules! load_game {
