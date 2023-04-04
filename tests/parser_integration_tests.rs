@@ -139,20 +139,22 @@ fn test_parser_right_games_with_correct_database_strict_mode() {
 #[test]
 fn test_parser_right_number_of_games_with_faulty_database_relaxed_mode() {
     let games = get_games("tests/data/test-games-faulty.db");
-    // we get them all
     assert_eq!(games.len(), 8);
 }
 #[test]
 fn test_parser_right_number_of_games_with_faulty_database_strict_mode() {
     let games = get_games_strict("tests/data/test-games-faulty.db");
-    // we get them all
     assert_eq!(games.len(), 2);
 }
 #[test]
 fn test_parser_right_number_of_games_with_start_faulty_database_strict_mode() {
     let games = get_games_strict("tests/data/test-games-faulty-at-start.db");
-    // we get them all
     assert_eq!(games.len(), 0);
+}
+#[test]
+fn test_parser_right_number_of_games_with_start_faulty_database_relaxed_mode() {
+    let games = get_games("tests/data/test-games-faulty-at-start.db");
+    assert_eq!(games.len(), 8);
 }
 #[test]
 fn test_parser_right_games_with_faulty_database_relaxed_mode() {
