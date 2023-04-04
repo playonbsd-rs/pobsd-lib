@@ -20,6 +20,37 @@ fn get_db_strict() -> GameDataBase {
 }
 
 #[test]
+fn test_get_game_by_id() {
+    let db = get_db_strict();
+    let game = db
+        .get_game_by_id(1595434339)
+        .expect("Game with id 1595434339 exists");
+    assert_eq!(&game.name, "Airships: Conquer the Skies");
+}
+#[test]
+fn test_get_game_by_ids() {
+    let db = get_db_strict();
+    let games = db.get_game_by_ids(vec![1595434339, 2316180984]);
+    let games = games.into_inner();
+    assert_eq!(&games[0].name, "Airships: Conquer the Skies");
+    assert_eq!(&games[1].name, "Alien Shepherd");
+}
+#[test]
+fn test_get_by_steam_id() {
+    let db = get_db_strict();
+    let game = db.get_game_by_steam_id(1869200);
+    match game {
+        Some(game) => assert_eq!(game.name, "The Adventures of Mr. Hat".to_string()),
+        None => panic!(),
+    }
+    let game = db.get_game_by_steam_id(0);
+    match game {
+        Some(_) => panic!(),
+        None => assert_eq!(game, None),
+    }
+}
+
+#[test]
 fn test_get_by_tag() {
     let db = get_db_strict();
     let game_query = db.get_game_by_tag("indie");
@@ -30,6 +61,13 @@ fn test_get_by_tag() {
     assert_eq!(game.name, "The Adventures of Shuggy".to_string());
     let game = game_query.items.get(2).unwrap();
     assert_eq!(game.name, "Aeternum".to_string());
+}
+
+#[test]
+fn test_get_by_tag_empty() {
+    let db = get_db_strict();
+    let game_query = db.get_game_by_tag("notatag");
+    assert_eq!(game_query.items.len(), 0);
 }
 
 #[test]
@@ -90,13 +128,10 @@ fn test_get_by_publi() {
 }
 
 #[test]
-fn test_get_by_steam_id() {
+fn test_get_all_games() {
     let db = get_db_strict();
-    let game = db.get_game_by_steam_id(1869200);
-    match game {
-        Some(game) => assert_eq!(game.name, "The Adventures of Mr. Hat".to_string()),
-        None => panic!(),
-    }
+    let games = db.get_all_games();
+    assert_eq!(games.items.len(), 9);
 }
 
 #[test]
