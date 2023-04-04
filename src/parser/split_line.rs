@@ -38,6 +38,11 @@ mod split_line_tests {
         assert_eq!((Some("one"), Some("tab")), split_line(&test_str));
     }
     #[test]
+    fn test_line_has_one_tab_and_nothing_after() {
+        let test_str = "one\t";
+        assert_eq!((Some("one"), None), split_line(&test_str));
+    }
+    #[test]
     fn test_line_has_two_tabs() {
         let test_str = "one\ttab\tanother";
         assert_eq!((Some("one"), Some("tab\tanother")), split_line(&test_str));
