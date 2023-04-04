@@ -158,3 +158,36 @@ impl Parser {
          (ParserState::IgdbId, Field::IgdbId, igdb_id, ParserState::Game)
     ];
 }
+#[cfg(test)]
+mod game_tests {
+    use super::*;
+    #[test]
+    fn test_from_parse_result_without_error_to_vec() {
+        let game = Game::new();
+        let game_bis = Game::new();
+        let games1 = vec![game, game_bis];
+        let games2 = games1.clone();
+        let parse_result = ParserResult::WithoutError(games2);
+        let games_test: Vec<Game> = parse_result.into();
+        assert_eq!(games1, games_test);
+    }
+    #[test]
+    fn test_from_parse_result_with_error_to_vec() {
+        let game = Game::new();
+        let game_bis = Game::new();
+        let games1 = vec![game, game_bis];
+        let games2 = games1.clone();
+        let parse_result = ParserResult::WithError(games2, vec![]);
+        let games_test: Vec<Game> = parse_result.into();
+        assert_eq!(games1, games_test);
+    }
+    #[test]
+    fn load_from_file_fail() {
+        let re = match Parser::default().load_from_file("nothere") {
+            Ok(_) => panic!(),
+            Err(e) => e,
+        };
+        let error_type = std::io::ErrorKind::InvalidInput;
+        assert_eq!(re.kind(), error_type);
+    }
+}
