@@ -1,5 +1,5 @@
 [package]
-name = "pobsd-db"
+name = "libpobsd"
 description = "Primitive database to query the PlayOnBSD database "
 authors = ["Hukadan <me@hukadan.org>"]
 version = "0.1.4"
@@ -13,6 +13,9 @@ keywords = ["OpenBSD", "PlayOnBSD"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+serde = "1"
+serde_json = "1"
+serde_derive = "1"
+regex = "1.7.3"
 hash32 = "0.3.1"
 paste = "1.0.12"
-pobsd-parser = "0.4.1"
