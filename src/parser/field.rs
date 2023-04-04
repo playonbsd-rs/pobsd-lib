@@ -139,7 +139,7 @@ impl fmt::Display for Field {
                     write!(f, "Unknown field {}", field)
                 }
                 None => {
-                    write!(f, "Unexpected patern")
+                    write!(f, "Unexpected pattern")
                 }
             },
         }
@@ -233,7 +233,7 @@ impl Field {
                 },
                 "Added" => match right {
                     Some(right) => Field::Added(Some(right.into())),
-                    None => Field::Added(Some("1970/01/01".into())),
+                    None => Field::Added(Some("1970-01-01".into())),
                 },
                 "Updated" => match right {
                     Some(right) => Field::Updated(Some(right.into())),
@@ -421,6 +421,28 @@ mod field_tests {
         assert_eq!(format!("{}", field), input);
     }
     #[test]
+    fn test_from_added_line() {
+        let input = "Added\t1980-14-01";
+        let field = Field::from(&input);
+        assert_eq!(Field::Added(Some("1980-14-01".into())), field);
+        assert_eq!(format!("{}", field), input);
+        let input = "Added";
+        let field = Field::from(&input);
+        assert_eq!(Field::Added(Some("1970-01-01".to_string())), field);
+        assert_eq!(format!("{}", field), format!("{}\t1970-01-01", input));
+    }
+    #[test]
+    fn test_from_updated_line() {
+        let input = "Updated\t1980-14-01";
+        let field = Field::from(&input);
+        assert_eq!(Field::Updated(Some("1980-14-01".into())), field);
+        assert_eq!(format!("{}", field), input);
+        let input = "Updated";
+        let field = Field::from(&input);
+        assert_eq!(Field::Updated(None), field);
+        assert_eq!(format!("{}", field), input);
+    }
+    #[test]
     fn test_from_unknown_field() {
         let input = "Let's not\tpanic";
         let field = Field::from(&input);
@@ -436,6 +458,13 @@ mod field_tests {
         let field = Field::from(&input);
         assert_eq!(Field::Unknown(Some("Let's not".into())), field);
         assert_eq!(format!("{}", field), format!("Unknown field {}", input));
+    }
+    #[test]
+    fn test_from_unknown_field_with_empty_line() {
+        let input = "";
+        let field = Field::from(&input);
+        assert_eq!(Field::Unknown(None), field);
+        assert_eq!(format!("{}", field), "Unexpected pattern");
     }
     #[test]
     fn test_from_igdb_id_line() {
