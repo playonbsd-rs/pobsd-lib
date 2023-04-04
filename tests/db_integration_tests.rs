@@ -1,7 +1,6 @@
-extern crate pobsd_db;
-extern crate pobsd_parser;
-use pobsd_db::GameDataBase;
-use pobsd_parser::{Game, Parser, ParserResult, ParsingMode};
+extern crate libpobsd;
+use libpobsd::db::GameDataBase;
+use libpobsd::parser::{Game, Parser, ParserResult, ParsingMode};
 
 // helper function to return the games with both
 // correct and faulty database in relaxed mode
@@ -104,8 +103,8 @@ fn test_get_by_steam_id() {
 fn test_get_all_tags() {
     let db = get_db_strict();
     let tag_query = db.get_all_tags();
-    assert_eq!(tag_query.items.len(), 6);
-    for tag in vec!["Tag1", "indie", "free", "manga", "bullethell", "anime"] {
+    assert_eq!(tag_query.items.len(), 5);
+    for tag in vec!["indie", "free", "manga", "bullethell", "anime"] {
         assert!(tag_query.items.contains(&&tag.to_string()));
     }
 }
@@ -114,9 +113,8 @@ fn test_get_all_tags() {
 fn test_get_all_genres() {
     let db = get_db_strict();
     let tag_query = db.get_all_genres();
-    assert_eq!(tag_query.items.len(), 7);
+    assert_eq!(tag_query.items.len(), 6);
     for genre in vec![
-        "Genre1",
         "Puzzle Platformer",
         "RPG",
         "shmup",

@@ -1,5 +1,5 @@
-extern crate pobsd_parser;
-use pobsd_parser::{Game, Parser, ParserResult, ParsingMode};
+extern crate libpobsd;
+use libpobsd::parser::{Game, Parser, ParserResult, ParsingMode};
 
 // helper function to return the games with both
 // correct and faulty database in relaxed mode
