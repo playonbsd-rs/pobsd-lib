@@ -289,6 +289,7 @@ mod game_tests {
     }
     #[test]
     fn test_ordering() {
+        use std::cmp::Ordering;
         let mut game1 = create_game();
         let mut game2 = create_game();
         game1.name = "Abc".into();
@@ -297,6 +298,12 @@ mod game_tests {
         assert!(game2.ge(&game1));
         assert!(game1.le(&game2));
         assert!(game1.lt(&game2));
+        assert_eq!(game2.cmp(&game1), Ordering::Greater);
+        assert_eq!(game1.cmp(&game2), Ordering::Less);
+        assert_eq!(game2.cmp(&game2), Ordering::Equal);
+        assert_eq!(game2.partial_cmp(&game1), Some(Ordering::Greater));
+        assert_eq!(game1.partial_cmp(&game2), Some(Ordering::Less));
+        assert_eq!(game2.partial_cmp(&game2), Some(Ordering::Equal));
         game1.name = "The Abc".into();
         game2.name = "def".into();
         assert!(game2.gt(&game1));
@@ -311,7 +318,7 @@ mod game_tests {
         assert!(game1.lt(&game2));
     }
     #[test]
-    fn test_display() {
+    fn test_display_1() {
         let game_str = "Game\tAaaaaAAaaaAAAaaAAAAaAAAAA!!! for the Awesome
 Cover\tAaaaaA_for_the_Awesome_Cover.jpg
 Engine
@@ -350,6 +357,47 @@ IgdbId";
             added: None,
             updated: None,
             igdb_id: None,
+        };
+        assert_eq!(format!("{}", game), game_str);
+    }
+    #[test]
+    fn test_display_2() {
+        let game_str = "Game\tAaaaaAAaaaAAAaaAAAAaAAAAA!!! for the Awesome
+Cover
+Engine\tEngine1
+Setup\tSetup1
+Runtime\tHumblePlay
+Store
+Hints
+Genre\tgenre1, genre2
+Tags\ttag1, tag2
+Year
+Dev\tdev1
+Pub\tpub1
+Version\tver1
+Status\tfine
+Added\t1970-01-01
+Updated\t1970-01-02
+IgdbId\t1234";
+        let game = Game {
+            uid: 12,
+            name: "AaaaaAAaaaAAAaaAAAAaAAAAA!!! for the Awesome".to_string(),
+            cover: None,
+            engine: Some("Engine1".to_string()),
+            setup: Some("Setup1".to_string()),
+            runtime: Some("HumblePlay".to_string()),
+            stores: None,
+            hints: None,
+            genres: Some(vec!["genre1".to_string(), "genre2".to_string()]),
+            tags: Some(vec!["tag1".to_string(), "tag2".to_string()]),
+            year: None,
+            dev: Some("dev1".to_string()),
+            publi: Some("pub1".to_string()),
+            version: Some("ver1".to_string()),
+            status: Some("fine".to_string()),
+            added: Some("1970-01-01".to_string()),
+            updated: Some("1970-01-02".to_string()),
+            igdb_id: Some("1234".to_string()),
         };
         assert_eq!(format!("{}", game), game_str);
     }
