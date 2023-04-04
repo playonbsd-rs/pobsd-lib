@@ -366,7 +366,7 @@ IgdbId";
 Cover
 Engine\tEngine1
 Setup\tSetup1
-Runtime\tHumblePlay
+Runtime
 Store
 Hints
 Genre\tgenre1, genre2
@@ -385,7 +385,7 @@ IgdbId\t1234";
             cover: None,
             engine: Some("Engine1".to_string()),
             setup: Some("Setup1".to_string()),
-            runtime: Some("HumblePlay".to_string()),
+            runtime: None,
             stores: None,
             hints: None,
             genres: Some(vec!["genre1".to_string(), "genre2".to_string()]),
