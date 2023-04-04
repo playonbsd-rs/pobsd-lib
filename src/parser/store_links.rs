@@ -103,23 +103,110 @@ impl StoreLinks {
 #[cfg(test)]
 mod store_link_tests {
     use super::*;
+    // get_steam_id
     #[test]
-    fn test_get_id_steam() {
+    fn test_get_steam_id_with_steam_url() {
+        let id = get_steam_id("https://store.steampowered.com/app/1878910/LoupLaine/");
+        assert_eq!(id, Some(1878910));
+    }
+    #[test]
+    fn test_get_steam_id_with_non_steam_url() {
+        let id = get_steam_id("https://humblebundle.com/app/1878910/LoupLaine/");
+        assert_eq!(id, None);
+    }
+    // StoreLink
+    #[test]
+    fn test_store_link_from_steam_url() {
         let store = StoreLink::from("https://store.steampowered.com/app/1878910/LoupLaine/");
         assert_eq!(store.id, Some(1878910));
+        assert_eq!(store.store, Store::Steam);
 
         let store = StoreLink::from("https://store.steampowered.com/app/1878910");
         assert_eq!(store.id, Some(1878910));
+        assert_eq!(store.store, Store::Steam);
 
         let store = StoreLink::from("https://store.steampowered.com/app/1878910/");
         assert_eq!(store.id, Some(1878910));
+        assert_eq!(store.store, Store::Steam);
 
         let store = StoreLink::from("https://store.steampowered.com/app/1878910/LoupLaine");
         assert_eq!(store.id, Some(1878910));
+        assert_eq!(store.store, Store::Steam);
     }
     #[test]
-    fn test_get_id_gog() {
+    fn test_store_link_from_gog_url() {
         let store = StoreLink::from("https://gog.com/app/1878910/LoupLaine/");
         assert_eq!(store.id, None);
+        assert_eq!(store.store, Store::Gog);
+    }
+    #[test]
+    fn test_store_link_from_unknown_url() {
+        let store = StoreLink::from("https://humblebundle.com/app/1878910/LoupLaine/");
+        assert_eq!(store.id, None);
+        assert_eq!(store.store, Store::Unknown);
+    }
+    // StoreLinks
+    #[test]
+    fn test_store_links_new_method() {
+        let v: Vec<StoreLink> = vec![];
+        let v2 = v.clone();
+        let st = StoreLinks::new(v);
+        assert_eq!(st, StoreLinks(v2));
+    }
+    #[test]
+    fn test_store_links_push_method() {
+        let v: Vec<StoreLink> = vec![];
+        let store = StoreLink::from("https://humblebundle.com/app/1878910/LoupLaine/");
+        let mut st = StoreLinks::new(v);
+        st.push(store);
+        assert_eq!(
+            st.inner_ref()[0].url,
+            "https://humblebundle.com/app/1878910/LoupLaine/"
+        );
+    }
+    #[test]
+    fn test_store_links_into_inner_method() {
+        let v: Vec<StoreLink> = vec![];
+        let v2 = v.clone();
+        let st = StoreLinks::new(v);
+        assert_eq!(st.into_inner(), v2);
+    }
+    #[test]
+    fn test_store_links_inner_ref_method() {
+        let store = StoreLink::from("https://humblebundle.com/app/1878910/LoupLaine/");
+        let v: Vec<StoreLink> = vec![store];
+        let st = StoreLinks::new(v);
+        let v: &Vec<StoreLink> = st.inner_ref();
+        assert_eq!(v[0].url, "https://humblebundle.com/app/1878910/LoupLaine/");
+    }
+    #[test]
+    fn test_store_links_inner_mut_ref_method() {
+        let store = StoreLink::from("https://humblebundle.com/app/1878910/LoupLaine/");
+        let v: Vec<StoreLink> = vec![store];
+        let mut st = StoreLinks::new(v);
+        let v: &mut Vec<StoreLink> = st.inner_mut_ref();
+        assert_eq!(v[0].url, "https://humblebundle.com/app/1878910/LoupLaine/");
+    }
+    #[test]
+    fn test_store_links_has_steam_method() {
+        let v: Vec<StoreLink> = vec![];
+        let store = StoreLink::from("https://humblebundle.com/app/1878910/LoupLaine/");
+        let mut st = StoreLinks::new(v);
+        st.push(store);
+        assert!(!st.has_steam());
+        let store = StoreLink::from("https://store.steampowered.com/app/1878910/LoupLaine");
+        st.push(store);
+        assert!(st.has_steam());
+    }
+    #[test]
+    fn test_store_links_has_gog_method() {
+        let v: Vec<StoreLink> = vec![];
+        let store = StoreLink::from("https://humblebundle.com/app/1878910/LoupLaine/");
+        let mut st = StoreLinks::new(v);
+        st.push(store);
+        assert!(!st.has_gog());
+        let store = StoreLink::from("https://gog.com/app/1878910/LoupLaine/");
+        st.push(store);
+        assert!(st.has_gog());
     }
 }
