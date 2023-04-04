@@ -91,6 +91,7 @@ macro_rules! search_game_by {
                     games.push(game)
                 }
             }
+            games.sort();
             QueryResult {
                 count: games.len(),
                 items: games,
@@ -109,6 +110,7 @@ macro_rules! search_game_by {
                         }
                     }
                 }
+                games.sort();
                 QueryResult {
                     count: games.len(),
                     items: games
@@ -128,6 +130,7 @@ macro_rules! search_game_by {
                         }
                     }
                 }
+                games.sort();
                 QueryResult {
                     count: games.len(),
                     items: games

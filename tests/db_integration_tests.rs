@@ -27,6 +27,18 @@ fn test_get_game_by_id() {
         .expect("Game with id 1595434339 exists");
     assert_eq!(&game.name, "Airships: Conquer the Skies");
 }
+
+#[test]
+fn test_get_game_by_name() {
+    let db = get_db_strict();
+    let game = db
+        .get_game_by_name("Airships: Conquer the Skies")
+        .expect("Game with id 1595434339 exists");
+    assert_eq!(game.uid, 1595434339);
+    let game = db.get_game_by_name("I do not exist");
+    assert_eq!(game, None);
+}
+
 #[test]
 fn test_get_game_by_ids() {
     let db = get_db_strict();
@@ -177,4 +189,51 @@ fn test_get_all_runtimes() {
     ] {
         assert!(tag_query.items.contains(&&runtime.to_string()));
     }
+}
+
+#[test]
+fn test_search_game_by_name() {
+    let db = get_db_strict();
+    let games = db.search_game_by_name("Airships: Conquer the Skies");
+    let games = games.into_inner();
+    assert_eq!(games[0].uid, 1595434339);
+    let db = get_db_strict();
+    let games = db.search_game_by_name("airships: conquer the skies");
+    let games = games.into_inner();
+    assert_eq!(games[0].uid, 1595434339);
+    let games = db.search_game_by_name("I do not exist");
+    let games = games.into_inner();
+    assert!(games.is_empty());
+}
+#[test]
+fn test_search_game_by_tags() {
+    let db = get_db_strict();
+    let games = db.search_game_by_tags("Indie");
+    let games = games.into_inner();
+    assert_eq!(games[0].name, "The Adventures of Mr. Hat");
+    assert_eq!(games[1].name, "The Adventures of Shuggy");
+    let db = get_db_strict();
+    let games = db.search_game_by_tags("indie");
+    let games = games.into_inner();
+    assert_eq!(games[0].name, "The Adventures of Mr. Hat");
+    assert_eq!(games[1].name, "The Adventures of Shuggy");
+    let games = db.search_game_by_name("I do not exist");
+    let games = games.into_inner();
+    assert!(games.is_empty());
+}
+#[test]
+fn test_search_game_by_engine() {
+    let db = get_db_strict();
+    let games = db.search_game_by_engine("FNA");
+    let games = games.into_inner();
+    assert_eq!(games[0].name, "The Adventures of Shuggy");
+    assert_eq!(games[1].name, "Aeternum");
+    let db = get_db_strict();
+    let games = db.search_game_by_engine("fna");
+    let games = games.into_inner();
+    assert_eq!(games[0].name, "The Adventures of Shuggy");
+    assert_eq!(games[1].name, "Aeternum");
+    let games = db.search_game_by_engine("I do not exist");
+    let games = games.into_inner();
+    assert!(games.is_empty());
 }
