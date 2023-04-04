@@ -76,7 +76,7 @@ fn test_parser_returned_lines_with_error_with_faulty_database_relaxed_mode() {
         }
         ParserResult::WithError(games, lines) => (games, lines),
     };
-    assert_eq!(vec![20, 51, 97], lines);
+    assert_eq!(vec![20, 51, 97, 120], lines);
 }
 #[test]
 fn test_parser_returned_lines_with_error_with_faulty_database_strict_mode() {
@@ -140,13 +140,19 @@ fn test_parser_right_games_with_correct_database_strict_mode() {
 fn test_parser_right_number_of_games_with_faulty_database_relaxed_mode() {
     let games = get_games("tests/data/test-games-faulty.db");
     // we get them all
-    assert_eq!(games.len(), 9);
+    assert_eq!(games.len(), 8);
 }
 #[test]
 fn test_parser_right_number_of_games_with_faulty_database_strict_mode() {
     let games = get_games_strict("tests/data/test-games-faulty.db");
     // we get them all
     assert_eq!(games.len(), 2);
+}
+#[test]
+fn test_parser_right_number_of_games_with_start_faulty_database_strict_mode() {
+    let games = get_games_strict("tests/data/test-games-faulty-at-start.db");
+    // we get them all
+    assert_eq!(games.len(), 0);
 }
 #[test]
 fn test_parser_right_games_with_faulty_database_relaxed_mode() {
@@ -161,8 +167,7 @@ fn test_parser_right_games_with_faulty_database_relaxed_mode() {
     assert_eq!(games.get(4).unwrap().name, "Aeternum");
     assert_eq!(games.get(5).unwrap().name, "Airships: Conquer the Skies");
     assert_eq!(games.get(6).unwrap().name, "Akane the Kunoichi");
-    assert_eq!(games.get(7).unwrap().name, "Alien Shepherd");
-    assert_eq!(games.get(8).unwrap().name, "Always Sometimes Monsters");
+    assert_eq!(games.get(7).unwrap().name, "Always Sometimes Monsters");
 }
 #[test]
 fn test_parser_right_games_with_faulty_database_strict_mode() {

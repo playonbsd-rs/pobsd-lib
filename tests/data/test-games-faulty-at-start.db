@@ -1,4 +1,4 @@
-Game	AaaaaAAaaaAAAaaAAAAaAAAAA!!! for the Awesome
+//Game	AaaaaAAaaaAAAaaAAAAaAAAAA!!! for the Awesome
 Cover	AaaaaA_for_the_Awesome_Cover.jpg
 Engine
 Setup
@@ -17,7 +17,7 @@ Updated	1970-01-01
 IgdbId	12
 Game	The Adventures of Mr. Hat
 Cover
-//Engine	godot
+Engine	godot
 Setup
 Runtime	godot
 Store	https://store.steampowered.com/app/1869200/The_Adventures_of_Mr_Hat/
@@ -48,7 +48,7 @@ Version
 Status
 Added	1970-01-01
 Updated	1970-01-01
-//IgdbId	1212
+IgdbId	1212
 Game	Aedemphia
 Cover	aedemphia.png
 Engine	RPG Maker
@@ -94,7 +94,7 @@ Genre	RTS
 Tags
 Year	2018
 Dev	David Stark
-//Pub
+Pub
 Version
 Status	works with some setup steps required
 Added	1970-01-01
@@ -117,7 +117,7 @@ Status
 Added	1970-01-01
 Updated	1970-01-01
 IgdbId	1255152121
-//Game	Alien Shepherd
+Game	Alien Shepherd
 Cover
 Engine	HashLink
 Setup
