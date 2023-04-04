@@ -430,6 +430,9 @@ mod field_tests {
         let field = Field::from(&input);
         assert_eq!(Field::Added(Some("1970-01-01".to_string())), field);
         assert_eq!(format!("{}", field), format!("{}\t1970-01-01", input));
+        // should not happen normally but check if
+        // it works as expected just in case.
+        assert_eq!(format!("{}", Field::Added(None)), "Added");
     }
     #[test]
     fn test_from_updated_line() {
