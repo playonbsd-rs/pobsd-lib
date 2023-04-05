@@ -40,6 +40,18 @@ fn test_get_game_by_name() {
 }
 
 #[test]
+fn test_query_get_game_by_name() {
+    let db = get_db_strict();
+    let qr = db.get_all_games();
+    let game = qr
+        .get_game_by_name("Airships: Conquer the Skies")
+        .expect("Game with id 1595434339 exists");
+    assert_eq!(game.uid, 1595434339);
+    let game = db.get_game_by_name("I do not exist");
+    assert_eq!(game, None);
+}
+
+#[test]
 fn test_get_game_by_ids() {
     let db = get_db_strict();
     let games = db.get_game_by_ids(vec![1595434339, 2316180984]);
@@ -76,9 +88,39 @@ fn test_get_by_tag() {
 }
 
 #[test]
-fn test_get_by_tag_empty() {
+fn test_query_result_get_by_tag() {
     let db = get_db_strict();
-    let game_query = db.get_game_by_tag("notatag");
+    let qr = db.get_all_games();
+    let game_query = qr.get_game_by_tags("indie");
+    assert_eq!(game_query.items.len(), 3);
+    let game: &Game = game_query.get(0).unwrap();
+    assert_eq!(game.name, "The Adventures of Mr. Hat".to_string());
+}
+
+#[test]
+fn test_query_result_get() {
+    let db = get_db_strict();
+    let qr = db.get_all_games();
+    let game_query = qr.get_game_by_tags("indie");
+    let game = game_query.get(1).unwrap();
+    assert_eq!(game.name, "The Adventures of Shuggy".to_string());
+}
+
+#[test]
+fn test_query_result_into_inner() {
+    let db = get_db_strict();
+    let qr = db.get_all_games();
+    let game_query = qr.get_game_by_tags("indie");
+    let games = game_query.into_inner();
+    let game = games.get(2).unwrap();
+    assert_eq!(game.name, "Aeternum".to_string());
+}
+
+#[test]
+fn test_query_result_get_by_tag_empty() {
+    let db = get_db_strict();
+    let qr = db.get_all_games();
+    let game_query = qr.get_game_by_tags("notatag");
     assert_eq!(game_query.items.len(), 0);
 }
 
@@ -86,6 +128,19 @@ fn test_get_by_tag_empty() {
 fn test_get_by_year() {
     let db = get_db_strict();
     let game_query = db.get_game_by_year("2011");
+    assert_eq!(game_query.items.len(), 1);
+    let game = game_query.items.get(0).unwrap();
+    assert_eq!(
+        game.name,
+        "AaaaaAAaaaAAAaaAAAAaAAAAA!!! for the Awesome".to_string()
+    );
+}
+
+#[test]
+fn test_query_result_get_by_year() {
+    let db = get_db_strict();
+    let qr = db.get_all_games();
+    let game_query = qr.get_game_by_year("2011");
     assert_eq!(game_query.items.len(), 1);
     let game = game_query.items.get(0).unwrap();
     assert_eq!(
