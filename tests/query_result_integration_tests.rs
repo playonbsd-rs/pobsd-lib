@@ -192,6 +192,24 @@ fn test_get_item_by_name_name_does_not_exist() {
     assert_eq!(item, None);
 }
 
+// Test get_game_by_runtime
+#[test]
+fn test_get_item_exists() {
+    let db = get_db_strict();
+    let qr = db.get_all_games();
+    let game_query = qr.get_game_by_runtime("lwjgl");
+    assert_eq!(game_query.items.len(), 1);
+    let game = game_query.get(0).unwrap();
+    assert_eq!(game.name, "Airships: Conquer the Skies".to_string());
+}
+#[test]
+fn test_get_item_does_not_exist() {
+    let db = get_db_strict();
+    let qr = db.get_all_games();
+    let game_query = qr.get_game_by_runtime("I do not exist");
+    assert_eq!(game_query.get(0), None);
+}
+
 //-------------------
 // SEARCH
 //-------------------
