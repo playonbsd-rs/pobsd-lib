@@ -1,4 +1,5 @@
 use super::query_result::QueryResult;
+use crate::db::Item;
 use crate::parser::{Game, Store};
 use paste::paste;
 
@@ -155,8 +156,8 @@ macro_rules! get_all {
     ($field:ident) => {
         paste! {
             /// Return all the chosen items of the database
-            pub fn [<get_all_ $field>](&self) -> QueryResult<&String> {
-                let mut items: Vec<&String> = self.$field.keys().collect();
+            pub fn [<get_all_ $field>](&self) -> QueryResult<&Item> {
+                let mut items: Vec<&Item> = self.$field.keys().collect();
                 items.sort();
                 QueryResult{
                     count: items.len(),

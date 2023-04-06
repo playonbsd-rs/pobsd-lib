@@ -70,15 +70,15 @@ impl<T> QueryResult<T> {
     }
 }
 
-impl QueryResult<Item> {
+impl<'a> QueryResult<&'a Item> {
     /// Get item by name (case sensitive)
-    pub fn get_item_by_name(&self, name: &str) -> Option<Item> {
-        let mut items: Vec<&Item> = self.items.iter().filter(|a| a.eq(&name)).collect();
-        items.pop().cloned()
+    pub fn get_item_by_name<'b>(self, name: &'b str) -> Option<&'a Item> {
+        let mut items: Vec<&Item> = self.items.into_iter().filter(|a| a.eq(&name)).collect();
+        items.pop()
     }
     /// Search items by name (case insensitive)
-    pub fn search_item_by_name(self, name: &str) -> QueryResult<Item> {
-        let items: Vec<Item> = self
+    pub fn search_item_by_name<'b>(self, name: &'b str) -> QueryResult<&'a Item> {
+        let items: Vec<&Item> = self
             .items
             .into_iter()
             .filter(|a| a.to_lowercase().contains(&name.to_lowercase()))
