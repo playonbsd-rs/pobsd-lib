@@ -1,10 +1,12 @@
-//! pobsd-parser is a parsing library for parsing the PlayOnBSD Database.
+//! Provides a [`Parser`] as well as few related items (such as [`Game`])
+//! for the PlayOnBSD Database.
 //!
-//! This library provides:
+//! In particular, this module provides:
 //! * A [`Parser`] struct handling the parsing
-//! * A [`ParsingMode`] enum to choose between a strict or a relax parsing mode
+//! * A [`ParsingMode`] enum to choose the parsing mode betweena strict and a relax mode
 //! * A [`ParserResult`] struct to handle parsing with and without error
 //! * A [`Game`] struct representing a game of a database
+//! * A [`StoreLinks`] struct, a [`StoreLink`] structs and [`Store`] enum to represent store links for each game
 //!
 //! ### Examples
 //! Here is a first example loading a file in relaxed mode (by default).

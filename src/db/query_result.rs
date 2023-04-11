@@ -47,7 +47,7 @@ macro_rules! get_game_by {
     };
 }
 
-/// Representation of the result of a query
+/// Queriable representation of the result of a query
 pub struct QueryResult<T> {
     /// Number of items in the query result
     pub count: usize,

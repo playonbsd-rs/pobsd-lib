@@ -1,6 +1,11 @@
-//! This library provides a set of methods to interrogate the PlayOnBSD
+//! Povides a [`GameDataBase`] struct and a [`QueryResult`] struct
+//! each struct providing a set of methods to interrogate the PlayOnBSD
 //! database in a friendly manner, without having to deal with a SQL
 //! database.
+//!
+//! The [`GameDataBase`] is created from a vector of [`super::Game`]
+//! that can be obtained from the PlayOnBSD database using the [`super::Parser`].
+//!
 //! ## Examples
 //! Create a GameDataBase from the PlayOnBSD database.
 //! ```no_run

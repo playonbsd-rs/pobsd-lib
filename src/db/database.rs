@@ -44,8 +44,7 @@ macro_rules! add_game_to {
     };
 }
 
-/// Representation of the PlayOnBSD database that provides
-/// a set of methods to query and filter the games.
+/// Queriable representation of the PlayOnBSD database
 #[derive(Default)]
 pub struct GameDataBase {
     /// HashMap using the game uid as key and the corresponding game as value
