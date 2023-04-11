@@ -2,10 +2,11 @@
 name = "libpobsd"
 description = "Library to interact with the PlayOnBSD database "
 authors = ["Hukadan <me@hukadan.org>"]
-version = "0.1.4"
+version = "0.1.0"
 edition = "2021"
-homepage = "https://github.com/playonbsd-rs/pobsd-db"
-documentation = "https://docs.rs/pobsd-db"
+homepage = "https://github.com/playonbsd-rs/pobsd-lib"
+repository = "https://github.com/playonbsd-rs/pobsd-lib"
+documentation = "https://docs.rs/libpobsd"
 license = "MIT"
 readme = "README.md"
 keywords = ["OpenBSD", "PlayOnBSD"]
