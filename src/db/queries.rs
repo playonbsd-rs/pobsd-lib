@@ -88,7 +88,7 @@ macro_rules! search_game_by {
         pub fn search_game_by_name(&self, name: &str) -> QueryResult<&Game> {
             let mut games: Vec<&Game> = Vec::new();
             for game in self.games.values() {
-                if game.name.to_lowercase().contains(&name.to_lowercase()) {
+                if game.name.eq_ignore_ascii_case(&name) {
                     games.push(game)
                 }
             }
@@ -106,7 +106,7 @@ macro_rules! search_game_by {
                 let mut games: Vec<&Game> = Vec::new();
                 for game in self.games.values() {
                     if let Some(value) = &game.$field {
-                        if value.to_lowercase().contains(&name.to_lowercase()) {
+                        if value.eq_ignore_ascii_case(&name) {
                             games.push(game);
                         }
                     }
