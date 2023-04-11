@@ -48,7 +48,7 @@ fn test_get_game_by_name_game_does_not_exist() {
 fn test_get_game_by_tag_tag_exists() {
     let db = get_db_strict();
     let qr = db.get_all_games();
-    let game_query = qr.get_game_by_tags("indie");
+    let game_query = qr.get_game_by_tag("indie");
     assert_eq!(game_query.items.len(), 3);
     let game = game_query.items.get(0).unwrap();
     assert_eq!(game.name, "The Adventures of Mr. Hat".to_string());
@@ -61,7 +61,7 @@ fn test_get_game_by_tag_tag_exists() {
 fn test_get_game_by_tag_tag_does_not_exist() {
     let db = get_db_strict();
     let qr = db.get_all_games();
-    let game_query = qr.get_game_by_tags("I do not exist");
+    let game_query = qr.get_game_by_tag("I do not exist");
     assert_eq!(game_query.items.len(), 0);
 }
 
@@ -127,7 +127,7 @@ fn test_get_game_by_runtime_runtime_does_not_exist() {
 fn test_get_game_by_genre_genre_exists() {
     let db = get_db_strict();
     let qr = db.get_all_games();
-    let game_query = qr.get_game_by_genres("shmup");
+    let game_query = qr.get_game_by_genre("shmup");
     assert_eq!(game_query.items.len(), 1);
     let game = game_query.items.get(0).unwrap();
     assert_eq!(game.name, "Aeternum".to_string());
@@ -136,7 +136,7 @@ fn test_get_game_by_genre_genre_exists() {
 fn test_get_game_by_genre_genre_does_not_exist() {
     let db = get_db_strict();
     let qr = db.get_all_games();
-    let game_query = qr.get_game_by_genres("I do not exist");
+    let game_query = qr.get_game_by_genre("I do not exist");
     assert_eq!(game_query.items.len(), 0);
 }
 
@@ -145,7 +145,7 @@ fn test_get_game_by_genre_genre_does_not_exist() {
 fn test_get_game_by_dev_dev_exists() {
     let db = get_db_strict();
     let qr = db.get_all_games();
-    let game_query = qr.get_game_by_devs("Creaky Lantern Games");
+    let game_query = qr.get_game_by_dev("Creaky Lantern Games");
     assert_eq!(game_query.items.len(), 1);
     let game = game_query.items.get(0).unwrap();
     assert_eq!(game.name, "Aeternum".to_string());
@@ -154,7 +154,7 @@ fn test_get_game_by_dev_dev_exists() {
 fn test_get_game_by_dev_dev_does_not_exist() {
     let db = get_db_strict();
     let qr = db.get_all_games();
-    let game_query = qr.get_game_by_devs("I do not exist");
+    let game_query = qr.get_game_by_dev("I do not exist");
     assert_eq!(game_query.items.len(), 0);
 }
 
@@ -163,7 +163,7 @@ fn test_get_game_by_dev_dev_does_not_exist() {
 fn test_get_game_by_publi_publi_exists() {
     let db = get_db_strict();
     let qr = db.get_all_games();
-    let game_query = qr.get_game_by_publis("Florent Espanet");
+    let game_query = qr.get_game_by_publi("Florent Espanet");
     assert_eq!(game_query.items.len(), 1);
     let game = game_query.items.get(0).unwrap();
     assert_eq!(game.name, "Alien Shepherd".to_string());
@@ -172,7 +172,7 @@ fn test_get_game_by_publi_publi_exists() {
 fn test_get_game_by_publi_publi_does_not_exist() {
     let db = get_db_strict();
     let qr = db.get_all_games();
-    let game_query = qr.get_game_by_publis("I do not exist");
+    let game_query = qr.get_game_by_publi("I do not exist");
     assert_eq!(game_query.items.len(), 0);
 }
 

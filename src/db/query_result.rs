@@ -32,7 +32,7 @@ macro_rules! get_game_by {
                     .items
                     .clone()
                     .into_iter()
-                    .filter(|a| match &a.$field {
+                    .filter(|a| match &a.[<$field s>] {
                         Some(items) => items.contains(&field.to_string()),
                         None => false,
                     })
@@ -106,9 +106,9 @@ impl<'a> QueryResult<&'a Game> {
     }
     get_game_by!(runtime);
     get_game_by!(year);
-    get_game_by!(array devs);
-    get_game_by!(array publis);
     get_game_by!(engine);
-    get_game_by!(array genres);
-    get_game_by!(array tags);
+    get_game_by!(array dev);
+    get_game_by!(array publi);
+    get_game_by!(array genre);
+    get_game_by!(array tag);
 }

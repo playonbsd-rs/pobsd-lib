@@ -125,7 +125,7 @@ macro_rules! search_game_by {
             pub fn [<search_game_by_ $field>](&self, name: &str) -> QueryResult<&Game> {
                 let mut games: Vec<&Game> = Vec::new();
                 for game in self.games.values() {
-                    if let Some(value) = &game.$field {
+                    if let Some(value) = &game.[<$field s>] {
                         if value.join(" ").to_lowercase().contains(&name.to_lowercase()) {
                             games.push(game);
                         }
@@ -187,10 +187,10 @@ impl GameDataBase {
     search_game_by!(year);
     search_game_by!(engine);
     search_game_by!(runtime);
-    search_game_by!(array devs);
-    search_game_by!(array publis);
-    search_game_by!(array genres);
-    search_game_by!(array tags);
+    search_game_by!(array dev);
+    search_game_by!(array publi);
+    search_game_by!(array genre);
+    search_game_by!(array tag);
     // Other queries
     get_all!(tags);
     get_all!(engines);
