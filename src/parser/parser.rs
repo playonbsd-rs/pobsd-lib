@@ -149,8 +149,8 @@ impl Parser {
          (ParserState::Genre, Field::Genres, genres, ParserState::Tags);
          (ParserState::Tags, Field::Tags, tags, ParserState::Year);
          (ParserState::Year, Field::Year, year, ParserState::Dev);
-         (ParserState::Dev, Field::Dev, dev, ParserState::Pub);
-         (ParserState::Pub, Field::Publi, publi, ParserState::Version);
+         (ParserState::Dev, Field::Dev, devs, ParserState::Pub);
+         (ParserState::Pub, Field::Publi, publis, ParserState::Version);
          (ParserState::Version, Field::Version, version, ParserState::Status);
          (ParserState::Status, Field::Status, status, ParserState::Added);
          (ParserState::Added, Field::Added, added, ParserState::Updated);

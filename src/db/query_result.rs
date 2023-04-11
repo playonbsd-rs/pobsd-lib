@@ -106,8 +106,8 @@ impl<'a> QueryResult<&'a Game> {
     }
     get_game_by!(runtime);
     get_game_by!(year);
-    get_game_by!(dev);
-    get_game_by!(publi);
+    get_game_by!(array devs);
+    get_game_by!(array publis);
     get_game_by!(engine);
     get_game_by!(array genres);
     get_game_by!(array tags);

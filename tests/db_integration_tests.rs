@@ -233,14 +233,15 @@ fn test_get_all_games() {
 fn test_get_all_devs() {
     let db = get_db_strict();
     let tag_query = db.get_all_devs();
-    assert_eq!(tag_query.items.len(), 6);
+    assert_eq!(tag_query.items.len(), 7);
     for tag in vec![
         "AX-GAME",
         "Smudged Cat Games",
         "Creaky Lantern Games",
         "David Stark",
         "Haruneko Entertainment",
-        "Florent Espanet, Lea Espanet",
+        "Florent Espanet",
+        "Lea Espanet",
     ] {
         assert!(tag_query.items.contains(&&tag.to_string()));
     }
@@ -356,7 +357,7 @@ fn test_search_game_by_name_name_does_not_exist() {
 #[test]
 fn test_search_game_by_dev_dev_exists() {
     let db = get_db_strict();
-    let games = db.search_game_by_dev("David Stark");
+    let games = db.search_game_by_devs("David Stark");
     let games = games.into_inner();
     assert_eq!(games.len(), 1);
     assert_eq!(games[0].uid, 1595434339);
@@ -364,7 +365,7 @@ fn test_search_game_by_dev_dev_exists() {
 #[test]
 fn test_search_game_by_dev_dev_exists_case_insensitive() {
     let db = get_db_strict();
-    let games = db.search_game_by_dev("david stark");
+    let games = db.search_game_by_devs("david stark");
     let games = games.into_inner();
     assert_eq!(games.len(), 1);
     assert_eq!(games[0].uid, 1595434339);
@@ -372,7 +373,7 @@ fn test_search_game_by_dev_dev_exists_case_insensitive() {
 #[test]
 fn test_search_game_by_dev_dev_does_not_exist() {
     let db = get_db_strict();
-    let games = db.search_game_by_dev("I do not exist");
+    let games = db.search_game_by_devs("I do not exist");
     let games = games.into_inner();
     assert!(games.is_empty());
 }

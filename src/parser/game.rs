@@ -56,10 +56,11 @@ pub struct Game {
     /// Released year (can be text such as "early access".
     pub year: Option<String>,
     /// Developer.
-    pub dev: Option<String>,
+    #[serde(rename = "dev")]
+    pub devs: Option<Vec<String>>,
     /// Publisher.
     #[serde(rename = "pub")]
-    pub publi: Option<String>,
+    pub publis: Option<Vec<String>>,
     /// Version of the game.
     pub version: Option<String>,
     /// When tested on -current.
@@ -164,12 +165,12 @@ impl fmt::Display for Game {
             Some(year) => format!("Year\t{}", year),
             None => "Year".to_string(),
         };
-        let dev = match &self.dev {
-            Some(dev) => format!("Dev\t{}", dev),
+        let dev = match &self.devs {
+            Some(devs) => format!("Dev\t{}", devs.join(", ")),
             None => "Dev".to_string(),
         };
-        let publi = match &self.publi {
-            Some(publi) => format!("Pub\t{}", publi),
+        let publi = match &self.publis {
+            Some(publis) => format!("Pub\t{}", publis.join(", ")),
             None => "Pub".to_string(),
         };
         let version = match &self.version {
@@ -241,8 +242,8 @@ mod game_tests {
         game.genres = Some(genres);
         game.tags = Some(tags);
         game.year = Some("1980".to_string());
-        game.dev = Some("game dev".to_string());
-        game.publi = Some("game publi".to_string());
+        game.devs = Some(vec!["game dev".to_string()]);
+        game.publis = Some(vec!["game publi".to_string()]);
         game.version = Some("game version".to_string());
         game.status = Some("game status".to_string());
         game.added = Some("2012-12-03".to_string());
@@ -350,8 +351,8 @@ IgdbId";
             genres: None,
             tags: None,
             year: Some("2011".to_string()),
-            dev: None,
-            publi: None,
+            devs: None,
+            publis: None,
             version: None,
             status: None,
             added: None,
@@ -391,8 +392,8 @@ IgdbId\t1234";
             genres: Some(vec!["genre1".to_string(), "genre2".to_string()]),
             tags: Some(vec!["tag1".to_string(), "tag2".to_string()]),
             year: None,
-            dev: Some("dev1".to_string()),
-            publi: Some("pub1".to_string()),
+            devs: Some(vec!["dev1".to_string()]),
+            publis: Some(vec!["pub1".to_string()]),
             version: Some("ver1".to_string()),
             status: Some("fine".to_string()),
             added: Some("1970-01-01".to_string()),

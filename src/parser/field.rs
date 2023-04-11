@@ -24,9 +24,9 @@ pub enum Field {
     /// Store the result of a Hints line of the database
     Hints(Option<String>),
     /// Store the result of a Dev line of the database
-    Dev(Option<String>),
+    Dev(Option<Vec<String>>),
     /// Store the result of a Pub line of the database
-    Publi(Option<String>),
+    Publi(Option<Vec<String>>),
     /// Store the result of a Version line of the database
     Version(Option<String>),
     /// Store the result of a Status line of the database
@@ -82,11 +82,11 @@ impl fmt::Display for Field {
                 None => write!(f, "Hints"),
             },
             Field::Dev(name) => match name {
-                Some(name) => write!(f, "Dev\t{}", name),
+                Some(name) => write!(f, "Dev\t{}", name.join(", ")),
                 None => write!(f, "Dev"),
             },
             Field::Publi(name) => match name {
-                Some(name) => write!(f, "Pub\t{}", name),
+                Some(name) => write!(f, "Pub\t{}", name.join(", ")),
                 None => write!(f, "Pub"),
             },
             Field::Version(name) => match name {
@@ -180,11 +180,23 @@ impl Field {
                     None => Field::Hints(None),
                 },
                 "Dev" => match right {
-                    Some(right) => Field::Dev(Some(right.into())),
+                    Some(right) => {
+                        let mut items: Vec<String> = Vec::new();
+                        for item in right.split(',') {
+                            items.push(item.trim().into());
+                        }
+                        Field::Dev(Some(items))
+                    }
                     None => Field::Dev(None),
                 },
                 "Pub" => match right {
-                    Some(right) => Field::Publi(Some(right.into())),
+                    Some(right) => {
+                        let mut items: Vec<String> = Vec::new();
+                        for item in right.split(',') {
+                            items.push(item.trim().into());
+                        }
+                        Field::Publi(Some(items))
+                    }
                     None => Field::Publi(None),
                 },
                 "Version" => match right {
@@ -321,10 +333,17 @@ mod field_tests {
         assert_eq!(format!("{}", field), input);
     }
     #[test]
-    fn test_from_dev_line() {
+    fn test_from_devs_line() {
         let input = "Dev\tToto";
         let field = Field::from(&input);
-        assert_eq!(Field::Dev(Some("Toto".into())), field);
+        assert_eq!(Field::Dev(Some(vec!["Toto".to_string()])), field);
+        assert_eq!(format!("{}", field), input);
+        let input = "Dev\tToto, Toto2";
+        let field = Field::from(&input);
+        assert_eq!(
+            Field::Dev(Some(vec!["Toto".to_string(), "Toto2".to_string()])),
+            field
+        );
         assert_eq!(format!("{}", field), input);
         let input = "Dev";
         let field = Field::from(&input);
@@ -335,7 +354,14 @@ mod field_tests {
     fn test_from_publi_line() {
         let input = "Pub\tToto";
         let field = Field::from(&input);
-        assert_eq!(Field::Publi(Some("Toto".into())), field);
+        assert_eq!(Field::Publi(Some(vec!["Toto".to_string()])), field);
+        assert_eq!(format!("{}", field), input);
+        let input = "Pub\tToto, Toto2";
+        let field = Field::from(&input);
+        assert_eq!(
+            Field::Publi(Some(vec!["Toto".to_string(), "Toto2".to_string()])),
+            field
+        );
         assert_eq!(format!("{}", field), input);
         let input = "Pub";
         let field = Field::from(&input);

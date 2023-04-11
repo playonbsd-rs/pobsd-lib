@@ -76,8 +76,8 @@ impl GameDataBase {
         db
     }
     load_game!(
-        items: engine, runtime, year, dev, publi;
-        arrays: genres, tags
+        items: engine, runtime, year;
+        arrays: devs, publis, genres, tags
     );
 
     fn add_game(&mut self, game: Game) {

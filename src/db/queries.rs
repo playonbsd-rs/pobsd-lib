@@ -187,8 +187,8 @@ impl GameDataBase {
     search_game_by!(year);
     search_game_by!(engine);
     search_game_by!(runtime);
-    search_game_by!(dev);
-    search_game_by!(publi);
+    search_game_by!(array devs);
+    search_game_by!(array publis);
     search_game_by!(array genres);
     search_game_by!(array tags);
     // Other queries
