@@ -338,6 +338,14 @@ fn test_search_game_by_name_game_exists() {
     assert_eq!(games[0].uid, 1595434339);
 }
 #[test]
+fn test_search_game_by_name_game_exists_only_contains() {
+    let db = get_db_strict();
+    let games = db.search_game_by_name("Airships: Conquer");
+    let games = games.into_inner();
+    assert_eq!(games.len(), 1);
+    assert_eq!(games[0].uid, 1595434339);
+}
+#[test]
 fn test_search_game_by_name_game_exists_case_insensitive() {
     let db = get_db_strict();
     let games = db.search_game_by_name("airships: conquer the skies");
@@ -363,6 +371,14 @@ fn test_search_game_by_dev_dev_exists() {
     assert_eq!(games[0].uid, 1595434339);
 }
 #[test]
+fn test_search_game_by_dev_dev_exists_only_contains() {
+    let db = get_db_strict();
+    let games = db.search_game_by_dev("Stark");
+    let games = games.into_inner();
+    assert_eq!(games.len(), 1);
+    assert_eq!(games[0].uid, 1595434339);
+}
+#[test]
 fn test_search_game_by_dev_dev_exists_case_insensitive() {
     let db = get_db_strict();
     let games = db.search_game_by_dev("david stark");
@@ -383,6 +399,16 @@ fn test_search_game_by_dev_dev_does_not_exist() {
 fn test_search_game_by_tags_tag_exists() {
     let db = get_db_strict();
     let games = db.search_game_by_tag("Indie");
+    let games = games.into_inner();
+    assert_eq!(games.len(), 3);
+    assert_eq!(games[0].name, "The Adventures of Mr. Hat");
+    assert_eq!(games[1].name, "The Adventures of Shuggy");
+    assert_eq!(games[2].name, "Aeternum");
+}
+#[test]
+fn test_search_game_by_tags_tag_exists_only_contains() {
+    let db = get_db_strict();
+    let games = db.search_game_by_tag("Indi");
     let games = games.into_inner();
     assert_eq!(games.len(), 3);
     assert_eq!(games[0].name, "The Adventures of Mr. Hat");
@@ -417,6 +443,14 @@ fn test_search_game_by_genres_genre_exists() {
     assert_eq!(games[0].name, "Airships: Conquer the Skies");
 }
 #[test]
+fn test_search_game_by_genres_genre_exists_only_contains() {
+    let db = get_db_strict();
+    let games = db.search_game_by_genre("TS");
+    let games = games.into_inner();
+    assert_eq!(games.len(), 1);
+    assert_eq!(games[0].name, "Airships: Conquer the Skies");
+}
+#[test]
 fn test_search_game_by_genres_genre_exists_case_insensitive() {
     let db = get_db_strict();
     let games = db.search_game_by_genre("rts");
@@ -437,6 +471,15 @@ fn test_search_game_by_genres_genre_does_not_exist() {
 fn test_search_game_by_engine_engine_exists() {
     let db = get_db_strict();
     let games = db.search_game_by_engine("FNA");
+    let games = games.into_inner();
+    assert_eq!(games.len(), 2);
+    assert_eq!(games[0].name, "The Adventures of Shuggy");
+    assert_eq!(games[1].name, "Aeternum");
+}
+#[test]
+fn test_search_game_by_engine_engine_exists_only_contains() {
+    let db = get_db_strict();
+    let games = db.search_game_by_engine("FN");
     let games = games.into_inner();
     assert_eq!(games.len(), 2);
     assert_eq!(games[0].name, "The Adventures of Shuggy");
