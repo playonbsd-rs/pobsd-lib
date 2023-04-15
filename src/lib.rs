@@ -12,8 +12,8 @@
 //! 8. *Genre*: strings, comma-separated
 //! 9. *Tags*: strings, comma-separated
 //! 10. *Year*: integer (release year)
-//! 11. *Dev*: string (developer), **libpobsd** consider this field comma-separated
-//! 12. *Pub*: string (publisher), **libpobsd** consider this field comma-separated
+//! 11. *Dev*: string (developer), comma-separated
+//! 12. *Pub*: string (publisher), comma-separated
 //! 13. *Version*: version number/string
 //! 14. *Status*: string of valid status with date when tested on -current in parentheses
 //! 15. *Added*: date (ISO 8601 format) when the entry was added (EPOCH when the information is not available)
