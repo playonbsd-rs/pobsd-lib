@@ -2,7 +2,7 @@
 name = "libpobsd"
 description = "Library to interact with the PlayOnBSD database "
 authors = ["Hukadan <me@hukadan.org>"]
-version = "0.1.1"
+version = "0.1.2"
 edition = "2021"
 homepage = "https://github.com/playonbsd-rs/pobsd-lib"
 repository = "https://github.com/playonbsd-rs/pobsd-lib"
