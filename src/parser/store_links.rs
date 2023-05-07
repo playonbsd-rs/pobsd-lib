@@ -4,10 +4,11 @@ use regex::Regex;
 /// Represents the store in which the game is available
 #[derive(Serialize, Clone, Default, Debug, PartialEq, Eq)]
 pub enum Store {
-    /// For steam games
     Steam,
-    /// For Gog games
     Gog,
+    HumbleBundle,
+    ItchIo,
+    Epic,
     /// For games on other stores
     #[default]
     Unknown,
@@ -37,6 +38,24 @@ impl StoreLink {
         } else if url.contains("gog.com") {
             Self {
                 store: Store::Gog,
+                url: url.to_string(),
+                id: None,
+            }
+        } else if url.contains("humblebundle.com") {
+            Self {
+                store: Store::HumbleBundle,
+                url: url.to_string(),
+                id: None,
+            }
+        } else if url.contains("itch.io") {
+            Self {
+                store: Store::ItchIo,
+                url: url.to_string(),
+                id: None,
+            }
+        } else if url.contains("epicgames.com") {
+            Self {
+                store: Store::Epic,
                 url: url.to_string(),
                 id: None,
             }
@@ -140,8 +159,27 @@ mod store_link_tests {
         assert_eq!(store.store, Store::Gog);
     }
     #[test]
-    fn test_store_link_from_unknown_url() {
+    fn test_store_link_from_humblebundle_url() {
         let store = StoreLink::from("https://humblebundle.com/app/1878910/LoupLaine/");
+        assert_eq!(store.id, None);
+        assert_eq!(store.store, Store::HumbleBundle);
+    }
+    #[test]
+    fn test_store_link_from_itchio_url() {
+        let store = StoreLink::from("https://plug-in-digital.itch.io/dead-cells");
+        assert_eq!(store.id, None);
+        assert_eq!(store.store, Store::ItchIo);
+    }
+    #[test]
+    fn test_store_link_from_epic_url() {
+        let store =
+            StoreLink::from("https://www.epicgames.com/store/en-US/product/axiom-verge/home");
+        assert_eq!(store.id, None);
+        assert_eq!(store.store, Store::Epic);
+    }
+    #[test]
+    fn test_store_link_from_unknown_url() {
+        let store = StoreLink::from("https://unknown.com/app/1878910/LoupLaine/");
         assert_eq!(store.id, None);
         assert_eq!(store.store, Store::Unknown);
     }
