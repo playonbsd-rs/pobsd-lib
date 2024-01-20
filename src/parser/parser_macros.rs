@@ -23,7 +23,7 @@ macro_rules! impl_parse {
                 $(
                 $state => match field {
                     $field(name) => {
-                        if let Some(mut game)  = self.games.last_mut() {
+                        if let Some(game)  = self.games.last_mut() {
                             game.$setter = name;
                             self.state = $next;
                         } else {
