@@ -48,6 +48,7 @@ macro_rules! get_game_by {
 }
 
 /// Queriable representation of the result of a query
+#[derive(Default, Debug, Clone)]
 pub struct QueryResult<T> {
     /// Number of items in the query result
     pub count: usize,
@@ -56,6 +57,13 @@ pub struct QueryResult<T> {
 }
 
 impl<T> QueryResult<T> {
+    // Create a new QueryResult from a vector
+    pub fn new(items: Vec<T>) -> Self {
+        Self {
+            count: items.len(),
+            items,
+        }
+    }
     // Returns a reference to an element or subslice depending on the type of index
     pub fn get(&self, index: usize) -> Option<&T> {
         self.items.get(index)
