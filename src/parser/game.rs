@@ -88,6 +88,54 @@ impl<'a> Game {
         };
         name
     }
+    pub fn name_contains(&self, value: &str) -> bool {
+        self.name.contains(value)
+    }
+    pub fn engine_contains(&self, value: &str) -> bool {
+        self.engine.as_ref().is_some_and(|v| v.contains(value))
+    }
+    pub fn runtime_contains(&self, value: &str) -> bool {
+        self.runtime.as_ref().is_some_and(|v| v.contains(value))
+    }
+    pub fn genres_contains(&self, value: &str) -> bool {
+        !self.genres.as_ref().is_some_and(|v| {
+            v.iter()
+                .filter(|x| x.contains(value))
+                .collect::<Vec<&String>>()
+                .is_empty()
+        })
+    }
+    pub fn tags_contains(&self, value: &str) -> bool {
+        !self.tags.as_ref().is_some_and(|v| {
+            v.iter()
+                .filter(|x| x.contains(value))
+                .collect::<Vec<&String>>()
+                .is_empty()
+        })
+    }
+    pub fn devs_contains(&self, value: &str) -> bool {
+        !self.devs.as_ref().is_some_and(|v| {
+            v.iter()
+                .filter(|x| x.contains(value))
+                .collect::<Vec<&String>>()
+                .is_empty()
+        })
+    }
+
+    pub fn publis_contains(&self, value: &str) -> bool {
+        !self.publis.as_ref().is_some_and(|v| {
+            v.iter()
+                .filter(|x| x.contains(value))
+                .collect::<Vec<&String>>()
+                .is_empty()
+        })
+    }
+    pub fn year_contains(&self, value: &str) -> bool {
+        self.year.as_ref().is_some_and(|v| v.contains(value))
+    }
+    pub fn status_contains(&self, value: &str) -> bool {
+        self.status.as_ref().is_some_and(|v| v.contains(value))
+    }
 }
 
 impl PartialOrd for Game {
@@ -401,5 +449,130 @@ IgdbId\t1234";
             igdb_id: Some("1234".to_string()),
         };
         assert_eq!(format!("{}", game), game_str);
+    }
+    #[test]
+    fn test_name_contains() {
+        let game = create_game();
+        assert!(game.name_contains("game"));
+        assert!(game.name_contains("name"));
+        assert!(game.name_contains("game name"));
+        assert!(!game.name_contains("not name"));
+    }
+    #[test]
+    fn test_name_contains_is_case_sensitive() {
+        let game = create_game();
+        assert!(game.name_contains("name"));
+        assert!(!game.name_contains("Name"));
+    }
+    #[test]
+    fn test_engine_contains() {
+        let game = create_game();
+        assert!(game.engine_contains("game"));
+        assert!(game.engine_contains("engine"));
+        assert!(game.engine_contains("game engine"));
+        assert!(!game.engine_contains("not engine"));
+    }
+    #[test]
+    fn test_engine_contains_is_case_sensitive() {
+        let game = create_game();
+        assert!(game.engine_contains("engine"));
+        assert!(!game.engine_contains("Engine"));
+    }
+    #[test]
+    fn test_runtime_contains() {
+        let game = create_game();
+        assert!(game.runtime_contains("game"));
+        assert!(game.runtime_contains("runtime"));
+        assert!(game.runtime_contains("game runtime"));
+        assert!(!game.runtime_contains("not runtime"));
+    }
+    #[test]
+    fn test_runtime_contains_is_case_sensitive() {
+        let game = create_game();
+        assert!(game.runtime_contains("runtime"));
+        assert!(!game.runtime_contains("Runtime"));
+    }
+    #[test]
+    fn test_year_contains() {
+        let game = create_game();
+        assert!(game.year_contains("1980"));
+        assert!(!game.year_contains("2000"));
+    }
+    #[test]
+    fn test_year_contains_is_case_sensitive() {
+        let mut game = create_game();
+        game.year = Some("early access".into());
+        assert!(game.year_contains("early"));
+        assert!(!game.year_contains("Early"));
+    }
+    #[test]
+    fn test_status_contains() {
+        let game = create_game();
+        assert!(game.status_contains("game"));
+        assert!(game.status_contains("status"));
+        assert!(game.status_contains("game status"));
+        assert!(!game.status_contains("good"));
+    }
+    #[test]
+    fn test_status_contains_is_case_sensitive() {
+        let game = create_game();
+        assert!(game.status_contains("status"));
+        assert!(!game.status_contains("Status"));
+    }
+    #[test]
+    fn test_genres_contains() {
+        let game = create_game();
+        assert!(game.genres_contains("genre1"));
+        assert!(game.genres_contains("genre2"));
+        assert!(game.genres_contains("genre"));
+        assert!(!game.status_contains("coucou"));
+    }
+    #[test]
+    fn test_genres_contains_is_case_sensitive() {
+        let game = create_game();
+        assert!(game.genres_contains("genre"));
+        assert!(!game.genres_contains("Genre"));
+    }
+    #[test]
+    fn test_tags_contains() {
+        let game = create_game();
+        assert!(game.tags_contains("tag1"));
+        assert!(game.tags_contains("tag2"));
+        assert!(game.tags_contains("tag"));
+        assert!(!game.tags_contains("coucou"));
+    }
+    #[test]
+    fn test_tags_contains_is_case_sensitive() {
+        let game = create_game();
+        assert!(game.tags_contains("tag"));
+        assert!(!game.tags_contains("Tag"));
+    }
+    #[test]
+    fn test_devs_contains() {
+        let game = create_game();
+        assert!(game.devs_contains("game"));
+        assert!(game.devs_contains("dev"));
+        assert!(game.devs_contains("game dev"));
+        assert!(!game.devs_contains("coucou"));
+    }
+    #[test]
+    fn test_devs_contains_is_case_sensitive() {
+        let game = create_game();
+        assert!(game.devs_contains("game"));
+        assert!(!game.devs_contains("Game"));
+    }
+    #[test]
+    fn test_publis_contains() {
+        let game = create_game();
+        assert!(game.publis_contains("game"));
+        assert!(game.publis_contains("publi"));
+        assert!(game.publis_contains("game publi"));
+        assert!(!game.publis_contains("coucou"));
+    }
+    #[test]
+    fn test_publis_contains_is_case_sensitive() {
+        let game = create_game();
+        assert!(game.publis_contains("game"));
+        assert!(!game.publis_contains("Game"));
     }
 }
