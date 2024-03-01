@@ -120,3 +120,15 @@ impl<'a> QueryResult<&'a Game> {
     get_game_by!(array genre);
     get_game_by!(array tag);
 }
+#[cfg(test)]
+mod query_results_tests {
+    use crate::QueryResult;
+    #[test]
+    fn test_new() {
+        let v = vec!["item1".to_string(), "item2".to_string()];
+        let v2 = v.clone();
+        let qr = QueryResult::new(v);
+        assert_eq!(qr.items, v2);
+        assert_eq!(qr.count, 2);
+    }
+}
