@@ -35,18 +35,24 @@ macro_rules! game_contains {
             /// Return the games having the given field containing the given value (not case sensitive)
             pub fn [<$field _contains>](&self, value: &str, search_type: &SearchType) -> bool {
                 match search_type {
-                    SearchType::CaseSensitive => !self.[<$field>].as_ref().is_some_and(|v| {
-                        v.iter()
-                            .filter(|x| x.contains(value))
+                    SearchType::CaseSensitive => match self.[<$field>].as_ref() {
+                        Some(items) => {
+                            !items
+                            .iter().filter(|x| x.contains(value))
                             .collect::<Vec<&String>>()
                             .is_empty()
-                    }),
-                    SearchType::NotCaseSensitive => !self.[<$field>].as_ref().is_some_and(|v| {
-                        v.iter()
-                            .filter(|x| x.to_lowercase().contains(&value.to_lowercase()))
+                            },
+                        None => false,
+                    },
+                    SearchType::NotCaseSensitive => match self.[<$field>].as_ref() {
+                        Some(items) => {
+                            !items
+                            .iter().filter(|x| x.to_lowercase().contains(&value.to_lowercase()))
                             .collect::<Vec<&String>>()
                             .is_empty()
-                    }),
+                            },
+                        None => false,
+                    },
                 }
             }
         }
