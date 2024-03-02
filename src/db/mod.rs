@@ -69,3 +69,10 @@ pub use query_result::QueryResult;
 
 /// Representation of items such as pub, tags, etc.
 pub type Item = String;
+
+#[derive(Debug, Default, Clone)]
+pub enum SearchType {
+    CaseSensitive,
+    #[default]
+    NotCaseSensitive,
+}

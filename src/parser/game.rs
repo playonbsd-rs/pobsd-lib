@@ -1,7 +1,57 @@
 //! Provides a representations of the game in the PlayOnBSD database.
 use super::store_links::StoreLinks;
+use crate::db::SearchType;
+
+use paste::paste;
 use std::cmp::{Ordering, PartialOrd};
 use std::fmt;
+
+macro_rules! game_contains {
+    (name) => {
+        pub fn name_contains(&self, value: &str, search_type: &SearchType) -> bool {
+            match search_type {
+                SearchType::CaseSensitive => self.name.contains(value),
+                SearchType::NotCaseSensitive => {
+                    self.name.to_lowercase().contains(&value.to_lowercase())
+                }
+            }
+        }
+    };
+    ($field:ident) => {
+        paste! {
+            pub fn [<$field _contains>](&self, value: &str, search_type: &SearchType) -> bool {
+            match search_type {
+                SearchType::CaseSensitive => self.[<$field>].as_ref().is_some_and(|v| v.contains(value)),
+                SearchType::NotCaseSensitive => self
+                    .[< $field>]
+                    .as_ref()
+                    .is_some_and(|v| v.to_lowercase().contains(&value.to_lowercase())),
+                }
+            }
+        }
+    };
+    (array $field:ident) => {
+        paste! {
+            /// Return the games having the given field containing the given value (not case sensitive)
+            pub fn [<$field _contains>](&self, value: &str, search_type: &SearchType) -> bool {
+                match search_type {
+                    SearchType::CaseSensitive => !self.[<$field>].as_ref().is_some_and(|v| {
+                        v.iter()
+                            .filter(|x| x.contains(value))
+                            .collect::<Vec<&String>>()
+                            .is_empty()
+                    }),
+                    SearchType::NotCaseSensitive => !self.[<$field>].as_ref().is_some_and(|v| {
+                        v.iter()
+                            .filter(|x| x.to_lowercase().contains(&value.to_lowercase()))
+                            .collect::<Vec<&String>>()
+                            .is_empty()
+                    }),
+                }
+            }
+        }
+    };
+}
 
 /// Represents a game from the database.
 ///
@@ -88,54 +138,16 @@ impl<'a> Game {
         };
         name
     }
-    pub fn name_contains(&self, value: &str) -> bool {
-        self.name.contains(value)
-    }
-    pub fn engine_contains(&self, value: &str) -> bool {
-        self.engine.as_ref().is_some_and(|v| v.contains(value))
-    }
-    pub fn runtime_contains(&self, value: &str) -> bool {
-        self.runtime.as_ref().is_some_and(|v| v.contains(value))
-    }
-    pub fn genres_contains(&self, value: &str) -> bool {
-        !self.genres.as_ref().is_some_and(|v| {
-            v.iter()
-                .filter(|x| x.contains(value))
-                .collect::<Vec<&String>>()
-                .is_empty()
-        })
-    }
-    pub fn tags_contains(&self, value: &str) -> bool {
-        !self.tags.as_ref().is_some_and(|v| {
-            v.iter()
-                .filter(|x| x.contains(value))
-                .collect::<Vec<&String>>()
-                .is_empty()
-        })
-    }
-    pub fn devs_contains(&self, value: &str) -> bool {
-        !self.devs.as_ref().is_some_and(|v| {
-            v.iter()
-                .filter(|x| x.contains(value))
-                .collect::<Vec<&String>>()
-                .is_empty()
-        })
-    }
+    game_contains!(name);
+    game_contains!(engine);
+    game_contains!(runtime);
+    game_contains!(year);
+    game_contains!(status);
 
-    pub fn publis_contains(&self, value: &str) -> bool {
-        !self.publis.as_ref().is_some_and(|v| {
-            v.iter()
-                .filter(|x| x.contains(value))
-                .collect::<Vec<&String>>()
-                .is_empty()
-        })
-    }
-    pub fn year_contains(&self, value: &str) -> bool {
-        self.year.as_ref().is_some_and(|v| v.contains(value))
-    }
-    pub fn status_contains(&self, value: &str) -> bool {
-        self.status.as_ref().is_some_and(|v| v.contains(value))
-    }
+    game_contains!(array genres);
+    game_contains!(array tags);
+    game_contains!(array devs);
+    game_contains!(array publis);
 }
 
 impl PartialOrd for Game {
@@ -453,126 +465,251 @@ IgdbId\t1234";
     #[test]
     fn test_name_contains() {
         let game = create_game();
-        assert!(game.name_contains("game"));
-        assert!(game.name_contains("name"));
-        assert!(game.name_contains("game name"));
-        assert!(!game.name_contains("not name"));
+        let st = SearchType::CaseSensitive;
+        assert!(game.name_contains("game", &st));
+        assert!(game.name_contains("name", &st));
+        assert!(game.name_contains("game name", &st));
+        assert!(!game.name_contains("not name", &st));
+        let st = SearchType::NotCaseSensitive;
+        assert!(game.name_contains("game", &st));
+        assert!(game.name_contains("name", &st));
+        assert!(game.name_contains("game name", &st));
+        assert!(!game.name_contains("not name", &st));
     }
     #[test]
     fn test_name_contains_is_case_sensitive() {
         let game = create_game();
-        assert!(game.name_contains("name"));
-        assert!(!game.name_contains("Name"));
+        let st = SearchType::CaseSensitive;
+        assert!(game.name_contains("name", &st));
+        assert!(!game.name_contains("Name", &st));
+    }
+    #[test]
+    fn test_name_contains_is_not_case_sensitive() {
+        let game = create_game();
+        let st = SearchType::NotCaseSensitive;
+        assert!(game.name_contains("name", &st));
+        assert!(game.name_contains("Name", &st));
     }
     #[test]
     fn test_engine_contains() {
         let game = create_game();
-        assert!(game.engine_contains("game"));
-        assert!(game.engine_contains("engine"));
-        assert!(game.engine_contains("game engine"));
-        assert!(!game.engine_contains("not engine"));
+        let st = SearchType::CaseSensitive;
+        assert!(game.engine_contains("game", &st));
+        assert!(game.engine_contains("engine", &st));
+        assert!(game.engine_contains("game engine", &st));
+        assert!(!game.engine_contains("not engine", &st));
+        let st = SearchType::NotCaseSensitive;
+        assert!(game.engine_contains("game", &st));
+        assert!(game.engine_contains("engine", &st));
+        assert!(game.engine_contains("game engine", &st));
+        assert!(!game.engine_contains("not engine", &st));
     }
     #[test]
     fn test_engine_contains_is_case_sensitive() {
         let game = create_game();
-        assert!(game.engine_contains("engine"));
-        assert!(!game.engine_contains("Engine"));
+        let st = SearchType::CaseSensitive;
+        assert!(game.engine_contains("engine", &st));
+        assert!(!game.engine_contains("Engine", &st));
+    }
+    #[test]
+    fn test_engine_contains_is_not_case_sensitive() {
+        let game = create_game();
+        let st = SearchType::NotCaseSensitive;
+        assert!(game.engine_contains("engine", &st));
+        assert!(game.engine_contains("Engine", &st));
     }
     #[test]
     fn test_runtime_contains() {
         let game = create_game();
-        assert!(game.runtime_contains("game"));
-        assert!(game.runtime_contains("runtime"));
-        assert!(game.runtime_contains("game runtime"));
-        assert!(!game.runtime_contains("not runtime"));
+        let st = SearchType::CaseSensitive;
+        assert!(game.runtime_contains("game", &st));
+        assert!(game.runtime_contains("runtime", &st));
+        assert!(game.runtime_contains("game runtime", &st));
+        assert!(!game.runtime_contains("not runtime", &st));
+        let st = SearchType::NotCaseSensitive;
+        assert!(game.runtime_contains("game", &st));
+        assert!(game.runtime_contains("runtime", &st));
+        assert!(game.runtime_contains("game runtime", &st));
+        assert!(!game.runtime_contains("not runtime", &st));
     }
     #[test]
     fn test_runtime_contains_is_case_sensitive() {
         let game = create_game();
-        assert!(game.runtime_contains("runtime"));
-        assert!(!game.runtime_contains("Runtime"));
+        let st = SearchType::CaseSensitive;
+        assert!(game.runtime_contains("runtime", &st));
+        assert!(!game.runtime_contains("Runtime", &st));
+    }
+    #[test]
+    fn test_runtime_contains_is_not_case_sensitive() {
+        let game = create_game();
+        let st = SearchType::NotCaseSensitive;
+        assert!(game.runtime_contains("runtime", &st));
+        assert!(game.runtime_contains("Runtime", &st));
     }
     #[test]
     fn test_year_contains() {
         let game = create_game();
-        assert!(game.year_contains("1980"));
-        assert!(!game.year_contains("2000"));
+        let st = SearchType::CaseSensitive;
+        assert!(game.year_contains("1980", &st));
+        assert!(!game.year_contains("2000", &st));
+        let st = SearchType::NotCaseSensitive;
+        assert!(game.year_contains("1980", &st));
+        assert!(!game.year_contains("2000", &st));
     }
     #[test]
     fn test_year_contains_is_case_sensitive() {
         let mut game = create_game();
+        let st = SearchType::CaseSensitive;
         game.year = Some("early access".into());
-        assert!(game.year_contains("early"));
-        assert!(!game.year_contains("Early"));
+        assert!(game.year_contains("early", &st));
+        assert!(!game.year_contains("Early", &st));
+    }
+    #[test]
+    fn test_year_contains_is_not_case_sensitive() {
+        let mut game = create_game();
+        let st = SearchType::NotCaseSensitive;
+        game.year = Some("early access".into());
+        assert!(game.year_contains("early", &st));
+        assert!(game.year_contains("Early", &st));
     }
     #[test]
     fn test_status_contains() {
         let game = create_game();
-        assert!(game.status_contains("game"));
-        assert!(game.status_contains("status"));
-        assert!(game.status_contains("game status"));
-        assert!(!game.status_contains("good"));
+        let st = SearchType::CaseSensitive;
+        assert!(game.status_contains("game", &st));
+        assert!(game.status_contains("status", &st));
+        assert!(game.status_contains("game status", &st));
+        assert!(!game.status_contains("good", &st));
+        let st = SearchType::NotCaseSensitive;
+        assert!(game.status_contains("game", &st));
+        assert!(game.status_contains("status", &st));
+        assert!(game.status_contains("game status", &st));
+        assert!(!game.status_contains("good", &st));
     }
     #[test]
     fn test_status_contains_is_case_sensitive() {
         let game = create_game();
-        assert!(game.status_contains("status"));
-        assert!(!game.status_contains("Status"));
+        let st = SearchType::CaseSensitive;
+        assert!(game.status_contains("status", &st));
+        assert!(!game.status_contains("Status", &st));
+    }
+    #[test]
+    fn test_status_contains_is_not_case_sensitive() {
+        let game = create_game();
+        let st = SearchType::NotCaseSensitive;
+        assert!(game.status_contains("status", &st));
+        assert!(game.status_contains("Status", &st));
     }
     #[test]
     fn test_genres_contains() {
         let game = create_game();
-        assert!(game.genres_contains("genre1"));
-        assert!(game.genres_contains("genre2"));
-        assert!(game.genres_contains("genre"));
-        assert!(!game.status_contains("coucou"));
+        let st = SearchType::CaseSensitive;
+        assert!(game.genres_contains("genre1", &st));
+        assert!(game.genres_contains("genre2", &st));
+        assert!(game.genres_contains("genre", &st));
+        assert!(!game.genres_contains("coucou", &st));
+        let st = SearchType::NotCaseSensitive;
+        assert!(game.genres_contains("genre1", &st));
+        assert!(game.genres_contains("genre2", &st));
+        assert!(game.genres_contains("genre", &st));
+        assert!(!game.genres_contains("coucou", &st));
     }
     #[test]
     fn test_genres_contains_is_case_sensitive() {
         let game = create_game();
-        assert!(game.genres_contains("genre"));
-        assert!(!game.genres_contains("Genre"));
+        let st = SearchType::CaseSensitive;
+        assert!(game.genres_contains("genre", &st));
+        assert!(!game.genres_contains("Genre", &st));
+    }
+    #[test]
+    fn test_genres_contains_is_not_case_sensitive() {
+        let game = create_game();
+        let st = SearchType::NotCaseSensitive;
+        assert!(game.genres_contains("genre", &st));
+        assert!(game.genres_contains("Genre", &st));
     }
     #[test]
     fn test_tags_contains() {
         let game = create_game();
-        assert!(game.tags_contains("tag1"));
-        assert!(game.tags_contains("tag2"));
-        assert!(game.tags_contains("tag"));
-        assert!(!game.tags_contains("coucou"));
+        let st = SearchType::CaseSensitive;
+        assert!(game.tags_contains("tag1", &st));
+        assert!(game.tags_contains("tag2", &st));
+        assert!(game.tags_contains("tag", &st));
+        assert!(!game.tags_contains("coucou", &st));
+        let st = SearchType::NotCaseSensitive;
+        assert!(game.tags_contains("tag1", &st));
+        assert!(game.tags_contains("tag2", &st));
+        assert!(game.tags_contains("tag", &st));
+        assert!(!game.tags_contains("coucou", &st));
     }
     #[test]
     fn test_tags_contains_is_case_sensitive() {
         let game = create_game();
-        assert!(game.tags_contains("tag"));
-        assert!(!game.tags_contains("Tag"));
+        let st = SearchType::CaseSensitive;
+        assert!(game.tags_contains("tag", &st));
+        assert!(!game.tags_contains("Tag", &st));
+    }
+    #[test]
+    fn test_tags_contains_is_not_case_sensitive() {
+        let game = create_game();
+        let st = SearchType::NotCaseSensitive;
+        assert!(game.tags_contains("tag", &st));
+        assert!(game.tags_contains("Tag", &st));
     }
     #[test]
     fn test_devs_contains() {
         let game = create_game();
-        assert!(game.devs_contains("game"));
-        assert!(game.devs_contains("dev"));
-        assert!(game.devs_contains("game dev"));
-        assert!(!game.devs_contains("coucou"));
+        let st = SearchType::CaseSensitive;
+        assert!(game.devs_contains("game", &st));
+        assert!(game.devs_contains("dev", &st));
+        assert!(game.devs_contains("game dev", &st));
+        assert!(!game.devs_contains("coucou", &st));
+        let st = SearchType::NotCaseSensitive;
+        assert!(game.devs_contains("game", &st));
+        assert!(game.devs_contains("dev", &st));
+        assert!(game.devs_contains("game dev", &st));
+        assert!(!game.devs_contains("coucou", &st));
     }
     #[test]
     fn test_devs_contains_is_case_sensitive() {
         let game = create_game();
-        assert!(game.devs_contains("game"));
-        assert!(!game.devs_contains("Game"));
+        let st = SearchType::CaseSensitive;
+        assert!(game.devs_contains("game", &st));
+        assert!(!game.devs_contains("Game", &st));
+    }
+    #[test]
+    fn test_devs_contains_is_not_case_sensitive() {
+        let game = create_game();
+        let st = SearchType::NotCaseSensitive;
+        assert!(game.devs_contains("game", &st));
+        assert!(game.devs_contains("Game", &st));
     }
     #[test]
     fn test_publis_contains() {
         let game = create_game();
-        assert!(game.publis_contains("game"));
-        assert!(game.publis_contains("publi"));
-        assert!(game.publis_contains("game publi"));
-        assert!(!game.publis_contains("coucou"));
+        let st = SearchType::CaseSensitive;
+        assert!(game.publis_contains("game", &st));
+        assert!(game.publis_contains("publi", &st));
+        assert!(game.publis_contains("game publi", &st));
+        assert!(!game.publis_contains("coucou", &st));
+        let st = SearchType::NotCaseSensitive;
+        assert!(game.publis_contains("game", &st));
+        assert!(game.publis_contains("publi", &st));
+        assert!(game.publis_contains("game publi", &st));
+        assert!(!game.publis_contains("coucou", &st));
     }
     #[test]
     fn test_publis_contains_is_case_sensitive() {
         let game = create_game();
-        assert!(game.publis_contains("game"));
-        assert!(!game.publis_contains("Game"));
+        let st = SearchType::CaseSensitive;
+        assert!(game.publis_contains("game", &st));
+        assert!(!game.publis_contains("Game", &st));
+    }
+    #[test]
+    fn test_publis_contains_is_not_case_sensitive() {
+        let game = create_game();
+        let st = SearchType::NotCaseSensitive;
+        assert!(game.publis_contains("game", &st));
+        assert!(game.publis_contains("Game", &st));
     }
 }
