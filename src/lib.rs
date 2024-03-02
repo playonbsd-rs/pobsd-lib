@@ -49,7 +49,7 @@
 //!
 //! Search games by name:
 //! ```no_run
-//! # use libpobsd::{Parser, ParserResult, GameDataBase};
+//! # use libpobsd::{Parser, ParserResult, GameDataBase, db::SearchType};
 //! # let games = match Parser::default()
 //! #            .load_from_file("openbsd-games.db")
 //! #            .expect("Failed to load database") {
@@ -57,13 +57,14 @@
 //! #     ParserResult::WithError(games, _) => games,
 //! # };
 //! let db = GameDataBase::new(games);
-//! let games = db.search_game_by_name("Barrow");
+//! let st = SearchType::CaseSensitive;
+//! let games = db.search_game_by_name("Barrow", &st);
 //! ```
 //!
 //! Filter a query result (represented by the [`QueryResult`] struct)
 //! by year:
 //! ```no_run
-//! # use libpobsd::{Parser, ParserResult, GameDataBase};
+//! # use libpobsd::{Parser, ParserResult, GameDataBase, db::SearchType};
 //! # let games = match Parser::default()
 //! #            .load_from_file("openbsd-games.db")
 //! #            .expect("Failed to load database") {
@@ -71,13 +72,14 @@
 //! #     ParserResult::WithError(games, _) => games,
 //! # };
 //! let db = GameDataBase::new(games);
-//! let games = db.search_game_by_name("Barrow");
-//! let games = games.get_game_by_year("2018");
+//! let st = SearchType::CaseSensitive;
+//! let games = db.search_game_by_name("Barrow", &st);
+//! let games = games.get_game_by_year("2018", &st);
 //! ```
 //!
 //! List the games of a query result:
 //! ```no_run
-//! # use libpobsd::{Parser, ParserResult, GameDataBase};
+//! # use libpobsd::{Parser, ParserResult, GameDataBase, db::SearchType};
 //! # let games = match Parser::default()
 //! #            .load_from_file("openbsd-games.db")
 //! #            .expect("Failed to load database") {
@@ -85,7 +87,8 @@
 //! #     ParserResult::WithError(games, _) => games,
 //! # };
 //! let db = GameDataBase::new(games);
-//! let games = db.search_game_by_name("Barrow");
+//! let st = SearchType::CaseSensitive;
+//! let games = db.search_game_by_name("Barrow", &st);
 //! for game in games.into_inner() {
 //!     println!("Game: {}", game.name);
 //! }

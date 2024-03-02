@@ -1,5 +1,6 @@
 use super::query_result::QueryResult;
-use crate::db::Item;
+use crate::db::game_filer::GameFilter;
+use crate::db::{Item, SearchType};
 use crate::parser::{Game, Store};
 use paste::paste;
 
@@ -29,10 +30,12 @@ macro_rules! get_game_by {
         }
     };
     (name) => {
-        /// Return the game with the given name (case sensitive)
-        pub fn get_game_by_name(&self, name: &str) -> Option<&Game> {
+        /// Return the first game found with the given name
+        pub fn get_game_by_name(&self, name: &str, search_type: &SearchType) -> Option<&Game> {
+            let mut filter = GameFilter::default();
+            filter.name = Some(name.into());
             for game in self.games.values() {
-                if game.name.eq(name) {
+                if filter.check_game(game, search_type) {
                     return Some(game);
                 }
             }
@@ -84,11 +87,15 @@ macro_rules! get_game_by {
 
 macro_rules! search_game_by {
     (name) => {
-        /// Return the games having the name containing the given value (not case sensitive)
-        pub fn search_game_by_name(&self, name: &str) -> QueryResult<&Game> {
+        /// Return the games having the name containing the given value
+        pub fn search_game_by_name(
+            &self,
+            name: &str,
+            search_type: &SearchType,
+        ) -> QueryResult<&Game> {
             let mut games: Vec<&Game> = Vec::new();
             for game in self.games.values() {
-                if game.name.to_lowercase().contains(&name.to_lowercase()) {
+                if game.name_contains(name, search_type) {
                     games.push(game)
                 }
             }
@@ -101,14 +108,12 @@ macro_rules! search_game_by {
     };
     ($field:ident) => {
         paste! {
-            /// Return the games having the given field containing the given value (not case sensitive)
-            pub fn [<search_game_by_ $field>](&self, name: &str) -> QueryResult<&Game> {
+            /// Return the games having the given field containing the given value
+            pub fn [<search_game_by_ $field>](&self, name: &str, search_type: &SearchType) -> QueryResult<&Game> {
                 let mut games: Vec<&Game> = Vec::new();
                 for game in self.games.values() {
-                    if let Some(value) = &game.$field {
-                        if value.to_lowercase().contains(&name.to_lowercase()) {
+                    if game.[<$field _contains>](name, search_type) {
                             games.push(game);
-                        }
                     }
                 }
                 games.sort();

@@ -2,20 +2,20 @@
 //! interogating the database. Query results are themselves queriable
 //! and return another query result.
 use super::Item;
+use crate::db::SearchType;
 use crate::parser::Game;
 use paste::paste;
 
 macro_rules! get_game_by {
     ($field:ident) => {
         paste! {
-            /// Get game by field name (case sensitive)
-            pub fn [<get_game_by_ $field>](self, field: &str) -> QueryResult<&'a Game> {
+            /// Get game by field name
+            pub fn [<get_game_by_ $field>](self, field: &str, search_type: &SearchType) -> QueryResult<&'a Game> {
                 let mut items: Vec<&Game> = self
-                    .items
-                    .clone()
-                    .into_iter()
-                    .filter(|a| a.$field.eq(&Some(field.to_string())))
-                    .collect();
+                .items
+                .into_iter()
+                .filter(|a| a.[<$field _contains>](field, &search_type))
+                .collect();
                 items.sort();
                 QueryResult{
                     count: items.len(),
@@ -29,14 +29,10 @@ macro_rules! get_game_by {
             /// Get game by field name (case sensitive)
             pub fn [<get_game_by_ $field>](self, field: &str) -> QueryResult<&'a Game> {
                 let mut items: Vec<&Game> = self
-                    .items
-                    .clone()
-                    .into_iter()
-                    .filter(|a| match &a.[<$field s>] {
-                        Some(items) => items.contains(&field.to_string()),
-                        None => false,
-                    })
-                    .collect();
+                .items
+                .into_iter()
+                .filter(|a| a.[<$field s_contains>](field, &SearchType::CaseSensitive))
+                .collect();
                 items.sort();
                 QueryResult{
                     count: items.len(),

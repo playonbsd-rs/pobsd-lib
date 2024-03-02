@@ -25,7 +25,7 @@
 //! Get a game by name.
 //! ```no_run
 //! # extern crate libpobsd;
-//! # use libpobsd::db::GameDataBase;
+//! # use libpobsd::db::{GameDataBase, SearchType};
 //! # use libpobsd::parser::{Game, Parser, ParserResult, ParsingMode};
 //! # let games = match Parser::new(ParsingMode::Strict)
 //! #       .load_from_file("games.db")
@@ -35,7 +35,8 @@
 //! #       ParserResult::WithError(games, _) => games,
 //! #   };
 //! # let db = GameDataBase::new(games);
-//! if let Some(game) = db.get_game_by_name("My Game"){
+//! let st = SearchType::CaseSensitive;
+//! if let Some(game) = db.get_game_by_name("My Game", &st){
 //!     assert_eq!(&game.name, "My Game");
 //! };
 //!```
@@ -61,6 +62,7 @@
 //! };
 //!```
 pub mod database;
+pub mod game_filer;
 pub(crate) mod queries;
 pub mod query_result;
 
