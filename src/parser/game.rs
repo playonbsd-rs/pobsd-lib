@@ -158,8 +158,7 @@ impl<'a> Game {
 
 impl PartialOrd for Game {
     fn partial_cmp(&self, other: &Game) -> Option<Ordering> {
-        self.get_ordering_name()
-            .partial_cmp(&other.get_ordering_name())
+        Some(self.cmp(other))
     }
     fn lt(&self, other: &Game) -> bool {
         self.get_ordering_name().lt(&other.get_ordering_name())
