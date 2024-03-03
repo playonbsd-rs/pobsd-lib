@@ -180,6 +180,12 @@ impl Ord for Game {
     }
 }
 
+impl AsRef<Game> for Game {
+    fn as_ref(&self) -> &Game {
+        &self
+    }
+}
+
 /// Display the game as it would appears in the database.
 /// See <https://github.com/playonbsd/OpenBSD-Games-Database>
 /// for details.
