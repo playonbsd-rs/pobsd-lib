@@ -2,7 +2,7 @@
 //! interogating the database. Query results are themselves queriable
 //! and return another query result.
 use super::Item;
-use crate::db::SearchType;
+use crate::db::{game_filer::GameFilter, SearchType};
 use crate::parser::Game;
 use paste::paste;
 
@@ -11,28 +11,8 @@ macro_rules! get_game_by {
         paste! {
             /// Get game by field name
             pub fn [<get_game_by_ $field>](self, field: &str, search_type: &SearchType) -> QueryResult<&'a Game> {
-                let mut items: Vec<&Game> = self
-                .items
-                .into_iter()
-                .filter(|a| a.[<$field _contains>](field, &search_type))
-                .collect();
-                items.sort();
-                QueryResult{
-                    count: items.len(),
-                    items
-                }
-            }
-        }
-    };
-    (array $field:ident) => {
-        paste! {
-            /// Get game by field name (case sensitive)
-            pub fn [<get_game_by_ $field>](self, field: &str) -> QueryResult<&'a Game> {
-                let mut items: Vec<&Game> = self
-                .items
-                .into_iter()
-                .filter(|a| a.[<$field s_contains>](field, &SearchType::CaseSensitive))
-                .collect();
+
+                let mut items = GameFilter::default().[<set_ $field>](field).filter_games(self.items, search_type);
                 items.sort();
                 QueryResult{
                     count: items.len(),
@@ -111,11 +91,12 @@ impl<'a> QueryResult<&'a Game> {
     get_game_by!(runtime);
     get_game_by!(year);
     get_game_by!(engine);
-    get_game_by!(array dev);
-    get_game_by!(array publi);
-    get_game_by!(array genre);
-    get_game_by!(array tag);
+    get_game_by!(dev);
+    get_game_by!(publi);
+    get_game_by!(genre);
+    get_game_by!(tag);
 }
+
 #[cfg(test)]
 mod query_results_tests {
     use crate::QueryResult;
