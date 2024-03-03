@@ -77,49 +77,49 @@ impl GameFilter {
     ) -> bool {
         let check_name = match &self.name {
             Some(name) => game.as_ref().name_contains(name, search_type),
-            None => true,
+            None => false,
         };
         let check_engine = match &self.engine {
             Some(engine) => game.as_ref().engine_contains(engine, search_type),
-            None => true,
+            None => false,
         };
         let check_runtime = match &self.runtime {
             Some(runtime) => game.as_ref().runtime_contains(runtime, search_type),
-            None => true,
+            None => false,
         };
         let check_genre = match &self.genre {
             Some(genre) => game.as_ref().genres_contains(genre, search_type),
-            None => true,
+            None => false,
         };
         let check_tag = match &self.tag {
             Some(tag) => game.as_ref().tags_contains(tag, search_type),
-            None => true,
+            None => false,
         };
         let check_year = match &self.year {
             Some(year) => game.as_ref().year_contains(year, search_type),
-            None => true,
+            None => false,
         };
         let check_dev = match &self.dev {
             Some(dev) => game.as_ref().devs_contains(dev, search_type),
-            None => true,
+            None => false,
         };
         let check_publi = match &self.publi {
             Some(publi) => game.as_ref().publis_contains(publi, search_type),
-            None => true,
+            None => false,
         };
         let check_status = match &self.status {
             Some(status) => game.as_ref().status_contains(status, search_type),
-            None => true,
+            None => false,
         };
         check_name
-            && check_engine
-            && check_runtime
-            && check_genre
-            && check_tag
-            && check_year
-            && check_dev
-            && check_publi
-            && check_status
+            || check_engine
+            || check_runtime
+            || check_genre
+            || check_tag
+            || check_year
+            || check_dev
+            || check_publi
+            || check_status
     }
     pub fn filter_games<T: AsRef<Game>>(&self, games: Vec<T>, search_type: &SearchType) -> Vec<T> {
         games
