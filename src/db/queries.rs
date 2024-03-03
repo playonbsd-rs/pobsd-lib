@@ -86,56 +86,13 @@ macro_rules! get_game_by {
 }
 
 macro_rules! search_game_by {
-    (name) => {
-        /// Return the games having the name containing the given value
-        pub fn search_game_by_name(
-            &self,
-            name: &str,
-            search_type: &SearchType,
-        ) -> QueryResult<&Game> {
-            let mut games: Vec<&Game> = Vec::new();
-            for game in self.games.values() {
-                if game.name_contains(name, search_type) {
-                    games.push(game)
-                }
-            }
-            games.sort();
-            QueryResult {
-                count: games.len(),
-                items: games,
-            }
-        }
-    };
     ($field:ident) => {
         paste! {
             /// Return the games having the given field containing the given value
-            pub fn [<search_game_by_ $field>](&self, name: &str, search_type: &SearchType) -> QueryResult<&Game> {
-                let mut games: Vec<&Game> = Vec::new();
-                for game in self.games.values() {
-                    if game.[<$field _contains>](name, search_type) {
-                            games.push(game);
-                    }
-                }
-                games.sort();
-                QueryResult {
-                    count: games.len(),
-                    items: games
-                }
-            }
-        }
-    };
-    (array $field:ident) => {
-        paste! {
-            /// Return the games having the given field containing the given value (not case sensitive)
-            pub fn [<search_game_by_ $field>](&self, name: &str) -> QueryResult<&Game> {
-                let mut games: Vec<&Game> = Vec::new();
-                for game in self.games.values() {
-                    if let Some(value) = &game.[<$field s>] {
-                        if value.join(" ").to_lowercase().contains(&name.to_lowercase()) {
-                            games.push(game);
-                        }
-                    }
-                }
+            pub fn [<search_game_by_ $field>](&self, pattern: &str, search_type: &SearchType) -> QueryResult<&Game> {
+                let mut games = GameFilter::default()
+                        .[<set_ $field>](pattern)
+                        .filter_games(self.games.values().collect(), search_type);
                 games.sort();
                 QueryResult {
                     count: games.len(),
@@ -192,10 +149,11 @@ impl GameDataBase {
     search_game_by!(year);
     search_game_by!(engine);
     search_game_by!(runtime);
-    search_game_by!(array dev);
-    search_game_by!(array publi);
-    search_game_by!(array genre);
-    search_game_by!(array tag);
+    search_game_by!(dev);
+    search_game_by!(publi);
+    search_game_by!(genre);
+    search_game_by!(tag);
+
     // Other queries
     get_all!(tags);
     get_all!(engines);
