@@ -1,5 +1,17 @@
 use super::SearchType;
 use crate::Game;
+use paste::paste;
+
+macro_rules! gf_setter {
+    ($field:ident) => {
+        paste! {
+            pub fn [<set_ $field>](&mut self, value: &str) -> &mut Self {
+                self.$field = Some(value.into());
+                self
+            }
+        }
+    };
+}
 
 #[derive(Clone, Default, Debug, PartialEq, Eq)]
 pub struct GameFilter {
@@ -23,7 +35,7 @@ pub struct GameFilter {
     pub status: Option<String>,
 }
 
-impl<'a, 'b> GameFilter {
+impl GameFilter {
     pub fn new(
         name: Option<String>,
         engine: Option<String>,
@@ -47,41 +59,56 @@ impl<'a, 'b> GameFilter {
             status,
         }
     }
-    pub fn check_game(&self, game: &Game, search_type: &SearchType) -> bool {
+    gf_setter!(name);
+    gf_setter!(engine);
+    gf_setter!(runtime);
+    gf_setter!(genre);
+    gf_setter!(tag);
+    gf_setter!(year);
+    gf_setter!(dev);
+    gf_setter!(publi);
+    gf_setter!(status);
+
+    pub fn check_game<T: AsRef<Game>>(
+        &self,
+        game: T,
+        //game: impl AsRef<Game>,
+        search_type: &SearchType,
+    ) -> bool {
         let check_name = match &self.name {
-            Some(name) => game.name_contains(name, search_type),
+            Some(name) => game.as_ref().name_contains(name, search_type),
             None => true,
         };
         let check_engine = match &self.engine {
-            Some(engine) => game.engine_contains(engine, search_type),
+            Some(engine) => game.as_ref().engine_contains(engine, search_type),
             None => true,
         };
         let check_runtime = match &self.runtime {
-            Some(runtime) => game.runtime_contains(runtime, search_type),
+            Some(runtime) => game.as_ref().runtime_contains(runtime, search_type),
             None => true,
         };
         let check_genre = match &self.genre {
-            Some(genre) => game.genres_contains(genre, search_type),
+            Some(genre) => game.as_ref().genres_contains(genre, search_type),
             None => true,
         };
         let check_tag = match &self.tag {
-            Some(tag) => game.tags_contains(tag, search_type),
+            Some(tag) => game.as_ref().tags_contains(tag, search_type),
             None => true,
         };
         let check_year = match &self.year {
-            Some(year) => game.year_contains(year, search_type),
+            Some(year) => game.as_ref().year_contains(year, search_type),
             None => true,
         };
         let check_dev = match &self.dev {
-            Some(dev) => game.devs_contains(dev, search_type),
+            Some(dev) => game.as_ref().devs_contains(dev, search_type),
             None => true,
         };
         let check_publi = match &self.publi {
-            Some(publi) => game.publis_contains(publi, search_type),
+            Some(publi) => game.as_ref().publis_contains(publi, search_type),
             None => true,
         };
         let check_status = match &self.status {
-            Some(status) => game.status_contains(status, search_type),
+            Some(status) => game.as_ref().status_contains(status, search_type),
             None => true,
         };
         check_name
@@ -94,7 +121,7 @@ impl<'a, 'b> GameFilter {
             && check_publi
             && check_status
     }
-    pub fn filter_games(&'a self, games: Vec<&'b Game>, search_type: &SearchType) -> Vec<&'b Game> {
+    pub fn filter_games<T: AsRef<Game>>(&self, games: Vec<T>, search_type: &SearchType) -> Vec<T> {
         games
             .into_iter()
             .filter(|x| self.check_game(x, search_type))
@@ -134,84 +161,101 @@ mod game_tests {
         game
     }
     #[test]
-    fn test_filter_game_name() {
+    fn test_check_game_name() {
         let game = create_game();
         let mut filter = GameFilter::default();
-        filter.name = Some("Game name".into());
+        filter.set_name("Game name");
         assert!(filter.check_game(&game, &SearchType::NotCaseSensitive));
         assert!(!filter.check_game(&game, &SearchType::CaseSensitive));
     }
     #[test]
-    fn test_filter_game_engine() {
+    fn test_check_game_engine() {
         let game = create_game();
         let mut filter = GameFilter::default();
-        filter.engine = Some("Engine".into());
+        filter.set_engine("Engine");
         assert!(filter.check_game(&game, &SearchType::NotCaseSensitive));
         assert!(!filter.check_game(&game, &SearchType::CaseSensitive));
     }
     #[test]
-    fn test_filter_game_runtime() {
+    fn test_check_game_runtime() {
         let game = create_game();
         let mut filter = GameFilter::default();
-        filter.runtime = Some("Runtime".into());
+        filter.set_runtime("Runtime");
         assert!(filter.check_game(&game, &SearchType::NotCaseSensitive));
         assert!(!filter.check_game(&game, &SearchType::CaseSensitive));
     }
     #[test]
-    fn test_filter_game_genre() {
+    fn test_check_game_genre() {
         let game = create_game();
         let mut filter = GameFilter::default();
-        filter.genre = Some("Genre1".into());
+        filter.set_genre("Genre1");
         assert!(filter.check_game(&game, &SearchType::NotCaseSensitive));
         assert!(!filter.check_game(&game, &SearchType::CaseSensitive));
     }
     #[test]
-    fn test_filter_game_tag() {
+    fn test_check_game_tag() {
         let game = create_game();
         let mut filter = GameFilter::default();
-        filter.tag = Some("Tag1".into());
+        filter.set_tag("Tag1");
         assert!(filter.check_game(&game, &SearchType::NotCaseSensitive));
         assert!(!filter.check_game(&game, &SearchType::CaseSensitive));
     }
     #[test]
-    fn test_filter_game_year() {
+    fn test_check_game_year() {
         let game = create_game();
         let mut filter = GameFilter::default();
-        filter.year = Some("1980".into());
+        filter.set_year("1980");
         assert!(filter.check_game(&game, &SearchType::NotCaseSensitive));
         assert!(filter.check_game(&game, &SearchType::CaseSensitive));
     }
     #[test]
-    fn test_filter_game_dev() {
+    fn test_check_game_dev() {
         let game = create_game();
         let mut filter = GameFilter::default();
-        filter.dev = Some("Game dev".into());
+        filter.set_dev("Game dev");
         assert!(filter.check_game(&game, &SearchType::NotCaseSensitive));
         assert!(!filter.check_game(&game, &SearchType::CaseSensitive));
     }
     #[test]
-    fn test_filter_game_publi() {
+    fn test_check_game_publi() {
         let game = create_game();
         let mut filter = GameFilter::default();
-        filter.publi = Some("Game publi".into());
+        filter.set_publi("Game publi");
         assert!(filter.check_game(&game, &SearchType::NotCaseSensitive));
         assert!(!filter.check_game(&game, &SearchType::CaseSensitive));
     }
     #[test]
-    fn test_filter_game_status() {
+    fn test_check_game_status() {
         let game = create_game();
         let mut filter = GameFilter::default();
-        filter.status = Some("Game status".into());
+        filter.set_status("Game status");
+        assert!(filter.check_game(&game, &SearchType::NotCaseSensitive));
+        assert!(!filter.check_game(&game, &SearchType::CaseSensitive));
+    }
+    #[test]
+    fn test_check_game_status_and_publis() {
+        let game = create_game();
+        let mut filter = GameFilter::default();
+        filter.set_status("Game status").set_publi("Game publi");
         assert!(filter.check_game(&game, &SearchType::NotCaseSensitive));
         assert!(!filter.check_game(&game, &SearchType::CaseSensitive));
     }
     #[test]
     fn test_filter_game_status_and_publis() {
-        let game = create_game();
+        let mut game1 = create_game();
+        let mut game2 = game1.clone();
+        game1.name = "Game1".into();
+        game2.name = "Game2".into();
+        let game1bis = game1.clone();
+        let games: Vec<Game> = vec![game1, game2];
+        let games_ref: Vec<&Game> = games.iter().collect();
+        let games_filtered: Vec<Game> = vec![game1bis];
+        let games_filtered_ref: Vec<&Game> = games_filtered.iter().collect();
         let mut filter = GameFilter::default();
-        filter.status = Some("Game status".into());
-        filter.publi = Some("Game publi".into());
-        assert!(filter.check_game(&game, &SearchType::NotCaseSensitive));
-        assert!(!filter.check_game(&game, &SearchType::CaseSensitive));
+        filter.set_name("Game1");
+        let gf_ref = filter.filter_games(games_ref, &SearchType::CaseSensitive);
+        assert_eq!(gf_ref, games_filtered_ref);
+        let gf = filter.filter_games(games, &SearchType::CaseSensitive);
+        assert_eq!(gf, games_filtered);
     }
 }
