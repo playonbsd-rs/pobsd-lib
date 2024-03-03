@@ -101,8 +101,10 @@ pub mod parser;
 extern crate serde_derive;
 extern crate serde_json;
 
+pub use crate::db::game_filer::GameFilter;
 pub use crate::db::GameDataBase;
 pub use crate::db::QueryResult;
+pub use crate::db::SearchType;
 pub use crate::parser::Game;
 pub use crate::parser::Parser;
 pub use crate::parser::ParserResult;
