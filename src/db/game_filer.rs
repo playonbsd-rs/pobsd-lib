@@ -36,6 +36,7 @@ pub struct GameFilter {
 }
 
 impl GameFilter {
+    #[allow(clippy::too_many_arguments)]
     pub fn new(
         name: Option<String>,
         engine: Option<String>,

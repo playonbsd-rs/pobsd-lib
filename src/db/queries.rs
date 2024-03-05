@@ -62,13 +62,10 @@ impl GameDataBase {
     /// Return the first game found with the given name
     pub fn get_game_by_name(&self, name: &str, search_type: &SearchType) -> Option<&Game> {
         let mut filter = GameFilter::default();
-        filter.name = Some(name.into());
-        for game in self.games.values() {
-            if filter.check_game(game, search_type) {
-                return Some(game);
-            }
-        }
-        None
+        filter.set_name(name);
+        self.games
+            .values()
+            .find(|game| filter.check_game(game, search_type))
     }
     /// Return the game with the given steam_id (case sensitive)
     pub fn get_game_by_steam_id(&self, steam_id: usize) -> Option<&Game> {

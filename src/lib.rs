@@ -96,6 +96,7 @@
 //! More examples are available in each module documentation.
 
 pub mod db;
+#[allow(clippy::tabs_in_doc_comments)]
 pub mod parser;
 #[macro_use]
 extern crate serde_derive;

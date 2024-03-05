@@ -136,15 +136,15 @@ impl<'a> Game {
     }
     fn get_ordering_name(&'a self) -> &str {
         if let Some(name) = self.name.strip_prefix("the ") {
-            return name;
+            name
         } else if let Some(name) = self.name.strip_prefix("The ") {
-            return name;
+            name
         } else if let Some(name) = self.name.strip_prefix("a ") {
-            return name;
+            name
         } else if let Some(name) = self.name.strip_prefix("A ") {
-            return name;
+            name
         } else {
-            return &self.name;
+            &self.name
         }
     }
 
@@ -165,28 +165,28 @@ impl PartialOrd for Game {
         Some(self.cmp(other))
     }
     fn lt(&self, other: &Game) -> bool {
-        self.get_ordering_name().lt(&other.get_ordering_name())
+        self.get_ordering_name().lt(other.get_ordering_name())
     }
     fn le(&self, other: &Game) -> bool {
-        self.get_ordering_name().le(&other.get_ordering_name())
+        self.get_ordering_name().le(other.get_ordering_name())
     }
     fn gt(&self, other: &Game) -> bool {
-        self.get_ordering_name().gt(&other.get_ordering_name())
+        self.get_ordering_name().gt(other.get_ordering_name())
     }
     fn ge(&self, other: &Game) -> bool {
-        self.get_ordering_name().ge(&other.get_ordering_name())
+        self.get_ordering_name().ge(other.get_ordering_name())
     }
 }
 
 impl Ord for Game {
     fn cmp(&self, other: &Game) -> Ordering {
-        self.get_ordering_name().cmp(&other.get_ordering_name())
+        self.get_ordering_name().cmp(other.get_ordering_name())
     }
 }
 
 impl AsRef<Game> for Game {
     fn as_ref(&self) -> &Game {
-        &self
+        self
     }
 }
 
