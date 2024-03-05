@@ -66,7 +66,7 @@ macro_rules! game_contains {
 /// which the game was added to the database. It therefore
 /// provides an unique identifier under the assumption that no
 /// game with the same name will be added the same dat into
-/// the databas.
+/// the database.
 ///
 /// The name of some fields differs from the one used
 /// in the database itself: Genre and Store are plural

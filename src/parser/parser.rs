@@ -39,7 +39,7 @@ enum ParserState {
 /// * a **strict mode** in which the parsing
 ///  will stop if a parsing error occurs returning the games processed
 /// before the error as well as the line in the input (file or string)
-/// where the error occured;
+/// where the error occurred;
 /// * a **relaxed mode** in which the parsing
 /// will continue even after an error is encountered, the parsing
 /// resuming when reaching the next game after the parsing error
@@ -56,8 +56,8 @@ pub enum ParsingMode {
 /// is returned holding a vector of the games in the database. If there
 /// is at least one error, the [`ParserResult::WithError`] variant is
 /// returned holding a vector of the games in the database and a vector
-/// of the lines where errors occured. If in strict mode only the games
-/// parsed before the error occured will be returned.
+/// of the lines where errors occurred. If in strict mode only the games
+/// parsed before the error occurred will be returned.
 pub enum ParserResult {
     WithError(Vec<Game>, Vec<usize>),
     WithoutError(Vec<Game>),

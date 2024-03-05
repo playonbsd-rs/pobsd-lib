@@ -1,5 +1,5 @@
 //! Provides a representation of the query result returned when
-//! interogating the database. Query results are themselves queriable
+//! interogating the database. Query results are themselves queryable
 //! and return another query result.
 use super::Item;
 use crate::db::{game_filer::GameFilter, SearchType};
@@ -10,7 +10,7 @@ macro_rules! get_game_by {
     ($field:ident) => {
         paste! {
             /// Get game by field name
-            pub fn [<get_game_by_ $field>](self, field: &str, search_type: &SearchType) -> QueryResult<&'a Game> {
+            pub fn [<filter_games_by_ $field>](self, field: &str, search_type: &SearchType) -> QueryResult<&'a Game> {
 
                 let mut items = GameFilter::default().[<set_ $field>](field).filter_games(self.items, search_type);
                 items.sort();
@@ -23,7 +23,7 @@ macro_rules! get_game_by {
     };
 }
 
-/// Queriable representation of the result of a query
+/// Queryable representation of the result of a query
 #[derive(Default, Debug, Clone)]
 pub struct QueryResult<T> {
     /// Number of items in the query result
@@ -57,7 +57,7 @@ impl<'a> QueryResult<&'a Item> {
         items.pop()
     }
     /// Search items by name (case insensitive)
-    pub fn search_item_by_name<'b>(self, name: &'b str) -> QueryResult<&'a Item> {
+    pub fn filter_items_by_name<'b>(self, name: &'b str) -> QueryResult<&'a Item> {
         let items: Vec<&Item> = self
             .items
             .into_iter()
@@ -77,7 +77,7 @@ impl<'a> QueryResult<&'a Game> {
         items.pop()
     }
     /// Search games by name (case insensitive)
-    pub fn search_game_by_name(self, name: &str) -> QueryResult<&'a Game> {
+    pub fn filter_games_by_name(self, name: &str) -> QueryResult<&'a Game> {
         let items: Vec<&Game> = self
             .items
             .into_iter()

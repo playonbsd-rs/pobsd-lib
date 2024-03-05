@@ -49,7 +49,7 @@ fn test_get_game_by_tag_tag_exists() {
     let db = get_db_strict();
     let qr = db.get_all_games();
     let st = SearchType::CaseSensitive;
-    let game_query = qr.clone().get_game_by_tag("indie", &st);
+    let game_query = qr.clone().filter_games_by_tag("indie", &st);
     assert_eq!(game_query.items.len(), 3);
     let game = game_query.items.get(0).unwrap();
     assert_eq!(game.name, "The Adventures of Mr. Hat".to_string());
@@ -58,7 +58,7 @@ fn test_get_game_by_tag_tag_exists() {
     let game = game_query.items.get(2).unwrap();
     assert_eq!(game.name, "Aeternum".to_string());
     let st = SearchType::NotCaseSensitive;
-    let game_query = qr.get_game_by_tag("indie", &st);
+    let game_query = qr.filter_games_by_tag("indie", &st);
     assert_eq!(game_query.items.len(), 3);
     let game = game_query.items.get(0).unwrap();
     assert_eq!(game.name, "The Adventures of Mr. Hat".to_string());
@@ -72,7 +72,7 @@ fn test_get_game_by_tag_tag_exists_case_sensitive() {
     let db = get_db_strict();
     let qr = db.get_all_games();
     let st = SearchType::CaseSensitive;
-    let game_query = qr.clone().get_game_by_tag("inDie", &st);
+    let game_query = qr.clone().filter_games_by_tag("inDie", &st);
     assert_eq!(game_query.items.len(), 0);
 }
 #[test]
@@ -80,7 +80,7 @@ fn test_get_game_by_tag_tag_exists_not_case_sensitive() {
     let db = get_db_strict();
     let qr = db.get_all_games();
     let st = SearchType::NotCaseSensitive;
-    let game_query = qr.clone().get_game_by_tag("inDie", &st);
+    let game_query = qr.clone().filter_games_by_tag("inDie", &st);
     assert_eq!(game_query.items.len(), 3);
     let game = game_query.items.get(0).unwrap();
     assert_eq!(game.name, "The Adventures of Mr. Hat".to_string());
@@ -94,10 +94,10 @@ fn test_get_game_by_tag_tag_does_not_exist() {
     let db = get_db_strict();
     let qr = db.get_all_games();
     let st = SearchType::CaseSensitive;
-    let game_query = qr.clone().get_game_by_tag("I do not exist", &st);
+    let game_query = qr.clone().filter_games_by_tag("I do not exist", &st);
     assert_eq!(game_query.items.len(), 0);
     let st = SearchType::NotCaseSensitive;
-    let game_query = qr.get_game_by_tag("I do not exist", &st);
+    let game_query = qr.filter_games_by_tag("I do not exist", &st);
     assert_eq!(game_query.items.len(), 0);
 }
 
@@ -107,7 +107,7 @@ fn test_get_by_year_year_exists() {
     let db = get_db_strict();
     let qr = db.get_all_games();
     let st = SearchType::CaseSensitive;
-    let game_query = qr.clone().get_game_by_year("2011", &st);
+    let game_query = qr.clone().filter_games_by_year("2011", &st);
     assert_eq!(game_query.items.len(), 1);
     let game = game_query.items.get(0).unwrap();
     assert_eq!(
@@ -115,7 +115,7 @@ fn test_get_by_year_year_exists() {
         "AaaaaAAaaaAAAaaAAAAaAAAAA!!! for the Awesome".to_string()
     );
     let st = SearchType::NotCaseSensitive;
-    let game_query = qr.get_game_by_year("2011", &st);
+    let game_query = qr.filter_games_by_year("2011", &st);
     assert_eq!(game_query.items.len(), 1);
     let game = game_query.items.get(0).unwrap();
     assert_eq!(
@@ -128,10 +128,10 @@ fn test_get_by_year_year_does_not_exist() {
     let db = get_db_strict();
     let qr = db.get_all_games();
     let st = SearchType::CaseSensitive;
-    let game_query = qr.clone().get_game_by_year("2811", &st);
+    let game_query = qr.clone().filter_games_by_year("2811", &st);
     assert_eq!(game_query.items.len(), 0);
     let st = SearchType::NotCaseSensitive;
-    let game_query = qr.get_game_by_year("2811", &st);
+    let game_query = qr.filter_games_by_year("2811", &st);
     assert_eq!(game_query.items.len(), 0);
 }
 
@@ -141,12 +141,12 @@ fn test_get_game_by_engine_engine_exists() {
     let db = get_db_strict();
     let qr = db.get_all_games();
     let st = SearchType::CaseSensitive;
-    let game_query = qr.clone().get_game_by_engine("godot", &st);
+    let game_query = qr.clone().filter_games_by_engine("godot", &st);
     assert_eq!(game_query.items.len(), 1);
     let game = game_query.items.get(0).unwrap();
     assert_eq!(game.name, "The Adventures of Mr. Hat".to_string());
     let st = SearchType::NotCaseSensitive;
-    let game_query = qr.get_game_by_engine("godot", &st);
+    let game_query = qr.filter_games_by_engine("godot", &st);
     assert_eq!(game_query.items.len(), 1);
     let game = game_query.items.get(0).unwrap();
     assert_eq!(game.name, "The Adventures of Mr. Hat".to_string());
@@ -156,10 +156,10 @@ fn test_get_game_by_engine_engine_does_not_exist() {
     let db = get_db_strict();
     let qr = db.get_all_games();
     let st = SearchType::CaseSensitive;
-    let game_query = qr.clone().get_game_by_engine("I do not exist", &st);
+    let game_query = qr.clone().filter_games_by_engine("I do not exist", &st);
     assert_eq!(game_query.items.len(), 0);
     let st = SearchType::NotCaseSensitive;
-    let game_query = qr.get_game_by_engine("I do not exist", &st);
+    let game_query = qr.filter_games_by_engine("I do not exist", &st);
     assert_eq!(game_query.items.len(), 0);
 }
 
@@ -169,12 +169,12 @@ fn test_get_game_by_runtime_runtime_exists() {
     let db = get_db_strict();
     let qr = db.get_all_games();
     let st = SearchType::CaseSensitive;
-    let game_query = qr.clone().get_game_by_runtime("lwjgl", &st);
+    let game_query = qr.clone().filter_games_by_runtime("lwjgl", &st);
     assert_eq!(game_query.items.len(), 1);
     let game = game_query.items.get(0).unwrap();
     assert_eq!(game.name, "Airships: Conquer the Skies".to_string());
     let st = SearchType::NotCaseSensitive;
-    let game_query = qr.get_game_by_runtime("lwjgl", &st);
+    let game_query = qr.filter_games_by_runtime("lwjgl", &st);
     assert_eq!(game_query.items.len(), 1);
     let game = game_query.items.get(0).unwrap();
     assert_eq!(game.name, "Airships: Conquer the Skies".to_string());
@@ -184,10 +184,10 @@ fn test_get_game_by_runtime_runtime_does_not_exist() {
     let db = get_db_strict();
     let qr = db.get_all_games();
     let st = SearchType::CaseSensitive;
-    let game_query = qr.clone().get_game_by_runtime("I do not exist", &st);
+    let game_query = qr.clone().filter_games_by_runtime("I do not exist", &st);
     assert_eq!(game_query.items.len(), 0);
     let st = SearchType::NotCaseSensitive;
-    let game_query = qr.get_game_by_runtime("I do not exist", &st);
+    let game_query = qr.filter_games_by_runtime("I do not exist", &st);
     assert_eq!(game_query.items.len(), 0);
 }
 
@@ -197,12 +197,12 @@ fn test_get_game_by_genre_genre_exists() {
     let db = get_db_strict();
     let qr = db.get_all_games();
     let st = SearchType::CaseSensitive;
-    let game_query = qr.clone().get_game_by_genre("shmup", &st);
+    let game_query = qr.clone().filter_games_by_genre("shmup", &st);
     assert_eq!(game_query.items.len(), 1);
     let game = game_query.items.get(0).unwrap();
     assert_eq!(game.name, "Aeternum".to_string());
     let st = SearchType::NotCaseSensitive;
-    let game_query = qr.get_game_by_genre("shmup", &st);
+    let game_query = qr.filter_games_by_genre("shmup", &st);
     assert_eq!(game_query.items.len(), 1);
     let game = game_query.items.get(0).unwrap();
     assert_eq!(game.name, "Aeternum".to_string());
@@ -212,7 +212,7 @@ fn test_get_game_by_genre_genre_exists_case_sensitive() {
     let db = get_db_strict();
     let qr = db.get_all_games();
     let st = SearchType::CaseSensitive;
-    let game_query = qr.get_game_by_genre("sHmup", &st);
+    let game_query = qr.filter_games_by_genre("sHmup", &st);
     assert_eq!(game_query.items.len(), 0);
 }
 #[test]
@@ -220,7 +220,7 @@ fn test_get_game_by_genre_genre_exists_not_case_sensitive() {
     let db = get_db_strict();
     let qr = db.get_all_games();
     let st = SearchType::NotCaseSensitive;
-    let game_query = qr.get_game_by_genre("sHmup", &st);
+    let game_query = qr.filter_games_by_genre("sHmup", &st);
     assert_eq!(game_query.items.len(), 1);
     let game = game_query.items.get(0).unwrap();
     assert_eq!(game.name, "Aeternum".to_string());
@@ -230,10 +230,10 @@ fn test_get_game_by_genre_genre_does_not_exist() {
     let db = get_db_strict();
     let qr = db.get_all_games();
     let st = SearchType::CaseSensitive;
-    let game_query = qr.clone().get_game_by_genre("I do not exist", &st);
+    let game_query = qr.clone().filter_games_by_genre("I do not exist", &st);
     assert_eq!(game_query.items.len(), 0);
     let st = SearchType::CaseSensitive;
-    let game_query = qr.get_game_by_genre("I do not exist", &st);
+    let game_query = qr.filter_games_by_genre("I do not exist", &st);
     assert_eq!(game_query.items.len(), 0);
 }
 
@@ -243,12 +243,12 @@ fn test_get_game_by_dev_dev_exists() {
     let db = get_db_strict();
     let qr = db.get_all_games();
     let st = SearchType::CaseSensitive;
-    let game_query = qr.clone().get_game_by_dev("Creaky Lantern Games", &st);
+    let game_query = qr.clone().filter_games_by_dev("Creaky Lantern Games", &st);
     assert_eq!(game_query.items.len(), 1);
     let game = game_query.items.get(0).unwrap();
     assert_eq!(game.name, "Aeternum".to_string());
     let st = SearchType::NotCaseSensitive;
-    let game_query = qr.get_game_by_dev("Creaky Lantern Games", &st);
+    let game_query = qr.filter_games_by_dev("Creaky Lantern Games", &st);
     assert_eq!(game_query.items.len(), 1);
     let game = game_query.items.get(0).unwrap();
     assert_eq!(game.name, "Aeternum".to_string());
@@ -258,7 +258,7 @@ fn test_get_game_by_dev_dev_exists_case_sensitive() {
     let db = get_db_strict();
     let qr = db.get_all_games();
     let st = SearchType::CaseSensitive;
-    let game_query = qr.clone().get_game_by_dev("creaky Lantern Games", &st);
+    let game_query = qr.clone().filter_games_by_dev("creaky Lantern Games", &st);
     assert_eq!(game_query.items.len(), 0);
 }
 #[test]
@@ -266,7 +266,7 @@ fn test_get_game_by_dev_dev_exists_not_case_sentitive() {
     let db = get_db_strict();
     let qr = db.get_all_games();
     let st = SearchType::NotCaseSensitive;
-    let game_query = qr.clone().get_game_by_dev("creaky Lantern Games", &st);
+    let game_query = qr.clone().filter_games_by_dev("creaky Lantern Games", &st);
     assert_eq!(game_query.items.len(), 1);
     let game = game_query.items.get(0).unwrap();
     assert_eq!(game.name, "Aeternum".to_string());
@@ -276,10 +276,10 @@ fn test_get_game_by_dev_dev_does_not_exist() {
     let db = get_db_strict();
     let qr = db.get_all_games();
     let st = SearchType::CaseSensitive;
-    let game_query = qr.clone().get_game_by_dev("I do not exist", &st);
+    let game_query = qr.clone().filter_games_by_dev("I do not exist", &st);
     assert_eq!(game_query.items.len(), 0);
     let st = SearchType::NotCaseSensitive;
-    let game_query = qr.get_game_by_dev("I do not exist", &st);
+    let game_query = qr.filter_games_by_dev("I do not exist", &st);
     assert_eq!(game_query.items.len(), 0);
 }
 
@@ -289,12 +289,12 @@ fn test_get_game_by_publi_publi_exists() {
     let db = get_db_strict();
     let qr = db.get_all_games();
     let st = SearchType::CaseSensitive;
-    let game_query = qr.clone().get_game_by_publi("Florent Espanet", &st);
+    let game_query = qr.clone().filter_games_by_publi("Florent Espanet", &st);
     assert_eq!(game_query.items.len(), 1);
     let game = game_query.items.get(0).unwrap();
     assert_eq!(game.name, "Alien Shepherd".to_string());
     let st = SearchType::NotCaseSensitive;
-    let game_query = qr.get_game_by_publi("Florent Espanet", &st);
+    let game_query = qr.filter_games_by_publi("Florent Espanet", &st);
     assert_eq!(game_query.items.len(), 1);
     let game = game_query.items.get(0).unwrap();
     assert_eq!(game.name, "Alien Shepherd".to_string());
@@ -304,7 +304,7 @@ fn test_get_game_by_publi_publi_exists_case_sensitive() {
     let db = get_db_strict();
     let qr = db.get_all_games();
     let st = SearchType::CaseSensitive;
-    let game_query = qr.get_game_by_publi("florent Espanet", &st);
+    let game_query = qr.filter_games_by_publi("florent Espanet", &st);
     assert_eq!(game_query.items.len(), 0);
 }
 #[test]
@@ -312,7 +312,7 @@ fn test_get_game_by_publi_publi_exists_not_case_sensitive() {
     let db = get_db_strict();
     let qr = db.get_all_games();
     let st = SearchType::NotCaseSensitive;
-    let game_query = qr.get_game_by_publi("Florent Espanet", &st);
+    let game_query = qr.filter_games_by_publi("Florent Espanet", &st);
     assert_eq!(game_query.items.len(), 1);
     let game = game_query.items.get(0).unwrap();
     assert_eq!(game.name, "Alien Shepherd".to_string());
@@ -322,7 +322,7 @@ fn test_get_game_by_publi_publi_does_not_exist() {
     let db = get_db_strict();
     let qr = db.get_all_games();
     let st = SearchType::CaseSensitive;
-    let game_query = qr.get_game_by_publi("I do not exist", &st);
+    let game_query = qr.filter_games_by_publi("I do not exist", &st);
     assert_eq!(game_query.items.len(), 0);
 }
 
@@ -348,12 +348,12 @@ fn test_get_item_exists() {
     let db = get_db_strict();
     let qr = db.get_all_games();
     let st = SearchType::CaseSensitive;
-    let game_query = qr.clone().get_game_by_runtime("lwjgl", &st);
+    let game_query = qr.clone().filter_games_by_runtime("lwjgl", &st);
     assert_eq!(game_query.items.len(), 1);
     let game = game_query.get(0).unwrap();
     assert_eq!(game.name, "Airships: Conquer the Skies".to_string());
     let st = SearchType::NotCaseSensitive;
-    let game_query = qr.get_game_by_runtime("lwjgl", &st);
+    let game_query = qr.filter_games_by_runtime("lwjgl", &st);
     assert_eq!(game_query.items.len(), 1);
     let game = game_query.get(0).unwrap();
     assert_eq!(game.name, "Airships: Conquer the Skies".to_string());
@@ -363,10 +363,10 @@ fn test_get_item_does_not_exist() {
     let db = get_db_strict();
     let qr = db.get_all_games();
     let st = SearchType::CaseSensitive;
-    let game_query = qr.clone().get_game_by_runtime("I do not exist", &st);
+    let game_query = qr.clone().filter_games_by_runtime("I do not exist", &st);
     assert_eq!(game_query.get(0), None);
     let st = SearchType::NotCaseSensitive;
-    let game_query = qr.get_game_by_runtime("I do not exist", &st);
+    let game_query = qr.filter_games_by_runtime("I do not exist", &st);
     assert_eq!(game_query.get(0), None);
 }
 
@@ -379,7 +379,7 @@ fn test_get_item_does_not_exist() {
 fn test_search_game_by_name_game_exists() {
     let db = get_db_strict();
     let qr = db.get_all_games();
-    let games = qr.search_game_by_name("Airships: Conquer the Skies");
+    let games = qr.filter_games_by_name("Airships: Conquer the Skies");
     let games = games.into_inner();
     assert_eq!(games.len(), 1);
     assert_eq!(games[0].uid, 1595434339);
@@ -388,7 +388,7 @@ fn test_search_game_by_name_game_exists() {
 fn test_search_game_by_name_game_exists_case_insensitive() {
     let db = get_db_strict();
     let qr = db.get_all_games();
-    let games = qr.search_game_by_name("airships: conquer the skies");
+    let games = qr.filter_games_by_name("airships: conquer the skies");
     let games = games.into_inner();
     assert_eq!(games.len(), 1);
     assert_eq!(games[0].uid, 1595434339);
@@ -397,7 +397,7 @@ fn test_search_game_by_name_game_exists_case_insensitive() {
 fn test_search_game_by_name_name_does_not_exist() {
     let db = get_db_strict();
     let qr = db.get_all_games();
-    let games = qr.search_game_by_name("I do not exist");
+    let games = qr.filter_games_by_name("I do not exist");
     let games = games.into_inner();
     assert!(games.is_empty());
 }
@@ -407,20 +407,20 @@ fn test_search_game_by_name_name_does_not_exist() {
 fn test_search_item_by_name_name_exists() {
     let db = get_db_strict();
     let tag_query = db.get_all_engines();
-    let item = tag_query.search_item_by_name("FNA").items[0];
+    let item = tag_query.filter_items_by_name("FNA").items[0];
     assert!(item.eq("FNA"));
 }
 #[test]
 fn test_search_item_by_name_name_exists_case_sensitive() {
     let db = get_db_strict();
     let tag_query = db.get_all_engines();
-    let item = tag_query.search_item_by_name("fna").items[0];
+    let item = tag_query.filter_items_by_name("fna").items[0];
     assert!(item.eq("FNA"));
 }
 #[test]
 fn test_search_item_by_name_name_does_not_exist() {
     let db = get_db_strict();
     let tag_query = db.get_all_engines();
-    let items = tag_query.search_item_by_name("Does not exist").items;
+    let items = tag_query.filter_items_by_name("Does not exist").items;
     assert!(items.is_empty());
 }

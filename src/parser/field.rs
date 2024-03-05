@@ -148,7 +148,7 @@ impl fmt::Display for Field {
 
 impl Field {
     /// Convert a line of the database into a Field enum
-    /// (see exemple above).
+    /// (see example above).
     pub fn from(line: &str) -> Self {
         // Split the line in a left and right hand sides
         let (left, right) = split_line(line);
