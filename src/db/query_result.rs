@@ -6,7 +6,7 @@ use crate::db::{game_filer::GameFilter, SearchType};
 use crate::parser::Game;
 use paste::paste;
 
-macro_rules! get_game_by {
+macro_rules! filter_games_by {
     ($field:ident) => {
         paste! {
             /// Get game by field name
@@ -72,29 +72,22 @@ impl<'a> QueryResult<&'a Item> {
 
 impl<'a> QueryResult<&'a Game> {
     /// Get game by name (case sensitive)
-    pub fn get_game_by_name(self, name: &str) -> Option<&'a Game> {
-        let mut items: Vec<&Game> = self.items.into_iter().filter(|a| a.name.eq(name)).collect();
+    pub fn get_game_by_name(self, name: &str, search_type: &SearchType) -> Option<&'a Game> {
+        let mut items = GameFilter::default()
+            .set_name(name)
+            .filter_games(self.items, search_type);
+        items.sort();
         items.pop()
     }
-    /// Search games by name (case insensitive)
-    pub fn filter_games_by_name(self, name: &str) -> QueryResult<&'a Game> {
-        let items: Vec<&Game> = self
-            .items
-            .into_iter()
-            .filter(|a| a.name.to_lowercase().contains(&name.to_lowercase()))
-            .collect();
-        QueryResult {
-            count: items.len(),
-            items,
-        }
-    }
-    get_game_by!(runtime);
-    get_game_by!(year);
-    get_game_by!(engine);
-    get_game_by!(dev);
-    get_game_by!(publi);
-    get_game_by!(genre);
-    get_game_by!(tag);
+
+    filter_games_by!(name);
+    filter_games_by!(runtime);
+    filter_games_by!(year);
+    filter_games_by!(engine);
+    filter_games_by!(dev);
+    filter_games_by!(publi);
+    filter_games_by!(genre);
+    filter_games_by!(tag);
 }
 
 #[cfg(test)]
