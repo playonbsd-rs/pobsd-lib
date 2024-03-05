@@ -134,17 +134,20 @@ impl<'a> Game {
     pub fn new() -> Self {
         Self::default()
     }
-    fn get_ordering_name(&'a self) -> String {
-        let name = self.name.to_lowercase();
-        let name = if name.starts_with("the ") {
-            name.strip_prefix("the ").unwrap().to_string()
-        } else if name.starts_with("a ") {
-            name.strip_prefix("a ").unwrap().to_string()
+    fn get_ordering_name(&'a self) -> &str {
+        if let Some(name) = self.name.strip_prefix("the ") {
+            return name;
+        } else if let Some(name) = self.name.strip_prefix("The ") {
+            return name;
+        } else if let Some(name) = self.name.strip_prefix("a ") {
+            return name;
+        } else if let Some(name) = self.name.strip_prefix("A ") {
+            return name;
         } else {
-            name
-        };
-        name
+            return &self.name;
+        }
     }
+
     game_contains!(name);
     game_contains!(engine);
     game_contains!(runtime);
@@ -267,7 +270,7 @@ mod game_tests {
     fn test_get_ordering_name_with_a_2() {
         let mut game = create_game();
         game.name = "Achampion".into();
-        assert_eq!(game.get_ordering_name(), "achampion");
+        assert_eq!(game.get_ordering_name(), "Achampion");
         game.name = "achampion".into();
         assert_eq!(game.get_ordering_name(), "achampion");
     }
@@ -283,7 +286,7 @@ mod game_tests {
     fn test_get_ordering_name_with_the_2() {
         let mut game = create_game();
         game.name = "Thechampion".into();
-        assert_eq!(game.get_ordering_name(), "thechampion");
+        assert_eq!(game.get_ordering_name(), "Thechampion");
         game.name = "thechampion".into();
         assert_eq!(game.get_ordering_name(), "thechampion");
     }
