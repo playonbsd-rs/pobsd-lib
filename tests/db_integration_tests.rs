@@ -125,7 +125,7 @@ fn test_get_by_steam_id_game_does_not_exist() {
 #[test]
 fn test_get_game_by_tag_tag_exists() {
     let db = get_db_strict();
-    let game_query = db.get_game_by_tag("indie");
+    let game_query = db.match_games_by_tag("indie");
     assert_eq!(game_query.items.len(), 3);
     let game = game_query.items.get(0).unwrap();
     assert_eq!(game.name, "The Adventures of Mr. Hat".to_string());
@@ -137,7 +137,7 @@ fn test_get_game_by_tag_tag_exists() {
 #[test]
 fn test_get_game_by_tag_tag_does_not_exist() {
     let db = get_db_strict();
-    let game_query = db.get_game_by_tag("I do not exist");
+    let game_query = db.match_games_by_tag("I do not exist");
     assert_eq!(game_query.items.len(), 0);
 }
 
@@ -145,7 +145,7 @@ fn test_get_game_by_tag_tag_does_not_exist() {
 #[test]
 fn test_get_by_year_year_exists() {
     let db = get_db_strict();
-    let game_query = db.get_game_by_year("2011");
+    let game_query = db.match_games_by_year("2011");
     assert_eq!(game_query.items.len(), 1);
     let game = game_query.items.get(0).unwrap();
     assert_eq!(
@@ -156,7 +156,7 @@ fn test_get_by_year_year_exists() {
 #[test]
 fn test_get_by_year_year_does_not_exist() {
     let db = get_db_strict();
-    let game_query = db.get_game_by_year("2811");
+    let game_query = db.match_games_by_year("2811");
     assert_eq!(game_query.items.len(), 0);
 }
 
@@ -164,7 +164,7 @@ fn test_get_by_year_year_does_not_exist() {
 #[test]
 fn test_get_game_by_engine_engine_exists() {
     let db = get_db_strict();
-    let game_query = db.get_game_by_engine("godot");
+    let game_query = db.match_games_by_engine("godot");
     assert_eq!(game_query.items.len(), 1);
     let game = game_query.items.get(0).unwrap();
     assert_eq!(game.name, "The Adventures of Mr. Hat".to_string());
@@ -172,7 +172,7 @@ fn test_get_game_by_engine_engine_exists() {
 #[test]
 fn test_get_game_by_engine_engine_does_not_exist() {
     let db = get_db_strict();
-    let game_query = db.get_game_by_engine("I do not exist");
+    let game_query = db.match_games_by_engine("I do not exist");
     assert_eq!(game_query.items.len(), 0);
 }
 
@@ -180,7 +180,7 @@ fn test_get_game_by_engine_engine_does_not_exist() {
 #[test]
 fn test_get_game_by_runtime_runtime_exists() {
     let db = get_db_strict();
-    let game_query = db.get_game_by_runtime("lwjgl");
+    let game_query = db.match_games_by_runtime("lwjgl");
     assert_eq!(game_query.items.len(), 1);
     let game = game_query.items.get(0).unwrap();
     assert_eq!(game.name, "Airships: Conquer the Skies".to_string());
@@ -188,7 +188,7 @@ fn test_get_game_by_runtime_runtime_exists() {
 #[test]
 fn test_get_game_by_runtime_runtime_does_not_exist() {
     let db = get_db_strict();
-    let game_query = db.get_game_by_runtime("I do not exist");
+    let game_query = db.match_games_by_runtime("I do not exist");
     assert_eq!(game_query.items.len(), 0);
 }
 
@@ -196,7 +196,7 @@ fn test_get_game_by_runtime_runtime_does_not_exist() {
 #[test]
 fn test_get_game_by_genre_genre_exists() {
     let db = get_db_strict();
-    let game_query = db.get_game_by_genre("shmup");
+    let game_query = db.match_games_by_genre("shmup");
     assert_eq!(game_query.items.len(), 1);
     let game = game_query.items.get(0).unwrap();
     assert_eq!(game.name, "Aeternum".to_string());
@@ -204,7 +204,7 @@ fn test_get_game_by_genre_genre_exists() {
 #[test]
 fn test_get_game_by_genre_genre_does_not_exist() {
     let db = get_db_strict();
-    let game_query = db.get_game_by_genre("I do not exist");
+    let game_query = db.match_games_by_genre("I do not exist");
     assert_eq!(game_query.items.len(), 0);
 }
 
@@ -212,7 +212,7 @@ fn test_get_game_by_genre_genre_does_not_exist() {
 #[test]
 fn test_get_game_by_dev_dev_exists() {
     let db = get_db_strict();
-    let game_query = db.get_game_by_dev("Creaky Lantern Games");
+    let game_query = db.match_games_by_dev("Creaky Lantern Games");
     assert_eq!(game_query.items.len(), 1);
     let game = game_query.items.get(0).unwrap();
     assert_eq!(game.name, "Aeternum".to_string());
@@ -220,7 +220,7 @@ fn test_get_game_by_dev_dev_exists() {
 #[test]
 fn test_get_game_by_dev_dev_does_not_exist() {
     let db = get_db_strict();
-    let game_query = db.get_game_by_dev("I do not exist");
+    let game_query = db.match_games_by_dev("I do not exist");
     assert_eq!(game_query.items.len(), 0);
 }
 
@@ -228,7 +228,7 @@ fn test_get_game_by_dev_dev_does_not_exist() {
 #[test]
 fn test_get_game_by_publi_publi_exists() {
     let db = get_db_strict();
-    let game_query = db.get_game_by_publi("Florent Espanet");
+    let game_query = db.match_games_by_publi("Florent Espanet");
     assert_eq!(game_query.items.len(), 1);
     let game = game_query.items.get(0).unwrap();
     assert_eq!(game.name, "Alien Shepherd".to_string());
@@ -236,7 +236,7 @@ fn test_get_game_by_publi_publi_exists() {
 #[test]
 fn test_get_game_by_publi_publi_does_not_exist() {
     let db = get_db_strict();
-    let game_query = db.get_game_by_publi("I do not exist");
+    let game_query = db.match_games_by_publi("I do not exist");
     assert_eq!(game_query.items.len(), 0);
 }
 
@@ -351,12 +351,12 @@ fn test_get_all_runtimes() {
 fn test_search_game_by_name_game_exists() {
     let db = get_db_strict();
     let st = SearchType::CaseSensitive;
-    let games = db.search_game_by_name("Airships: Conquer the Skies", &st);
+    let games = db.search_games_by_name("Airships: Conquer the Skies", &st);
     let games = games.into_inner();
     assert_eq!(games.len(), 1);
     assert_eq!(games[0].uid, 1595434339);
     let st = SearchType::NotCaseSensitive;
-    let games = db.search_game_by_name("Airships: Conquer the Skies", &st);
+    let games = db.search_games_by_name("Airships: Conquer the Skies", &st);
     let games = games.into_inner();
     assert_eq!(games.len(), 1);
     assert_eq!(games[0].uid, 1595434339);
@@ -365,12 +365,12 @@ fn test_search_game_by_name_game_exists() {
 fn test_search_game_by_name_game_exists_only_contains() {
     let db = get_db_strict();
     let st = SearchType::CaseSensitive;
-    let games = db.search_game_by_name("Airships: Conquer", &st);
+    let games = db.search_games_by_name("Airships: Conquer", &st);
     let games = games.into_inner();
     assert_eq!(games.len(), 1);
     assert_eq!(games[0].uid, 1595434339);
     let st = SearchType::NotCaseSensitive;
-    let games = db.search_game_by_name("Airships: Conquer", &st);
+    let games = db.search_games_by_name("Airships: Conquer", &st);
     let games = games.into_inner();
     assert_eq!(games.len(), 1);
     assert_eq!(games[0].uid, 1595434339);
@@ -379,7 +379,7 @@ fn test_search_game_by_name_game_exists_only_contains() {
 fn test_search_game_by_name_game_exists_case_insensitive() {
     let db = get_db_strict();
     let st = SearchType::CaseSensitive;
-    let games = db.search_game_by_name("airships: conquer the skies", &st);
+    let games = db.search_games_by_name("airships: conquer the skies", &st);
     let games = games.into_inner();
     assert_eq!(games.len(), 0);
 }
@@ -388,7 +388,7 @@ fn test_search_game_by_name_game_exists_case_insensitive() {
 fn test_search_game_by_name_game_exists_not_case_insensitive() {
     let db = get_db_strict();
     let st = SearchType::NotCaseSensitive;
-    let games = db.search_game_by_name("airships: conquer the skies", &st);
+    let games = db.search_games_by_name("airships: conquer the skies", &st);
     let games = games.into_inner();
     assert_eq!(games.len(), 1);
     assert_eq!(games[0].uid, 1595434339);
@@ -397,11 +397,11 @@ fn test_search_game_by_name_game_exists_not_case_insensitive() {
 fn test_search_game_by_name_name_does_not_exist() {
     let db = get_db_strict();
     let st = SearchType::CaseSensitive;
-    let games = db.search_game_by_name("I do not exist", &st);
+    let games = db.search_games_by_name("I do not exist", &st);
     let games = games.into_inner();
     assert!(games.is_empty());
     let st = SearchType::NotCaseSensitive;
-    let games = db.search_game_by_name("I do not exist", &st);
+    let games = db.search_games_by_name("I do not exist", &st);
     let games = games.into_inner();
     assert!(games.is_empty());
 }
@@ -411,12 +411,12 @@ fn test_search_game_by_name_name_does_not_exist() {
 fn test_search_game_by_dev_dev_exists() {
     let db = get_db_strict();
     let st = SearchType::CaseSensitive;
-    let games = db.search_game_by_dev("David Stark", &st);
+    let games = db.search_games_by_dev("David Stark", &st);
     let games = games.into_inner();
     assert_eq!(games.len(), 1);
     assert_eq!(games[0].uid, 1595434339);
     let st = SearchType::NotCaseSensitive;
-    let games = db.search_game_by_dev("David Stark", &st);
+    let games = db.search_games_by_dev("David Stark", &st);
     let games = games.into_inner();
     assert_eq!(games.len(), 1);
     assert_eq!(games[0].uid, 1595434339);
@@ -425,12 +425,12 @@ fn test_search_game_by_dev_dev_exists() {
 fn test_search_game_by_dev_dev_exists_only_contains() {
     let db = get_db_strict();
     let st = SearchType::CaseSensitive;
-    let games = db.search_game_by_dev("Stark", &st);
+    let games = db.search_games_by_dev("Stark", &st);
     let games = games.into_inner();
     assert_eq!(games.len(), 1);
     assert_eq!(games[0].uid, 1595434339);
     let st = SearchType::NotCaseSensitive;
-    let games = db.search_game_by_dev("Stark", &st);
+    let games = db.search_games_by_dev("Stark", &st);
     let games = games.into_inner();
     assert_eq!(games.len(), 1);
     assert_eq!(games[0].uid, 1595434339);
@@ -439,7 +439,7 @@ fn test_search_game_by_dev_dev_exists_only_contains() {
 fn test_search_game_by_dev_dev_exists_not_case_sensitive() {
     let db = get_db_strict();
     let st = SearchType::NotCaseSensitive;
-    let games = db.search_game_by_dev("david stark", &st);
+    let games = db.search_games_by_dev("david stark", &st);
     let games = games.into_inner();
     assert_eq!(games.len(), 1);
     assert_eq!(games[0].uid, 1595434339);
@@ -448,7 +448,7 @@ fn test_search_game_by_dev_dev_exists_not_case_sensitive() {
 fn test_search_game_by_dev_dev_exists_case_sensitive() {
     let db = get_db_strict();
     let st = SearchType::CaseSensitive;
-    let games = db.search_game_by_dev("david stark", &st);
+    let games = db.search_games_by_dev("david stark", &st);
     let games = games.into_inner();
     assert_eq!(games.len(), 0);
 }
@@ -456,11 +456,11 @@ fn test_search_game_by_dev_dev_exists_case_sensitive() {
 fn test_search_game_by_dev_dev_does_not_exist() {
     let db = get_db_strict();
     let st = SearchType::CaseSensitive;
-    let games = db.search_game_by_dev("I do not exist", &st);
+    let games = db.search_games_by_dev("I do not exist", &st);
     let games = games.into_inner();
     assert!(games.is_empty());
     let st = SearchType::NotCaseSensitive;
-    let games = db.search_game_by_dev("I do not exist", &st);
+    let games = db.search_games_by_dev("I do not exist", &st);
     let games = games.into_inner();
     assert!(games.is_empty());
 }
@@ -470,14 +470,14 @@ fn test_search_game_by_dev_dev_does_not_exist() {
 fn test_search_game_by_tags_tag_exists() {
     let db = get_db_strict();
     let st = SearchType::CaseSensitive;
-    let games = db.search_game_by_tag("indie", &st);
+    let games = db.search_games_by_tag("indie", &st);
     let games = games.into_inner();
     assert_eq!(games.len(), 3);
     assert_eq!(games[0].name, "The Adventures of Mr. Hat");
     assert_eq!(games[1].name, "The Adventures of Shuggy");
     assert_eq!(games[2].name, "Aeternum");
     let st = SearchType::NotCaseSensitive;
-    let games = db.search_game_by_tag("indie", &st);
+    let games = db.search_games_by_tag("indie", &st);
     let games = games.into_inner();
     assert_eq!(games.len(), 3);
     assert_eq!(games[0].name, "The Adventures of Mr. Hat");
@@ -488,14 +488,14 @@ fn test_search_game_by_tags_tag_exists() {
 fn test_search_game_by_tags_tag_exists_only_contains() {
     let db = get_db_strict();
     let st = SearchType::CaseSensitive;
-    let games = db.search_game_by_tag("indie", &st);
+    let games = db.search_games_by_tag("indie", &st);
     let games = games.into_inner();
     assert_eq!(games.len(), 3);
     assert_eq!(games[0].name, "The Adventures of Mr. Hat");
     assert_eq!(games[1].name, "The Adventures of Shuggy");
     assert_eq!(games[2].name, "Aeternum");
     let st = SearchType::NotCaseSensitive;
-    let games = db.search_game_by_tag("indie", &st);
+    let games = db.search_games_by_tag("indie", &st);
     let games = games.into_inner();
     assert_eq!(games.len(), 3);
     assert_eq!(games[0].name, "The Adventures of Mr. Hat");
@@ -506,7 +506,7 @@ fn test_search_game_by_tags_tag_exists_only_contains() {
 fn test_search_game_by_tags_tag_exists_case_sensitive() {
     let db = get_db_strict();
     let st = SearchType::CaseSensitive;
-    let games = db.search_game_by_tag("Indie", &st);
+    let games = db.search_games_by_tag("Indie", &st);
     let games = games.into_inner();
     assert_eq!(games.len(), 0);
 }
@@ -514,7 +514,7 @@ fn test_search_game_by_tags_tag_exists_case_sensitive() {
 fn test_search_game_by_tags_tag_exists_not_case_sensitive() {
     let db = get_db_strict();
     let st = SearchType::NotCaseSensitive;
-    let games = db.search_game_by_tag("Indie", &st);
+    let games = db.search_games_by_tag("Indie", &st);
     let games = games.into_inner();
     assert_eq!(games.len(), 3);
     assert_eq!(games[0].name, "The Adventures of Mr. Hat");
@@ -525,7 +525,7 @@ fn test_search_game_by_tags_tag_exists_not_case_sensitive() {
 fn test_search_game_by_tags_tag_does_not_exist() {
     let db = get_db_strict();
     let st = SearchType::CaseSensitive;
-    let games = db.search_game_by_tag("I do not exist", &st);
+    let games = db.search_games_by_tag("I do not exist", &st);
     let games = games.into_inner();
     assert!(games.is_empty());
 }
@@ -535,12 +535,12 @@ fn test_search_game_by_tags_tag_does_not_exist() {
 fn test_search_game_by_genres_genre_exists() {
     let db = get_db_strict();
     let st = SearchType::CaseSensitive;
-    let games = db.search_game_by_genre("RTS", &st);
+    let games = db.search_games_by_genre("RTS", &st);
     let games = games.into_inner();
     assert_eq!(games.len(), 1);
     assert_eq!(games[0].name, "Airships: Conquer the Skies");
     let st = SearchType::NotCaseSensitive;
-    let games = db.search_game_by_genre("RTS", &st);
+    let games = db.search_games_by_genre("RTS", &st);
     let games = games.into_inner();
     assert_eq!(games.len(), 1);
     assert_eq!(games[0].name, "Airships: Conquer the Skies");
@@ -549,12 +549,12 @@ fn test_search_game_by_genres_genre_exists() {
 fn test_search_game_by_genres_genre_exists_only_contains() {
     let db = get_db_strict();
     let st = SearchType::CaseSensitive;
-    let games = db.search_game_by_genre("TS", &st);
+    let games = db.search_games_by_genre("TS", &st);
     let games = games.into_inner();
     assert_eq!(games.len(), 1);
     assert_eq!(games[0].name, "Airships: Conquer the Skies");
     let st = SearchType::NotCaseSensitive;
-    let games = db.search_game_by_genre("TS", &st);
+    let games = db.search_games_by_genre("TS", &st);
     let games = games.into_inner();
     assert_eq!(games.len(), 1);
     assert_eq!(games[0].name, "Airships: Conquer the Skies");
@@ -563,7 +563,7 @@ fn test_search_game_by_genres_genre_exists_only_contains() {
 fn test_search_game_by_genres_genre_exists_case_sensitive() {
     let db = get_db_strict();
     let st = SearchType::CaseSensitive;
-    let games = db.search_game_by_genre("rts", &st);
+    let games = db.search_games_by_genre("rts", &st);
     let games = games.into_inner();
     assert_eq!(games.len(), 0);
 }
@@ -571,7 +571,7 @@ fn test_search_game_by_genres_genre_exists_case_sensitive() {
 fn test_search_game_by_genres_genre_exists_not_case_sensitive() {
     let db = get_db_strict();
     let st = SearchType::NotCaseSensitive;
-    let games = db.search_game_by_genre("rts", &st);
+    let games = db.search_games_by_genre("rts", &st);
     let games = games.into_inner();
     assert_eq!(games.len(), 1);
     assert_eq!(games[0].name, "Airships: Conquer the Skies");
@@ -580,11 +580,11 @@ fn test_search_game_by_genres_genre_exists_not_case_sensitive() {
 fn test_search_game_by_genres_genre_does_not_exist() {
     let db = get_db_strict();
     let st = SearchType::CaseSensitive;
-    let games = db.search_game_by_genre("I do not exist", &st);
+    let games = db.search_games_by_genre("I do not exist", &st);
     let games = games.into_inner();
     assert!(games.is_empty());
     let st = SearchType::NotCaseSensitive;
-    let games = db.search_game_by_genre("I do not exist", &st);
+    let games = db.search_games_by_genre("I do not exist", &st);
     let games = games.into_inner();
     assert!(games.is_empty());
 }
@@ -594,13 +594,13 @@ fn test_search_game_by_genres_genre_does_not_exist() {
 fn test_search_game_by_engine_engine_exists() {
     let db = get_db_strict();
     let st = SearchType::CaseSensitive;
-    let games = db.search_game_by_engine("FNA", &st);
+    let games = db.search_games_by_engine("FNA", &st);
     let games = games.into_inner();
     assert_eq!(games.len(), 2);
     assert_eq!(games[0].name, "The Adventures of Shuggy");
     assert_eq!(games[1].name, "Aeternum");
     let st = SearchType::NotCaseSensitive;
-    let games = db.search_game_by_engine("FNA", &st);
+    let games = db.search_games_by_engine("FNA", &st);
     let games = games.into_inner();
     assert_eq!(games.len(), 2);
     assert_eq!(games[0].name, "The Adventures of Shuggy");
@@ -610,13 +610,13 @@ fn test_search_game_by_engine_engine_exists() {
 fn test_search_game_by_engine_engine_exists_only_contains() {
     let db = get_db_strict();
     let st = SearchType::CaseSensitive;
-    let games = db.search_game_by_engine("FN", &st);
+    let games = db.search_games_by_engine("FN", &st);
     let games = games.into_inner();
     assert_eq!(games.len(), 2);
     assert_eq!(games[0].name, "The Adventures of Shuggy");
     assert_eq!(games[1].name, "Aeternum");
     let st = SearchType::NotCaseSensitive;
-    let games = db.search_game_by_engine("FN", &st);
+    let games = db.search_games_by_engine("FN", &st);
     let games = games.into_inner();
     assert_eq!(games.len(), 2);
     assert_eq!(games[0].name, "The Adventures of Shuggy");
@@ -626,7 +626,7 @@ fn test_search_game_by_engine_engine_exists_only_contains() {
 fn test_search_game_by_engine_engine_exists_case_sensitive() {
     let db = get_db_strict();
     let st = SearchType::CaseSensitive;
-    let games = db.search_game_by_engine("fna", &st);
+    let games = db.search_games_by_engine("fna", &st);
     let games = games.into_inner();
     assert_eq!(games.len(), 0);
 }
@@ -634,7 +634,7 @@ fn test_search_game_by_engine_engine_exists_case_sensitive() {
 fn test_search_game_by_engine_engine_exists_not_case_sensitive() {
     let db = get_db_strict();
     let st = SearchType::NotCaseSensitive;
-    let games = db.search_game_by_engine("fna", &st);
+    let games = db.search_games_by_engine("fna", &st);
     let games = games.into_inner();
     assert_eq!(games.len(), 2);
     assert_eq!(games[0].name, "The Adventures of Shuggy");
@@ -644,11 +644,11 @@ fn test_search_game_by_engine_engine_exists_not_case_sensitive() {
 fn test_search_game_by_engine_engine_does_not_exist() {
     let db = get_db_strict();
     let st = SearchType::CaseSensitive;
-    let games = db.search_game_by_engine("I do not exist", &st);
+    let games = db.search_games_by_engine("I do not exist", &st);
     let games = games.into_inner();
     assert!(games.is_empty());
     let st = SearchType::NotCaseSensitive;
-    let games = db.search_game_by_engine("I do not exist", &st);
+    let games = db.search_games_by_engine("I do not exist", &st);
     let games = games.into_inner();
     assert!(games.is_empty());
 }

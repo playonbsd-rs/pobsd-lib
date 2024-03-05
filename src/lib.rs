@@ -58,7 +58,7 @@
 //! # };
 //! let db = GameDataBase::new(games);
 //! let st = SearchType::CaseSensitive;
-//! let games = db.search_game_by_name("Barrow", &st);
+//! let games = db.search_games_by_name("Barrow", &st);
 //! ```
 //!
 //! Filter a query result (represented by the [`QueryResult`] struct)
@@ -73,7 +73,7 @@
 //! # };
 //! let db = GameDataBase::new(games);
 //! let st = SearchType::CaseSensitive;
-//! let games = db.search_game_by_name("Barrow", &st);
+//! let games = db.search_games_by_name("Barrow", &st);
 //! let games = games.filter_games_by_year("2018", &st);
 //! ```
 //!
@@ -88,7 +88,7 @@
 //! # };
 //! let db = GameDataBase::new(games);
 //! let st = SearchType::CaseSensitive;
-//! let games = db.search_game_by_name("Barrow", &st);
+//! let games = db.search_games_by_name("Barrow", &st);
 //! for game in games.into_inner() {
 //!     println!("Game: {}", game.name);
 //! }

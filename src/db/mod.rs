@@ -53,7 +53,7 @@
 //! #       ParserResult::WithError(games, _) => games,
 //! #   };
 //! # let db = GameDataBase::new(games);
-//! let game_query = db.get_game_by_tag("indie");
+//! let game_query = db.match_games_by_tag("indie");
 //! // check the first element of the query
 //! if let Some(game) = game_query.get(0) {
 //!     if let Some(tags) = &game.tags {
