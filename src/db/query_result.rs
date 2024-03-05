@@ -11,13 +11,8 @@ macro_rules! filter_games_by {
         paste! {
             /// Get game by field name
             pub fn [<filter_games_by_ $field>](self, field: &str, search_type: &SearchType) -> QueryResult<&'a Game> {
-
-                let mut items = GameFilter::default().[<set_ $field>](field).filter_games(self.items, search_type);
-                items.sort();
-                QueryResult{
-                    count: items.len(),
-                    items
-                }
+                let items = GameFilter::default().[<set_ $field>](field).filter_games(self.items, search_type);
+                QueryResult::new(items)
             }
         }
     };
@@ -32,9 +27,10 @@ pub struct QueryResult<T> {
     pub items: Vec<T>,
 }
 
-impl<T> QueryResult<T> {
+impl<T: Ord> QueryResult<T> {
     // Create a new QueryResult from a vector
-    pub fn new(items: Vec<T>) -> Self {
+    pub fn new(mut items: Vec<T>) -> Self {
+        items.sort();
         Self {
             count: items.len(),
             items,
@@ -63,10 +59,7 @@ impl<'a> QueryResult<&'a Item> {
             .into_iter()
             .filter(|a| a.to_lowercase().contains(&name.to_lowercase()))
             .collect();
-        QueryResult {
-            count: items.len(),
-            items,
-        }
+        QueryResult::new(items)
     }
 }
 

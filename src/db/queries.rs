@@ -1,10 +1,10 @@
+use super::database::GameDataBase;
 use super::query_result::QueryResult;
+
 use crate::db::game_filer::GameFilter;
 use crate::db::{Item, SearchType};
 use crate::parser::{Game, Store};
 use paste::paste;
-
-use super::database::GameDataBase;
 
 macro_rules! match_games_by {
     ($field:ident) => {
@@ -19,16 +19,9 @@ macro_rules! match_games_by {
                                 games.push(game)
                             }
                         }
-                        games.sort();
-                        QueryResult{
-                            count: games.len(),
-                            items: games
-                        }
+                        QueryResult::new(games)
                     }
-                    None => QueryResult{
-                        count: 0,
-                        items : vec![]
-                    },
+                    None => QueryResult::new(vec![]),
                 }
             }
         }
@@ -40,14 +33,10 @@ macro_rules! search_games_by {
         paste! {
             /// Return the games having the given field containing the given value
             pub fn [<search_games_by_ $field>](&self, pattern: &str, search_type: &SearchType) -> QueryResult<&Game> {
-                let mut games = GameFilter::default()
+                let games = GameFilter::default()
                         .[<set_ $field>](pattern)
                         .filter_games(self.games.values().collect(), search_type);
-                games.sort();
-                QueryResult {
-                    count: games.len(),
-                    items: games
-                }
+                QueryResult::new(games)
             }
         }
     };
@@ -58,12 +47,8 @@ macro_rules! get_all {
         paste! {
             /// Return all the chosen items of the database
             pub fn [<get_all_ $field>](&self) -> QueryResult<&Item> {
-                let mut items: Vec<&Item> = self.$field.keys().collect();
-                items.sort();
-                QueryResult{
-                    count: items.len(),
-                    items,
-                }
+                let items: Vec<&Item> = self.$field.keys().collect();
+                QueryResult::new(items)
             }
         }
     };
@@ -107,11 +92,7 @@ impl GameDataBase {
                 games.push(game);
             }
         }
-        games.sort();
-        QueryResult {
-            count: games.len(),
-            items: games,
-        }
+        QueryResult::new(games)
     }
     match_games_by!(tag);
     match_games_by!(year);
@@ -122,21 +103,18 @@ impl GameDataBase {
     match_games_by!(publi);
 
     search_games_by!(name);
+    search_games_by!(tag);
     search_games_by!(year);
     search_games_by!(engine);
     search_games_by!(runtime);
+    search_games_by!(genre);
     search_games_by!(dev);
     search_games_by!(publi);
-    search_games_by!(genre);
-    search_games_by!(tag);
 
     pub fn get_all_games(&self) -> QueryResult<&Game> {
         let mut games: Vec<&Game> = self.games.values().collect();
         games.sort();
-        QueryResult {
-            count: games.len(),
-            items: games,
-        }
+        QueryResult::new(games)
     }
     get_all!(tags);
     get_all!(engines);
