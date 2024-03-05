@@ -30,7 +30,7 @@
 //! extern crate libpobsd;
 //! use libpobsd::parser::{Parser, ParserResult, ParsingMode};
 //!
-//! // Create a paser in strict mode
+//! // Create a parser in strict mode
 //! let parser = Parser::new(ParsingMode::Strict);
 //! // Load the database
 //! let parser_result = parser.load_from_file("/path/to/games.db")

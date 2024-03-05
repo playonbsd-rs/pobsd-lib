@@ -1,6 +1,7 @@
 //! Provides a representations of the game in the PlayOnBSD database.
 use super::store_links::StoreLinks;
 use crate::db::SearchType;
+use crate::parser::field::Field;
 
 use paste::paste;
 use std::cmp::{Ordering, PartialOrd};
@@ -191,99 +192,26 @@ impl AsRef<Game> for Game {
 /// for details.
 impl fmt::Display for Game {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let game = format!("Game\t{}", self.name);
-        let cover = match &self.cover {
-            Some(cover) => format!("Cover\t{}", cover),
-            None => "Cover".to_string(),
-        };
-        let engine = match &self.engine {
-            Some(engine) => format!("Engine\t{}", engine),
-            None => "Engine".to_string(),
-        };
-        let setup = match &self.setup {
-            Some(setup) => format!("Setup\t{}", setup),
-            None => "Setup".to_string(),
-        };
-        let runtime = match &self.runtime {
-            Some(runtime) => format!("Runtime\t{}", runtime),
-            None => "Runtime".to_string(),
-        };
-        let stores = match &self.stores {
-            Some(stores) => format!(
-                "Store\t{}",
-                stores
-                    .inner_ref()
-                    .iter()
-                    .map(|a| a.url.to_string())
-                    .collect::<Vec<String>>()
-                    .join(" ")
-            ),
-            None => "Store".to_string(),
-        };
-        let hints = match &self.hints {
-            Some(hints) => format!("Hints\t{}", hints),
-            None => "Hints".to_string(),
-        };
-        let genres = match &self.genres {
-            Some(genres) => format!("Genre\t{}", genres.join(", ")),
-            None => "Genre".to_string(),
-        };
-        let tags = match &self.tags {
-            Some(tags) => format!("Tags\t{}", tags.join(", ")),
-            None => "Tags".to_string(),
-        };
-        let year = match &self.year {
-            Some(year) => format!("Year\t{}", year),
-            None => "Year".to_string(),
-        };
-        let dev = match &self.devs {
-            Some(devs) => format!("Dev\t{}", devs.join(", ")),
-            None => "Dev".to_string(),
-        };
-        let publi = match &self.publis {
-            Some(publis) => format!("Pub\t{}", publis.join(", ")),
-            None => "Pub".to_string(),
-        };
-        let version = match &self.version {
-            Some(version) => format!("Version\t{}", version),
-            None => "Version".to_string(),
-        };
-        let status = match &self.status {
-            Some(status) => format!("Status\t{}", status),
-            None => "Status".to_string(),
-        };
-        let added = match &self.added {
-            Some(added) => format!("Added\t{}", added),
-            None => "Added".to_string(),
-        };
-        let updated = match &self.updated {
-            Some(updated) => format!("Updated\t{}", updated),
-            None => "Updated".to_string(),
-        };
-        let igdb_id = match &self.igdb_id {
-            Some(runtime) => format!("IgdbId\t{}", runtime),
-            None => "IgdbId".to_string(),
-        };
         write!(
             f,
             "{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}",
-            game,
-            cover,
-            engine,
-            setup,
-            runtime,
-            stores,
-            hints,
-            genres,
-            tags,
-            year,
-            dev,
-            publi,
-            version,
-            status,
-            added,
-            updated,
-            igdb_id,
+            Field::Game(Some(self.name.to_string())),
+            Field::Cover(self.cover.to_owned()),
+            Field::Engine(self.engine.to_owned()),
+            Field::Setup(self.setup.to_owned()),
+            Field::Runtime(self.runtime.to_owned()),
+            Field::Store(self.stores.to_owned()),
+            Field::Hints(self.hints.to_owned()),
+            Field::Genres(self.genres.to_owned()),
+            Field::Tags(self.tags.to_owned()),
+            Field::Year(self.year.to_owned()),
+            Field::Dev(self.devs.to_owned()),
+            Field::Publi(self.publis.to_owned()),
+            Field::Version(self.version.to_owned()),
+            Field::Status(self.status.to_owned()),
+            Field::Added(self.added.to_owned()),
+            Field::Updated(self.updated.to_owned()),
+            Field::IgdbId(self.igdb_id.to_owned()),
         )
     }
 }

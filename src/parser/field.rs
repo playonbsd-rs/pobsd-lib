@@ -98,16 +98,7 @@ impl fmt::Display for Field {
                 None => write!(f, "Status"),
             },
             Field::Store(name) => match name {
-                Some(StoreLinks(name)) => {
-                    write!(
-                        f,
-                        "Store\t{}",
-                        name.iter()
-                            .map(|a| a.url.to_string())
-                            .collect::<Vec<String>>()
-                            .join(" ")
-                    )
-                }
+                Some(name) => write!(f, "Store\t{}", name),
                 None => write!(f, "Store"),
             },
             Field::Genres(name) => match name {

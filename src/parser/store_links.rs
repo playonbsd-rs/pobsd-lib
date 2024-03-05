@@ -1,4 +1,6 @@
 //! Provides a representations for the store links associated to each game.
+use std::fmt::Display;
+
 use regex::Regex;
 
 /// Represents the store in which the game is available
@@ -69,6 +71,12 @@ impl StoreLink {
     }
 }
 
+impl Display for StoreLink {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.url)
+    }
+}
+
 // Return the steam id from a store url
 fn get_steam_id(url: &str) -> Option<usize> {
     let re = Regex::new(r"https://store.steampowered.com/app/(\d+)(/?.+)?").unwrap();
@@ -116,6 +124,20 @@ impl StoreLinks {
         let links = self.inner_ref();
         let res: Vec<&StoreLink> = links.iter().filter(|a| a.store.eq(&Store::Gog)).collect();
         !res.is_empty()
+    }
+}
+
+impl Display for StoreLinks {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "{}",
+            self.0
+                .iter()
+                .map(|a| a.to_string())
+                .collect::<Vec<String>>()
+                .join(" ")
+        )
     }
 }
 
@@ -183,6 +205,14 @@ mod store_link_tests {
         assert_eq!(store.id, None);
         assert_eq!(store.store, Store::Unknown);
     }
+    #[test]
+    fn test_store_link_display() {
+        let store = StoreLink::from("https://unknown.com/app/1878910/LoupLaine/");
+        assert_eq!(
+            format!("{}", store),
+            String::from("https://unknown.com/app/1878910/LoupLaine/")
+        );
+    }
     // StoreLinks
     #[test]
     fn test_store_links_new_method() {
@@ -246,5 +276,15 @@ mod store_link_tests {
         let store = StoreLink::from("https://gog.com/app/1878910/LoupLaine/");
         st.push(store);
         assert!(st.has_gog());
+    }
+    #[test]
+    fn test_store_links_display() {
+        let v: Vec<StoreLink> = vec![];
+        let store = StoreLink::from("https://humblebundle.com/app/1878910/LoupLaine/");
+        let mut st = StoreLinks::new(v);
+        st.push(store);
+        let store = StoreLink::from("https://gog.com/app/1878910/LoupLaine/");
+        st.push(store);
+        assert_eq!(format!("{}", st), String::from("https://humblebundle.com/app/1878910/LoupLaine/ https://gog.com/app/1878910/LoupLaine/"));
     }
 }
