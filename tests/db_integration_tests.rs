@@ -79,7 +79,7 @@ fn test_get_game_by_name_game_does_not_exist() {
 #[test]
 fn test_get_game_by_ids_with_existing_games() {
     let db = get_db_strict();
-    let games = db.get_game_by_ids(vec![1595434339, 2316180984]);
+    let games = db.match_games_by_ids(vec![1595434339, 2316180984]);
     let games = games.into_inner();
     assert_eq!(games.len(), 2);
     assert_eq!(&games[0].name, "Airships: Conquer the Skies");
@@ -88,7 +88,7 @@ fn test_get_game_by_ids_with_existing_games() {
 #[test]
 fn test_get_game_by_ids_with_some_existing_games() {
     let db = get_db_strict();
-    let games = db.get_game_by_ids(vec![1595434339, 1]);
+    let games = db.match_games_by_ids(vec![1595434339, 1]);
     let games = games.into_inner();
     assert_eq!(games.len(), 1);
     assert_eq!(&games[0].name, "Airships: Conquer the Skies");
@@ -96,7 +96,7 @@ fn test_get_game_by_ids_with_some_existing_games() {
 #[test]
 fn test_get_game_by_ids_empty_vec() {
     let db = get_db_strict();
-    let games = db.get_game_by_ids(vec![]);
+    let games = db.match_games_by_ids(vec![]);
     let games = games.into_inner();
     assert_eq!(games.len(), 0);
 }

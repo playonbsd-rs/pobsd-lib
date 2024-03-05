@@ -70,22 +70,9 @@ macro_rules! get_all {
 }
 
 impl GameDataBase {
+    /// Return the game with the given id
     pub fn get_game_by_id(&self, game_id: u32) -> Option<&Game> {
         self.games.get(&game_id)
-    }
-    /// Return the game with the given ids
-    pub fn get_game_by_ids(&self, game_ids: Vec<u32>) -> QueryResult<&Game> {
-        let mut games: Vec<&Game> = Vec::new();
-        for game_id in game_ids {
-            if let Some(game) = self.get_game_by_id(game_id) {
-                games.push(game);
-            }
-        }
-        games.sort();
-        QueryResult {
-            count: games.len(),
-            items: games,
-        }
     }
     /// Return the first game found with the given name
     pub fn get_game_by_name(&self, name: &str, search_type: &SearchType) -> Option<&Game> {
@@ -110,6 +97,21 @@ impl GameDataBase {
             }
         }
         None
+    }
+
+    /// Return the games with the given ids
+    pub fn match_games_by_ids(&self, game_ids: Vec<u32>) -> QueryResult<&Game> {
+        let mut games: Vec<&Game> = Vec::new();
+        for game_id in game_ids {
+            if let Some(game) = self.get_game_by_id(game_id) {
+                games.push(game);
+            }
+        }
+        games.sort();
+        QueryResult {
+            count: games.len(),
+            items: games,
+        }
     }
     match_games_by!(tag);
     match_games_by!(year);
