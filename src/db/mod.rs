@@ -9,9 +9,7 @@
 //! ## Examples
 //! Create a GameDataBase from the PlayOnBSD database.
 //! ```no_run
-//! extern crate libpobsd;
-//! use libpobsd::db::GameDataBase;
-//! use libpobsd::parser::{Game, Parser, ParserResult, ParsingMode};
+//! use libpobsd::{GameDataBase, Game, Parser, ParserResult, ParsingMode, SearchType};
 //! // loading the games from the database
 //! let games = match Parser::new(ParsingMode::Strict)
 //!        .load_from_file("games.db")
@@ -24,9 +22,7 @@
 //!```
 //! Get a game by name.
 //! ```no_run
-//! # extern crate libpobsd;
-//! # use libpobsd::db::{GameDataBase, SearchType};
-//! # use libpobsd::parser::{Game, Parser, ParserResult, ParsingMode};
+//! # use libpobsd::{GameDataBase, Game, Parser, ParserResult, ParsingMode, SearchType};
 //! # let games = match Parser::new(ParsingMode::Strict)
 //! #       .load_from_file("games.db")
 //! #       .expect("Could not open the file")
@@ -42,9 +38,7 @@
 //!```
 //! Get all games associated to a given tag.
 //! ```no_run
-//! # extern crate libpobsd;
-//! # use libpobsd::db::GameDataBase;
-//! # use libpobsd::parser::{Game, Parser, ParserResult, ParsingMode};
+//! # use libpobsd::{GameDataBase, Game, Parser, ParserResult, ParsingMode};
 //! # let games = match Parser::new(ParsingMode::Strict)
 //! #       .load_from_file("games.db")
 //! #       .expect("Could not open the file")

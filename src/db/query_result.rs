@@ -1,9 +1,9 @@
 //! Provides a representation of the query result returned when
 //! interogating the database. Query results are themselves queryable
 //! and return another query result.
-use super::Item;
-use crate::db::{game_filer::GameFilter, SearchType};
-use crate::parser::Game;
+use crate::db::Item;
+use crate::{Game, GameFilter, SearchType};
+
 use paste::paste;
 
 macro_rules! filter_games_by {

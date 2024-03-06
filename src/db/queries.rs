@@ -1,9 +1,7 @@
-use super::database::GameDataBase;
-use super::query_result::QueryResult;
+use crate::db::Item;
+use crate::models::Store;
+use crate::{Game, GameDataBase, GameFilter, QueryResult, SearchType};
 
-use crate::db::game_filer::GameFilter;
-use crate::db::{Item, SearchType};
-use crate::parser::{Game, Store};
 use paste::paste;
 
 macro_rules! match_games_by {

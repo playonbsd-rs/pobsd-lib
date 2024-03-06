@@ -1,6 +1,4 @@
-extern crate libpobsd;
-use libpobsd::db::{GameDataBase, SearchType};
-use libpobsd::parser::{Game, Parser, ParserResult, ParsingMode};
+use libpobsd::{Game, GameDataBase, Parser, ParserResult, ParsingMode, SearchType};
 
 // HELPER FUNCTIONS
 

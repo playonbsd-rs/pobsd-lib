@@ -1,5 +1,4 @@
-extern crate libpobsd;
-use libpobsd::parser::{Game, Parser, ParserResult, ParsingMode};
+use libpobsd::{Game, Parser, ParserResult, ParsingMode};
 
 // HELPER FUNCTIONS
 // helper function to return the games with both

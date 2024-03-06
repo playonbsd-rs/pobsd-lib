@@ -11,8 +11,7 @@
 //! ### Examples
 //! Here is a first example loading a file in relaxed mode (by default).
 //! ```no_run
-//! extern crate libpobsd;
-//! use libpobsd::parser::{Parser, ParserResult};
+//! use libpobsd::{Parser, ParserResult};
 //!
 //! // Create a parser
 //! let parser = Parser::default();
@@ -27,8 +26,7 @@
 //! The parser can also use a strict mode in which it will stop when encountering
 //! a parsing error and returning the games it has processed.
 //! ```no_run
-//! extern crate libpobsd;
-//! use libpobsd::parser::{Parser, ParserResult, ParsingMode};
+//! use libpobsd::{Parser, ParserResult, ParsingMode};
 //!
 //! // Create a parser in strict mode
 //! let parser = Parser::new(ParsingMode::Strict);
@@ -42,8 +40,7 @@
 //! ```
 //! The parser can also load from a &str or a String.
 //! ```
-//! extern crate libpobsd;
-//! use libpobsd::parser::{Parser, ParserResult, ParsingMode};
+//! use libpobsd::{Parser, ParserResult, ParsingMode};
 //!
 //! let games = r#"Game	AaaaaAAaaaAAAaaAAAAaAAAAA!!! for the Awesome
 //! Cover	AaaaaA_for_the_Awesome_Cover.jpg

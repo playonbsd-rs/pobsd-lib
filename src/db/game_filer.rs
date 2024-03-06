@@ -1,5 +1,4 @@
-use super::SearchType;
-use crate::Game;
+use crate::{Game, SearchType};
 use paste::paste;
 
 macro_rules! gf_setter {
@@ -132,7 +131,7 @@ impl GameFilter {
 
 #[cfg(test)]
 mod game_tests {
-    use crate::parser::store_links::{StoreLink, StoreLinks};
+    use crate::models::store_links::{StoreLink, StoreLinks};
 
     use super::*;
     fn create_game() -> Game {

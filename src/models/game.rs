@@ -1,7 +1,7 @@
 //! Provides a representations of the game in the PlayOnBSD database.
-use super::store_links::StoreLinks;
-use crate::db::SearchType;
-use crate::parser::field::Field;
+use crate::models::field::Field;
+use crate::models::store_links::StoreLinks;
+use crate::SearchType;
 
 use paste::paste;
 use std::cmp::{Ordering, PartialOrd};
@@ -223,7 +223,7 @@ impl fmt::Display for Game {
 
 #[cfg(test)]
 mod game_tests {
-    use crate::parser::store_links::StoreLink;
+    use crate::models::store_links::StoreLink;
 
     use super::*;
     fn create_game() -> Game {

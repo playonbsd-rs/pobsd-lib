@@ -2,13 +2,14 @@
 //! the [PlayOnBSD Database](https://github.com/playonbsd/OpenBSD-Games-Database)
 //! (either provided as a string or as a file) into a vector of [`Game`] objects.
 //!
+
+use crate::models::field::Field;
+use crate::Game;
+
 use hash32::{FnvHasher, Hasher};
 use std::fs;
 use std::hash::Hash;
 use std::path::Path;
-
-use super::field::Field;
-use super::game::Game;
 
 pub trait State {}
 

@@ -1,6 +1,7 @@
 //! Provide a representation of the PlayOnBSD database than can be
 //! queried using a set of predefined methods.
-use crate::parser::Game;
+use crate::models::Game;
+
 use paste::paste;
 use std::collections::HashMap;
 
