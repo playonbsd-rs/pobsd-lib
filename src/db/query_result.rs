@@ -86,6 +86,15 @@ impl<'a> QueryResult<&'a Game> {
     filter_games_by!(tag);
 }
 
+impl<T> IntoIterator for QueryResult<T> {
+    type Item = T;
+    type IntoIter = std::vec::IntoIter<Self::Item>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.items.into_iter()
+    }
+}
+
 #[cfg(test)]
 mod query_results_tests {
     use crate::QueryResult;

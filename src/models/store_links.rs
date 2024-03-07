@@ -131,6 +131,15 @@ impl StoreLinks {
     }
 }
 
+impl IntoIterator for StoreLinks {
+    type Item = StoreLink;
+    type IntoIter = std::vec::IntoIter<Self::Item>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.0.into_iter()
+    }
+}
+
 impl Display for StoreLinks {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(
