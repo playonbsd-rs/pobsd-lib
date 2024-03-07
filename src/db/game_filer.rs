@@ -1,5 +1,8 @@
 use crate::{Game, SearchType};
+
 use paste::paste;
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Serialize};
 
 macro_rules! gf_setter {
     ($field:ident) => {
@@ -13,6 +16,7 @@ macro_rules! gf_setter {
 }
 
 #[derive(Clone, Default, Debug, PartialEq, Eq)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct GameFilter {
     /// The name of the game.
     pub name: Option<String>,

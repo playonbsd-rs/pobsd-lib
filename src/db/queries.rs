@@ -106,6 +106,15 @@ impl GameDataBase {
     search_games_by!(dev);
     search_games_by!(publi);
 
+    pub fn search_game_by_filter(
+        &self,
+        search_type: &SearchType,
+        filter: &GameFilter,
+    ) -> QueryResult<&Game> {
+        let games = filter.filter_games(self.games.values().collect(), search_type);
+        QueryResult::new(games)
+    }
+
     pub fn get_all_games(&self) -> QueryResult<&Game> {
         let mut games: Vec<&Game> = self.games.values().collect();
         games.sort();

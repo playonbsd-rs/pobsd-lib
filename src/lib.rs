@@ -98,9 +98,6 @@
 pub mod db;
 #[allow(clippy::tabs_in_doc_comments)]
 pub mod models;
-#[macro_use]
-extern crate serde_derive;
-extern crate serde_json;
 
 pub use crate::db::game_filer::GameFilter;
 pub use crate::db::GameDataBase;

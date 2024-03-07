@@ -4,6 +4,8 @@ use crate::models::store_links::StoreLinks;
 use crate::SearchType;
 
 use paste::paste;
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Serialize};
 use std::cmp::{Ordering, PartialOrd};
 use std::fmt;
 
@@ -88,7 +90,8 @@ macro_rules! game_contains {
 /// ### PartialOrd
 /// The [`Game`] struct implements the [`core::cmp::PartialOrd`] trait
 /// and [`Game`] objects are ordered according to their name (without The or A).
-#[derive(Serialize, Clone, Default, Debug, PartialEq, Eq)]
+#[derive(Clone, Default, Debug, PartialEq, Eq)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct Game {
     /// An unique identifier generated from the name and added fields
     pub uid: u32,
@@ -113,10 +116,10 @@ pub struct Game {
     /// Released year (can be text such as "early access".
     pub year: Option<String>,
     /// Developer.
-    #[serde(rename = "dev")]
+    #[cfg_attr(feature = "serde", serde(rename = "dev"))]
     pub devs: Option<Vec<String>>,
     /// Publisher.
-    #[serde(rename = "pub")]
+    #[cfg_attr(feature = "serde", serde(rename = "pub"))]
     pub publis: Option<Vec<String>>,
     /// Version of the game.
     pub version: Option<String>,

@@ -5,6 +5,8 @@ use crate::db::Item;
 use crate::{Game, GameFilter, SearchType};
 
 use paste::paste;
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Serialize};
 
 macro_rules! filter_games_by {
     ($field:ident) => {
@@ -20,6 +22,7 @@ macro_rules! filter_games_by {
 
 /// Queryable representation of the result of a query
 #[derive(Default, Debug, Clone)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct QueryResult<T> {
     /// Number of items in the query result
     pub count: usize,

@@ -3,6 +3,8 @@
 use crate::models::Game;
 
 use paste::paste;
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
 macro_rules! load_game {
@@ -46,7 +48,8 @@ macro_rules! add_game_to {
 }
 
 /// Queryable representation of the PlayOnBSD database
-#[derive(Default)]
+#[derive(Default, Clone)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct GameDataBase {
     /// HashMap using the game uid as key and the corresponding game as value
     pub(crate) games: HashMap<u32, Game>,

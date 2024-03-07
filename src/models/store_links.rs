@@ -1,10 +1,12 @@
 //! Provides a representations for the store links associated to each game.
+use regex::Regex;
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Serialize};
 use std::fmt::Display;
 
-use regex::Regex;
-
 /// Represents the store in which the game is available
-#[derive(Serialize, Clone, Default, Debug, PartialEq, Eq)]
+#[derive(Clone, Default, Debug, PartialEq, Eq)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub enum Store {
     Steam,
     Gog,
@@ -17,7 +19,8 @@ pub enum Store {
 }
 
 /// Represent a store link
-#[derive(Serialize, Clone, Default, Debug, PartialEq, Eq)]
+#[derive(Clone, Default, Debug, PartialEq, Eq)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct StoreLink {
     /// Store related to the link
     pub store: Store,
@@ -89,7 +92,8 @@ fn get_steam_id(url: &str) -> Option<usize> {
 }
 
 /// Represent a collection of store links
-#[derive(Serialize, Clone, Default, Debug, PartialEq, Eq)]
+#[derive(Clone, Default, Debug, PartialEq, Eq)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct StoreLinks(pub Vec<StoreLink>);
 
 impl StoreLinks {
