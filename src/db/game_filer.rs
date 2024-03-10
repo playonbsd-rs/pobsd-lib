@@ -131,6 +131,17 @@ impl GameFilter {
             .filter(|x| self.check_game(x, search_type))
             .collect()
     }
+    pub fn is_empty(&self) -> bool {
+        self.name.is_none()
+            && self.engine.is_none()
+            && self.runtime.is_none()
+            && self.genre.is_none()
+            && self.tag.is_none()
+            && self.year.is_none()
+            && self.dev.is_none()
+            && self.publi.is_none()
+            && self.status.is_none()
+    }
 }
 
 #[cfg(test)]
