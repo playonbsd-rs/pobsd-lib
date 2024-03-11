@@ -1,13 +1,17 @@
 //! Provides a representations of the game in the PlayOnBSD database.
 use crate::models::field::Field;
+use crate::models::game_status::GameStatus;
 use crate::models::store_links::StoreLinks;
 use crate::SearchType;
 
+use chrono::NaiveDate;
 use paste::paste;
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 use std::cmp::{Ordering, PartialOrd};
 use std::fmt;
+
+use super::game_status::Status;
 
 macro_rules! game_contains {
     (name) => {
@@ -124,11 +128,11 @@ pub struct Game {
     /// Version of the game.
     pub version: Option<String>,
     /// When tested on -current.
-    pub status: Option<String>,
+    pub status: GameStatus,
     /// When added
-    pub added: Option<String>,
+    pub added: NaiveDate,
     /// When updated
-    pub updated: Option<String>,
+    pub updated: NaiveDate,
     /// The IGDB Id of the game
     pub igdb_id: Option<String>,
 }
@@ -155,12 +159,15 @@ impl<'a> Game {
     game_contains!(engine);
     game_contains!(runtime);
     game_contains!(year);
-    game_contains!(status);
 
     game_contains!(array genres);
     game_contains!(array tags);
     game_contains!(array devs);
     game_contains!(array publis);
+
+    pub fn status_is(&self, status: Status) -> bool {
+        self.status.status.eq(&status)
+    }
 }
 
 impl PartialOrd for Game {
@@ -250,9 +257,9 @@ mod game_tests {
         game.devs = Some(vec!["game dev".to_string()]);
         game.publis = Some(vec!["game publi".to_string()]);
         game.version = Some("game version".to_string());
-        game.status = Some("game status".to_string());
-        game.added = Some("2012-12-03".to_string());
-        game.updated = Some("2014-12-03".to_string());
+        game.status = GameStatus::new(Status::DoesNotRun, Some("game status".to_string()));
+        game.added = NaiveDate::parse_from_str("2012-12-03", "%Y-%m-%d").unwrap();
+        game.updated = NaiveDate::parse_from_str("2014-12-03", "%Y-%m-%d").unwrap();
         game
     }
     #[test]
@@ -339,8 +346,8 @@ Dev
 Pub
 Version
 Status
-Added
-Updated
+Added\t1970-01-01
+Updated\t1970-01-01
 IgdbId";
         let game = Game {
             uid: 12,
@@ -359,9 +366,9 @@ IgdbId";
             devs: None,
             publis: None,
             version: None,
-            status: None,
-            added: None,
-            updated: None,
+            status: GameStatus::default(),
+            added: NaiveDate::default(),
+            updated: NaiveDate::default(),
             igdb_id: None,
         };
         assert_eq!(format!("{}", game), game_str);
@@ -381,7 +388,7 @@ Year
 Dev\tdev1
 Pub\tpub1
 Version\tver1
-Status\tfine
+Status\t0 fine
 Added\t1970-01-01
 Updated\t1970-01-02
 IgdbId\t1234";
@@ -400,9 +407,9 @@ IgdbId\t1234";
             devs: Some(vec!["dev1".to_string()]),
             publis: Some(vec!["pub1".to_string()]),
             version: Some("ver1".to_string()),
-            status: Some("fine".to_string()),
-            added: Some("1970-01-01".to_string()),
-            updated: Some("1970-01-02".to_string()),
+            status: GameStatus::new(Status::DoesNotRun, Some("fine".to_string())),
+            added: NaiveDate::parse_from_str("1970-01-01", "%Y-%m-%d").unwrap(),
+            updated: NaiveDate::parse_from_str("1970-01-02", "%Y-%m-%d").unwrap(),
             igdb_id: Some("1234".to_string()),
         };
         assert_eq!(format!("{}", game), game_str);
@@ -520,30 +527,8 @@ IgdbId\t1234";
     #[test]
     fn test_status_contains() {
         let game = create_game();
-        let st = SearchType::CaseSensitive;
-        assert!(game.status_contains("game", &st));
-        assert!(game.status_contains("status", &st));
-        assert!(game.status_contains("game status", &st));
-        assert!(!game.status_contains("good", &st));
-        let st = SearchType::NotCaseSensitive;
-        assert!(game.status_contains("game", &st));
-        assert!(game.status_contains("status", &st));
-        assert!(game.status_contains("game status", &st));
-        assert!(!game.status_contains("good", &st));
-    }
-    #[test]
-    fn test_status_contains_is_case_sensitive() {
-        let game = create_game();
-        let st = SearchType::CaseSensitive;
-        assert!(game.status_contains("status", &st));
-        assert!(!game.status_contains("Status", &st));
-    }
-    #[test]
-    fn test_status_contains_is_not_case_sensitive() {
-        let game = create_game();
-        let st = SearchType::NotCaseSensitive;
-        assert!(game.status_contains("status", &st));
-        assert!(game.status_contains("Status", &st));
+        let status = Status::DoesNotRun;
+        assert!(game.status_is(status));
     }
     #[test]
     fn test_genres_contains() {

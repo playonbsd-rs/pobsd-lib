@@ -1,4 +1,4 @@
-use crate::{Game, SearchType};
+use crate::{models::game_status::GameStatus, Game, SearchType};
 
 use paste::paste;
 #[cfg(feature = "serde")]
@@ -35,7 +35,7 @@ pub struct GameFilter {
     /// Publisher.
     pub publi: Option<String>,
     /// When tested on -current.
-    pub status: Option<String>,
+    pub status: Option<GameStatus>,
 }
 
 impl GameFilter {
@@ -49,7 +49,7 @@ impl GameFilter {
         year: Option<String>,
         dev: Option<String>,
         publi: Option<String>,
-        status: Option<String>,
+        status: Option<GameStatus>,
     ) -> Self {
         Self {
             name,
@@ -71,7 +71,10 @@ impl GameFilter {
     gf_setter!(year);
     gf_setter!(dev);
     gf_setter!(publi);
-    gf_setter!(status);
+    pub fn set_status(&mut self, status: GameStatus) -> &mut Self {
+        self.status = Some(status);
+        self
+    }
 
     pub fn check_game<T: AsRef<Game>>(
         &self,
@@ -112,7 +115,7 @@ impl GameFilter {
             None => false,
         };
         let check_status = match &self.status {
-            Some(status) => game.as_ref().status_contains(status, search_type),
+            Some(status) => game.as_ref().status.eq(status),
             None => false,
         };
         check_name
@@ -146,7 +149,11 @@ impl GameFilter {
 
 #[cfg(test)]
 mod game_tests {
-    use crate::models::store_links::{StoreLink, StoreLinks};
+    use crate::models::{
+        game_status::GameStatus,
+        store_links::{StoreLink, StoreLinks},
+    };
+    use chrono::NaiveDate;
 
     use super::*;
     fn create_game() -> Game {
@@ -170,9 +177,12 @@ mod game_tests {
         game.devs = Some(vec!["game dev".to_string()]);
         game.publis = Some(vec!["game publi".to_string()]);
         game.version = Some("game version".to_string());
-        game.status = Some("game status".to_string());
-        game.added = Some("2012-12-03".to_string());
-        game.updated = Some("2014-12-03".to_string());
+        game.status = GameStatus::new(
+            crate::models::game_status::Status::Unknown,
+            Some("game status".to_string()),
+        );
+        game.added = NaiveDate::parse_from_str("2012-12-03", "%Y-%m-%d").unwrap();
+        game.updated = NaiveDate::parse_from_str("2014-12-03", "%Y-%m-%d").unwrap();
         game
     }
     #[test]
@@ -243,17 +253,28 @@ mod game_tests {
     fn test_check_game_status() {
         let game = create_game();
         let mut filter = GameFilter::default();
-        filter.set_status("Game status");
+        let status = GameStatus::new(
+            crate::models::game_status::Status::Unknown,
+            Some("game status".to_string()),
+        );
+        filter.set_status(status);
         assert!(filter.check_game(&game, &SearchType::NotCaseSensitive));
-        assert!(!filter.check_game(&game, &SearchType::CaseSensitive));
+        // Status is not case sensitive, should return a result as well
+        assert!(filter.check_game(&game, &SearchType::CaseSensitive));
     }
     #[test]
     fn test_check_game_status_and_publis() {
         let game = create_game();
         let mut filter = GameFilter::default();
-        filter.set_status("Game status").set_publi("Game publi");
+        let status = GameStatus::new(
+            crate::models::game_status::Status::Unknown,
+            Some("game status".to_string()),
+        );
+        filter.set_status(status.clone());
+        filter.set_status(status).set_publi("Game publi");
         assert!(filter.check_game(&game, &SearchType::NotCaseSensitive));
-        assert!(!filter.check_game(&game, &SearchType::CaseSensitive));
+        // Status is not case sensitive, should return a result as well
+        assert!(filter.check_game(&game, &SearchType::CaseSensitive));
     }
     #[test]
     fn test_filter_game_status_and_publis() {

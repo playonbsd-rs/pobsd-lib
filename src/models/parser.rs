@@ -131,7 +131,11 @@ impl Parser {
         }
         for game in &mut self.games {
             let mut fnv = FnvHasher::default();
-            game.added.hash(&mut fnv);
+            // This is ugly but for compatibility
+            // uid should not change while updating
+            // libpobsd
+            let added = game.added.format("%Y-%m-%d").to_string();
+            Some(added).hash(&mut fnv);
             game.name.hash(&mut fnv);
             game.uid = fnv.finish32();
         }

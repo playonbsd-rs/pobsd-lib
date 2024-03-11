@@ -89,6 +89,7 @@
 pub(crate) mod parser_macros;
 pub(crate) mod field;
 pub mod game;
+pub mod game_status;
 pub mod parser;
 pub(crate) mod split_line;
 pub mod store_links;

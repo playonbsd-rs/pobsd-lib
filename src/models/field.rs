@@ -1,7 +1,11 @@
+use chrono::NaiveDate;
+
 use crate::models::split_line::split_line;
 use crate::models::store_links::{StoreLink, StoreLinks};
 
 use std::fmt;
+
+use super::game_status::{GameStatus, Status};
 
 /* ------------------------ FIELD ENUM -----------------------*/
 /// The Field enum is a representations of a line
@@ -31,7 +35,7 @@ pub enum Field {
     /// Store the result of a Version line of the database
     Version(Option<String>),
     /// Store the result of a Status line of the database
-    Status(Option<String>),
+    Status(GameStatus),
     /// Store the result of a Store line of the database
     /// Stores are stored in a vector
     Store(Option<StoreLinks>),
@@ -44,9 +48,9 @@ pub enum Field {
     /// Store the result of a Year line of the database
     Year(Option<String>),
     /// When the game was added
-    Added(Option<String>),
+    Added(NaiveDate),
     /// When the game was last updated
-    Updated(Option<String>),
+    Updated(NaiveDate),
     /// The id of the game in the IGDB database
     IgdbId(Option<String>),
     /// Store the result of a unknown line of the database
@@ -94,9 +98,9 @@ impl fmt::Display for Field {
                 Some(name) => write!(f, "Version\t{}", name),
                 None => write!(f, "Version"),
             },
-            Field::Status(name) => match name {
-                Some(name) => write!(f, "Status\t{}", name),
-                None => write!(f, "Status"),
+            Field::Status(name) => match name.status {
+                Status::Unknown => write!(f, "Status"),
+                _ => write!(f, "Status\t{}", name),
             },
             Field::Store(name) => match name {
                 Some(name) => write!(f, "Store\t{}", name),
@@ -114,14 +118,8 @@ impl fmt::Display for Field {
                 Some(name) => write!(f, "Year\t{}", name),
                 None => write!(f, "Year"),
             },
-            Field::Added(name) => match name {
-                Some(name) => write!(f, "Added\t{}", name),
-                None => write!(f, "Added"),
-            },
-            Field::Updated(name) => match name {
-                Some(name) => write!(f, "Updated\t{}", name),
-                None => write!(f, "Updated"),
-            },
+            Field::Added(date) => write!(f, "Added\t{}", date.format("%Y-%m-%d")),
+            Field::Updated(date) => write!(f, "Updated\t{}", date.format("%Y-%m-%d")),
             Field::IgdbId(name) => match name {
                 Some(name) => write!(f, "IgdbId\t{}", name),
                 None => write!(f, "IgdbId"),
@@ -196,8 +194,8 @@ impl Field {
                     None => Field::Version(None),
                 },
                 "Status" => match right {
-                    Some(right) => Field::Status(Some(right.into())),
-                    None => Field::Status(None),
+                    Some(right) => Field::Status(GameStatus::from_line(right)),
+                    None => Field::Status(GameStatus::default()),
                 },
                 // Store does not use the same separator than Genre and Tags
                 "Store" => match right {
@@ -236,12 +234,16 @@ impl Field {
                     None => Field::Year(None),
                 },
                 "Added" => match right {
-                    Some(right) => Field::Added(Some(right.into())),
-                    None => Field::Added(Some("1970-01-01".into())),
+                    Some(right) => Field::Added(
+                        NaiveDate::parse_from_str(right, "%Y-%m-%d").unwrap_or_default(),
+                    ),
+                    None => Field::Added(NaiveDate::default()),
                 },
                 "Updated" => match right {
-                    Some(right) => Field::Updated(Some(right.into())),
-                    None => Field::Updated(None),
+                    Some(right) => Field::Updated(
+                        NaiveDate::parse_from_str(right, "%Y-%m-%d").unwrap_or_default(),
+                    ),
+                    None => Field::Updated(NaiveDate::default()),
                 },
                 "IgdbId" => match right {
                     Some(right) => Field::IgdbId(Some(right.into())),
@@ -373,13 +375,16 @@ mod field_tests {
     }
     #[test]
     fn test_from_status_line() {
-        let input = "Status\tToto";
+        let input = "Status\t0 Toto";
         let field = Field::from(&input);
-        assert_eq!(Field::Status(Some("Toto".into())), field);
+        assert_eq!(
+            Field::Status(GameStatus::new(Status::DoesNotRun, Some("Toto".into()))),
+            field
+        );
         assert_eq!(format!("{}", field), input);
         let input = "Status";
         let field = Field::from(&input);
-        assert_eq!(Field::Status(None), field);
+        assert_eq!(Field::Status(GameStatus::new(Status::Unknown, None)), field);
         assert_eq!(format!("{}", field), input);
     }
     #[test]
@@ -440,27 +445,40 @@ mod field_tests {
     }
     #[test]
     fn test_from_added_line() {
-        let input = "Added\t1980-14-01";
+        let input = "Added\t1980-11-01";
         let field = Field::from(&input);
-        assert_eq!(Field::Added(Some("1980-14-01".into())), field);
+        assert_eq!(
+            Field::Added(NaiveDate::parse_from_str("1980-11-01", "%Y-%m-%d").unwrap()),
+            field
+        );
         assert_eq!(format!("{}", field), input);
         let input = "Added";
         let field = Field::from(&input);
-        assert_eq!(Field::Added(Some("1970-01-01".to_string())), field);
+        assert_eq!(
+            Field::Added(NaiveDate::parse_from_str("1970-01-01", "%Y-%m-%d").unwrap()),
+            field
+        );
         assert_eq!(format!("{}", field), format!("{}\t1970-01-01", input));
         // should not happen normally but check if
         // it works as expected just in case.
-        assert_eq!(format!("{}", Field::Added(None)), "Added");
+        assert_eq!(
+            format!("{}", Field::Added(NaiveDate::default())),
+            format!("Added\t1970-01-01")
+        );
     }
     #[test]
     fn test_from_updated_line() {
-        let input = "Updated\t1980-14-01";
+        let input = "Updated\t1980-12-01";
         let field = Field::from(&input);
-        assert_eq!(Field::Updated(Some("1980-14-01".into())), field);
+        assert_eq!(
+            Field::Updated(NaiveDate::parse_from_str("1980-12-01", "%Y-%m-%d").unwrap()),
+            field
+        );
         assert_eq!(format!("{}", field), input);
         let input = "Updated";
         let field = Field::from(&input);
-        assert_eq!(Field::Updated(None), field);
+        let input = "Updated\t1970-01-01";
+        assert_eq!(Field::Updated(NaiveDate::default()), field);
         assert_eq!(format!("{}", field), input);
     }
     #[test]
