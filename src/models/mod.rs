@@ -2,11 +2,12 @@
 //! [`Game`], [`StoreLink`] or [`GameStatus`].
 //!
 //! In particular, this module provides:
-//! * A [`Parser`] struct handling the parsing
-//! * A [`ParsingMode`] enum to choose the parsing mode betweena strict and a relax mode
-//! * A [`ParserResult`] struct to handle parsing with and without error
-//! * A [`Game`] struct representing a game of a database
-//! * A [`StoreLinks`] struct, a [`StoreLink`] structs and [`Store`] enum to represent store links for each game
+//! * A [`Game`] struct representing a game of the PlayOnBSD database
+//! * A [`StoreLink`] struct representing each store link (store field in the
+//! PlayOnBSD database). Multiple [`StoreLink`] can be stored in a [`StoreLinks`]
+//! collection.
+//! * A [`GameStatus`] struct representing the status of a Game (the status
+//! itself as a [`Status`] enum and the optional associated comment.
 //!
 //! ### Examples
 //! The parser can also load from a &str or a String.

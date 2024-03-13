@@ -86,11 +86,6 @@ macro_rules! game_contains {
 /// and Pub translate to publi since pub is a reserved
 /// keyword in Rust.
 ///
-/// All fields are optional strings or vectors of strings
-/// except for the name of the game which is mandatory.
-/// The parser does not try to be smart with dates and
-/// just store them as string.
-///
 /// ### Display
 /// The [`Game`] struct implement the [`core::fmt::Display`] trait
 /// and will be displayed as it would appear in the
