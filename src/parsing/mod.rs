@@ -1,7 +1,88 @@
 //! Provides a simplistic [`Parser`] that converts
 //! the [PlayOnBSD Database](https://github.com/playonbsd/OpenBSD-Games-Database)
-//! (either provided as a string or as a file) into a vector of [`Game`] objects.
+//! (either provided as a string or as a file) into a vector of [`Game`].
 //!
+//! ### Examples
+//! Here is a first example loading a file in relaxed mode (by default).
+//! ```no_run
+//! use libpobsd::{Parser, ParserResult};
+//!
+//! // Create a parser
+//! let parser = Parser::default();
+//! // Load the database
+//! let parser_result = parser.load_from_file("/path/to/games.db")
+//!        .expect("Problem trying to open the file");
+//! let games = match parser_result {
+//!        ParserResult::WithoutError(games) => games,
+//!        ParserResult::WithError(games, _) => games,
+//!    };
+//! ```
+//! The parser can also use a strict mode in which it will stop when encountering
+//! a parsing error and returning the games it has processed.
+//! ```no_run
+//! use libpobsd::{Parser, ParserResult, ParsingMode};
+//!
+//! // Create a parser in strict mode
+//! let parser = Parser::new(ParsingMode::Strict);
+//! // Load the database
+//! let parser_result = parser.load_from_file("/path/to/games.db")
+//!        .expect("Problem trying to open the file");
+//! let games = match parser_result {
+//!     ParserResult::WithoutError(games) => games,
+//!     ParserResult::WithError(games, _) => games,
+//! };
+//! ```
+//! The parser can also load from a [`&str`] or a [`String`].
+//! ```
+//! use libpobsd::{Parser, ParserResult, ParsingMode, Game};
+//!
+//! let games = r#"Game	AaaaaAAaaaAAAaaAAAAaAAAAA!!! for the Awesome
+//! Cover	AaaaaA_for_the_Awesome_Cover.jpg
+//! Engine
+//! Setup
+//! Runtime	HumblePlay
+//! Store	https://www.humblebundle.com/store/aaaaaaaaaaaaaaaaaaaaaaaaa-for-the-awesome
+//! Hints	Demo on HumbleBundle store page
+//! Genre
+//! Tags
+//! Year	2011
+//! Dev
+//! Pub
+//! Version
+//! Status
+//! Added	1970-01-01
+//! Updated	1970-01-01
+//! IgdbId	12
+//! Game	The Adventures of Mr. Hat
+//! Cover
+//! Engine	godot
+//! Setup
+//! Runtime	godot
+//! Store	https://store.steampowered.com/app/1869200/The_Adventures_of_Mr_Hat/
+//! Hints
+//! Genre	Puzzle Platformer
+//! Tags	indie
+//! Year
+//! Dev	AX-GAME
+//! Pub	Fun Quarter
+//! Version	Early Access
+//! Status	runs (2022-05-13)
+//! Added	2022-05-13
+//! Updated	2022-05-13
+//! IgdbId	13"#;
+//!
+//! let parser = Parser::default();
+//! let games = match parser.load_from_string(games) {
+//!     ParserResult::WithoutError(games) => games,
+//!     // Should not panic since the data are fine
+//!     ParserResult::WithError(_, _) => panic!(),
+//! };
+//! let game1: &Game = games.get(1).unwrap();
+//! assert_eq!(Some(String::from("godot")), game1.engine);
+//!
+//! ```
+#[macro_use]
+pub(crate) mod parser_macros;
 
 use crate::models::field::Field;
 use crate::Game;
@@ -10,8 +91,6 @@ use hash32::{FnvHasher, Hasher};
 use std::fs;
 use std::hash::Hash;
 use std::path::Path;
-
-pub trait State {}
 
 enum ParserState {
     Game,
@@ -35,32 +114,31 @@ enum ParserState {
     Recovering,
 }
 
-/// The [`ParsingMode`] enum is used to represent the two parsing modes
-/// supported by [`Parser`]:
-/// * a **strict mode** in which the parsing
-///  will stop if a parsing error occurs returning the games processed
-/// before the error as well as the line in the input (file or string)
-/// where the error occurred;
-/// * a **relaxed mode** in which the parsing
-/// will continue even after an error is encountered, the parsing
-/// resuming when reaching the next game after the parsing error
-/// ; it returns all the games that have been parsed as well as
-/// the lines that were ignored due to parsing errors.
+/// Represent the two parsing modes supported by [`Parser`].
 pub enum ParsingMode {
+    /// In **strict mode**, the parsing will stop if a parsing error occurs
+    /// returning the games processed before the error as well as the line
+    /// in the input (file or string) where the error occurred.
     Strict,
+    /// In **relaxed mode**, the parsing will continue even after an error
+    /// is encountered, the parsing resuming when reaching the next game
+    /// after the parsing error, and returning all the games that have been
+    /// parsed as well as the line numbers that were ignored due to parsing
+    /// errors.
     Relaxed,
 }
 
-/// Represent the result of the parsing.
-///
-/// If there is no error, the [`ParserResult::WithoutError`] variant
-/// is returned holding a vector of the games in the database. If there
-/// is at least one error, the [`ParserResult::WithError`] variant is
-/// returned holding a vector of the games in the database and a vector
-/// of the lines where errors occurred. If in strict mode only the games
-/// parsed before the error occurred will be returned.
+/// Represent the result of the parsing. When in in strict mode,
+/// only the games parsed before a parsing error occurred will
+/// be returned. In relaxed mode, the parser will do its best
+/// to continue parsing games.
 pub enum ParserResult {
+    /// Result of the parsing when an error occurred. It holds a vector
+    /// of [`Game`] parsed from the database and a vector of the lines where
+    /// errors occurred.
     WithError(Vec<Game>, Vec<usize>),
+    /// Result of the parsing when no error occurred. It holds a vector
+    /// of [`Game`] parsed from the database.
     WithoutError(Vec<Game>),
 }
 
@@ -72,8 +150,9 @@ impl From<ParserResult> for Vec<Game> {
         }
     }
 }
-/// Parser provides a parser that can be created using the [`Parser::new`] method
-/// which takes a [`ParsingMode`] enum as only argument.
+/// [`Parser`] parses the PlayOnBSD database provided as a [`&str`] or from
+/// a file and returns a [`ParserResult`] holding a vector of [`Game`] contained
+/// in the PlayOnBSD database.
 pub struct Parser {
     state: ParserState,
     games: Vec<Game>,
@@ -94,7 +173,7 @@ impl Default for Parser {
     }
 }
 impl Parser {
-    /// Crate a parser with a given parsing mode
+    /// Crate a [`Parser`] set to the given parsing mode.
     pub fn new(mode: ParsingMode) -> Self {
         Self {
             state: ParserState::Game,

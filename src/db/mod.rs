@@ -1,10 +1,10 @@
-//! Povides a [`GameDataBase`] struct and a [`QueryResult`] struct
+//! Povides a [`GameDataBase`], [`GameFilter`] and a [`QueryResult`]
 //! each struct providing a set of methods to interrogate the PlayOnBSD
 //! database in a friendly manner, without having to deal with a SQL
 //! database.
 //!
-//! The [`GameDataBase`] is created from a vector of [`super::Game`]
-//! that can be obtained from the PlayOnBSD database using the [`super::Parser`].
+//! The [`GameDataBase`] is created from a vector of [`crate::Game`]
+//! that can be obtained from the PlayOnBSD database using the [`crate::Parser`].
 //!
 //! ## Examples
 //! Create a GameDataBase from the PlayOnBSD database.
@@ -61,14 +61,18 @@ pub(crate) mod queries;
 pub mod query_result;
 
 pub use database::GameDataBase;
+pub use game_filer::GameFilter;
 pub use query_result::QueryResult;
 
 /// Representation of items such as pub, tags, etc.
 pub type Item = String;
 
 #[derive(Debug, Default, Clone)]
+/// Define the type of search performed. It can be either case sensitive or not.
 pub enum SearchType {
+    /// Correspond to a case sensitive search
     CaseSensitive,
     #[default]
+    /// Correspond to a case insensitive search. It is the default.
     NotCaseSensitive,
 }

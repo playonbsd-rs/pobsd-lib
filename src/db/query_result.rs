@@ -31,7 +31,8 @@ pub struct QueryResult<T> {
 }
 
 impl<T: Ord> QueryResult<T> {
-    // Create a new QueryResult from a vector
+    /// Create a new QueryResult from a vector
+
     pub fn new(mut items: Vec<T>) -> Self {
         items.sort();
         Self {
@@ -39,11 +40,11 @@ impl<T: Ord> QueryResult<T> {
             items,
         }
     }
-    // Returns a reference to an element or subslice depending on the type of index
+    /// Returns a reference to an element or subslice depending on the type of index
     pub fn get(&self, index: usize) -> Option<&T> {
         self.items.get(index)
     }
-    // Return the vector of items stored in the query result
+    /// Return the vector of items stored in the query result
     pub fn into_inner(self) -> Vec<T> {
         self.items
     }

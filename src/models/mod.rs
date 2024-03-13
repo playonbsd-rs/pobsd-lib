@@ -1,5 +1,5 @@
-//! Provides a [`Parser`] as well as few related items (such as [`Game`])
-//! for the PlayOnBSD Database.
+//! Provides a set of objects to represent the PlayOnBSD database items such as
+//! [`Game`], [`StoreLink`] or [`GameStatus`].
 //!
 //! In particular, this module provides:
 //! * A [`Parser`] struct handling the parsing
@@ -9,35 +9,6 @@
 //! * A [`StoreLinks`] struct, a [`StoreLink`] structs and [`Store`] enum to represent store links for each game
 //!
 //! ### Examples
-//! Here is a first example loading a file in relaxed mode (by default).
-//! ```no_run
-//! use libpobsd::{Parser, ParserResult};
-//!
-//! // Create a parser
-//! let parser = Parser::default();
-//! // Load the database
-//! let parser_result = parser.load_from_file("/path/to/games.db")
-//!        .expect("Problem trying to open the file");
-//! let games = match parser_result {
-//!        ParserResult::WithoutError(games) => games,
-//!        ParserResult::WithError(games, _) => games,
-//!    };
-//! ```
-//! The parser can also use a strict mode in which it will stop when encountering
-//! a parsing error and returning the games it has processed.
-//! ```no_run
-//! use libpobsd::{Parser, ParserResult, ParsingMode};
-//!
-//! // Create a parser in strict mode
-//! let parser = Parser::new(ParsingMode::Strict);
-//! // Load the database
-//! let parser_result = parser.load_from_file("/path/to/games.db")
-//!        .expect("Problem trying to open the file");
-//! let games = match parser_result {
-//!     ParserResult::WithoutError(games) => games,
-//!     ParserResult::WithError(games, _) => games,
-//! };
-//! ```
 //! The parser can also load from a &str or a String.
 //! ```
 //! use libpobsd::{Parser, ParserResult, ParsingMode};
@@ -85,19 +56,15 @@
 //! };
 //!
 //! ```
-#[macro_use]
-pub(crate) mod parser_macros;
 pub(crate) mod field;
 pub mod game;
 pub mod game_status;
-pub mod parser;
 pub(crate) mod split_line;
 pub mod store_links;
 
 pub use self::game::Game;
-pub use self::parser::Parser;
-pub use self::parser::ParserResult;
-pub use self::parser::ParsingMode;
+pub use self::game_status::GameStatus;
+pub use self::game_status::Status;
 pub use self::store_links::Store;
 pub use self::store_links::StoreLink;
 pub use self::store_links::StoreLinks;

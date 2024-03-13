@@ -8,12 +8,17 @@ use std::fmt::Display;
 #[derive(Clone, Default, Debug, PartialEq, Eq)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub enum Store {
+    /// Steam game
     Steam,
+    /// Gog game
     Gog,
+    /// HumbleBundle game
     HumbleBundle,
+    /// ItchIO game
     ItchIo,
+    /// Epic game
     Epic,
-    /// For games on other stores
+    /// For games on other stores (default value)
     #[default]
     Unknown,
 }

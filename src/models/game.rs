@@ -15,31 +15,36 @@ use super::game_status::Status;
 
 macro_rules! game_contains {
     (name) => {
-        pub fn name_contains(&self, value: &str, search_type: &SearchType) -> bool {
+        /// Check if the name field of a Game contains the given pattern. The search can
+        /// be case sensitive or not depending on the search_type value.
+        pub fn name_contains(&self, pattern: &str, search_type: &SearchType) -> bool {
             match search_type {
-                SearchType::CaseSensitive => self.name.contains(value),
+                SearchType::CaseSensitive => self.name.contains(pattern),
                 SearchType::NotCaseSensitive => {
-                    self.name.to_lowercase().contains(&value.to_lowercase())
+                    self.name.to_lowercase().contains(&pattern.to_lowercase())
                 }
             }
         }
     };
     ($field:ident) => {
         paste! {
-            pub fn [<$field _contains>](&self, value: &str, search_type: &SearchType) -> bool {
+            /// Check if the given field of a Game contains the given pattern. The search can
+            /// be case sensitive or not depending on the search_type value.
+            pub fn [<$field _contains>](&self, pattern: &str, search_type: &SearchType) -> bool {
             match search_type {
-                SearchType::CaseSensitive => self.[<$field>].as_ref().is_some_and(|v| v.contains(value)),
+                SearchType::CaseSensitive => self.[<$field>].as_ref().is_some_and(|v| v.contains(pattern)),
                 SearchType::NotCaseSensitive => self
                     .[< $field>]
                     .as_ref()
-                    .is_some_and(|v| v.to_lowercase().contains(&value.to_lowercase())),
+                    .is_some_and(|v| v.to_lowercase().contains(&pattern.to_lowercase())),
                 }
             }
         }
     };
     (array $field:ident) => {
         paste! {
-            /// Return the games having the given field containing the given value (not case sensitive)
+            /// Check if the given field of a Game contains the given pattern. The search can
+            /// be case sensitive or not depending on the search_type value.
             pub fn [<$field _contains>](&self, value: &str, search_type: &SearchType) -> bool {
                 match search_type {
                     SearchType::CaseSensitive => match self.[<$field>].as_ref() {
@@ -138,6 +143,7 @@ pub struct Game {
 }
 
 impl<'a> Game {
+    /// Create a new Game. Equivalent to Default.
     pub fn new() -> Self {
         Self::default()
     }
@@ -165,6 +171,8 @@ impl<'a> Game {
     game_contains!(array devs);
     game_contains!(array publis);
 
+    /// Check if the Status of the Game correspond to a givent Status. Note
+    /// that the argument provided is a Status and not a GameStatus.
     pub fn status_is(&self, status: Status) -> bool {
         self.status.status.eq(&status)
     }
