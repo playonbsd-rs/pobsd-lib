@@ -35,6 +35,15 @@ pub enum Status {
     Perfect,
 }
 
+impl Into<GameStatus> for Status {
+    fn into(self) -> GameStatus {
+        GameStatus {
+            status: self,
+            message: None,
+        }
+    }
+}
+
 #[derive(Clone, Debug, Default, Eq, PartialOrd, Ord)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 /// Represent the GameStatus comprising the Status itself plus
@@ -102,6 +111,18 @@ impl GameStatus {
 impl AsRef<GameStatus> for GameStatus {
     fn as_ref(&self) -> &GameStatus {
         self
+    }
+}
+
+impl AsRef<Status> for GameStatus {
+    fn as_ref(&self) -> &Status {
+        &self.status
+    }
+}
+
+impl Into<Status> for GameStatus {
+    fn into(self) -> Status {
+        self.status
     }
 }
 

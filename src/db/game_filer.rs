@@ -1,6 +1,6 @@
 //! Provide a [`GameFilter`] than can be used to filter games
 //! according to the value of their fields.
-use crate::{models::game_status::GameStatus, Game, SearchType};
+use crate::{Game, SearchType, Status};
 
 use paste::paste;
 #[cfg(feature = "serde")]
@@ -40,7 +40,7 @@ pub struct GameFilter {
     /// Publisher.
     pub publi: Option<String>,
     /// When tested on -current.
-    pub status: Option<GameStatus>,
+    pub status: Option<Status>,
 }
 
 impl GameFilter {
@@ -55,7 +55,7 @@ impl GameFilter {
         year: Option<String>,
         dev: Option<String>,
         publi: Option<String>,
-        status: Option<GameStatus>,
+        status: Option<Status>,
     ) -> Self {
         Self {
             name,
@@ -78,8 +78,8 @@ impl GameFilter {
     gf_setter!(dev);
     gf_setter!(publi);
     /// Set the status field. It takes a [`GameStatus`] as argument.
-    pub fn set_status(&mut self, status: GameStatus) -> &mut Self {
-        self.status = Some(status);
+    pub fn set_status<T: AsRef<Status>>(&mut self, status: T) -> &mut Self {
+        self.status = Some(status.as_ref().clone());
         self
     }
 
@@ -123,7 +123,7 @@ impl GameFilter {
             None => false,
         };
         let check_status = match &self.status {
-            Some(status) => game.as_ref().status.eq(status),
+            Some(status) => game.as_ref().status_is(status),
             None => false,
         };
         check_name

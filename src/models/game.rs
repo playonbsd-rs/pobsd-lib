@@ -168,8 +168,8 @@ impl<'a> Game {
 
     /// Check if the Status of the Game correspond to a givent Status. Note
     /// that the argument provided is a Status and not a GameStatus.
-    pub fn status_is(&self, status: Status) -> bool {
-        self.status.status.eq(&status)
+    pub fn status_is(&self, status: &Status) -> bool {
+        self.status.status.eq(status)
     }
 }
 
@@ -531,7 +531,7 @@ IgdbId\t1234";
     fn test_status_contains() {
         let game = create_game();
         let status = Status::DoesNotRun;
-        assert!(game.status_is(status));
+        assert!(game.status_is(&status));
     }
     #[test]
     fn test_genres_contains() {
