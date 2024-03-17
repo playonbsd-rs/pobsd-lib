@@ -8,6 +8,7 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, Default, PartialEq, Eq, PartialOrd, Ord)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
 /// Represent the status of a Game
 pub enum Status {
     #[default]
@@ -33,6 +34,21 @@ pub enum Status {
     /// 100%: the complete game including optional content like DLC, side
     /// quests, multiplayer can be enjoyed.
     Perfect,
+}
+
+impl Display for Status {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Status::Unknown => write!(f, "unknown"),
+            Status::DoesNotRun => write!(f, "doesnotrun"),
+            Status::Launches => write!(f, "launches"),
+            Status::MajorBugs => write!(f, "majorbugs"),
+            Status::MediumImpact => write!(f, "mediumimpact"),
+            Status::MinorBugs => write!(f, "minorbugs"),
+            Status::Completable => write!(f, "completable"),
+            Status::Perfect => write!(f, "perfect"),
+        }
+    }
 }
 
 impl Into<GameStatus> for Status {
@@ -71,32 +87,32 @@ impl GameStatus {
             }
         } else if line.starts_with('1') {
             Self {
-                status: Status::DoesNotRun,
+                status: Status::Launches,
                 message: line.strip_prefix('1').map(|x| x.trim().into()),
             }
         } else if line.starts_with('2') {
             Self {
-                status: Status::DoesNotRun,
+                status: Status::MajorBugs,
                 message: line.strip_prefix('2').map(|x| x.trim().into()),
             }
         } else if line.starts_with('3') {
             Self {
-                status: Status::DoesNotRun,
+                status: Status::MediumImpact,
                 message: line.strip_prefix('3').map(|x| x.trim().into()),
             }
         } else if line.starts_with('4') {
             Self {
-                status: Status::DoesNotRun,
+                status: Status::MinorBugs,
                 message: line.strip_prefix('4').map(|x| x.trim().into()),
             }
         } else if line.starts_with('5') {
             Self {
-                status: Status::DoesNotRun,
+                status: Status::Completable,
                 message: line.strip_prefix('5').map(|x| x.trim().into()),
             }
         } else if line.starts_with('6') {
             Self {
-                status: Status::DoesNotRun,
+                status: Status::Perfect,
                 message: line.strip_prefix('6').map(|x| x.trim().into()),
             }
         } else {
@@ -144,5 +160,72 @@ impl Display for GameStatus {
             Status::Completable => write!(f, "5 {}", self.message.as_deref().unwrap_or("")),
             Status::Perfect => write!(f, "6 {}", self.message.as_deref().unwrap_or("")),
         }
+    }
+}
+
+#[cfg(test)]
+mod game_status_test {
+
+    use super::*;
+    #[test]
+    fn test_default_status() {
+        let st = Status::default();
+        assert_eq!(st, Status::Unknown);
+    }
+    #[test]
+    fn test_game_status_from_line_parfect() {
+        let line = "6 comment";
+        let gst = GameStatus::from_line(line);
+        assert_eq!(gst.status, Status::Perfect);
+        assert_eq!(gst.message, Some("comment".to_string()));
+    }
+    #[test]
+    fn test_game_status_from_line_completable() {
+        let line = "5 comment";
+        let gst = GameStatus::from_line(line);
+        assert_eq!(gst.status, Status::Completable);
+        assert_eq!(gst.message, Some("comment".to_string()));
+    }
+    #[test]
+    fn test_game_status_from_line_minor_bugs() {
+        let line = "4 comment";
+        let gst = GameStatus::from_line(line);
+        assert_eq!(gst.status, Status::MinorBugs);
+        assert_eq!(gst.message, Some("comment".to_string()));
+    }
+    #[test]
+    fn test_game_status_from_line_medium_impact() {
+        let line = "3 comment";
+        let gst = GameStatus::from_line(line);
+        assert_eq!(gst.status, Status::MediumImpact);
+        assert_eq!(gst.message, Some("comment".to_string()));
+    }
+    #[test]
+    fn test_game_status_from_line_major_bugs() {
+        let line = "2 comment";
+        let gst = GameStatus::from_line(line);
+        assert_eq!(gst.status, Status::MajorBugs);
+        assert_eq!(gst.message, Some("comment".to_string()));
+    }
+    #[test]
+    fn test_game_status_from_line_launches() {
+        let line = "1 comment";
+        let gst = GameStatus::from_line(line);
+        assert_eq!(gst.status, Status::Launches);
+        assert_eq!(gst.message, Some("comment".to_string()));
+    }
+    #[test]
+    fn test_game_status_from_line_does_not_run() {
+        let line = "0 comment";
+        let gst = GameStatus::from_line(line);
+        assert_eq!(gst.status, Status::DoesNotRun);
+        assert_eq!(gst.message, Some("comment".to_string()));
+    }
+    #[test]
+    fn test_game_status_from_line_unknown() {
+        let line = "comment";
+        let gst = GameStatus::from_line(line);
+        assert_eq!(gst.status, Status::Unknown);
+        assert_eq!(gst.message, None);
     }
 }
