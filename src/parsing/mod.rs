@@ -93,25 +93,8 @@ use std::hash::Hash;
 use std::path::Path;
 
 enum ParserState {
-    Game,
-    Cover,
-    Engine,
-    Setup,
-    Runtime,
-    Store,
-    Hints,
-    Genre,
-    Tags,
-    Year,
-    Dev,
-    Pub,
-    Version,
-    Status,
-    Added,
-    Updated,
-    IgdbId,
+    Parsing,
     Error,
-    Recovering,
 }
 
 /// Represent the two parsing modes supported by [`Parser`].
@@ -164,7 +147,7 @@ pub struct Parser {
 impl Default for Parser {
     fn default() -> Self {
         Self {
-            state: ParserState::Game,
+            state: ParserState::Parsing,
             games: Vec::new(),
             current_line: 0,
             error_lines: Vec::new(),
@@ -176,7 +159,7 @@ impl Parser {
     /// Crate a [`Parser`] set to the given parsing mode.
     pub fn new(mode: ParsingMode) -> Self {
         Self {
-            state: ParserState::Game,
+            state: ParserState::Parsing,
             games: Vec::new(),
             current_line: 0,
             error_lines: Vec::new(),
@@ -206,6 +189,7 @@ impl Parser {
                 if let ParsingMode::Strict = self.mode {
                     break;
                 }
+                self.state = ParserState::Parsing;
             };
         }
         for game in &mut self.games {
@@ -223,23 +207,23 @@ impl Parser {
             true => ParserResult::WithoutError(self.games),
         }
     }
-    impl_parse![ParserState::Game, Field::Game, name, ParserState::Cover;
-         (ParserState::Cover, Field::Cover, cover, ParserState::Engine);
-         (ParserState::Engine, Field::Engine, engine, ParserState::Setup);
-         (ParserState::Setup, Field::Setup, setup, ParserState::Runtime);
-         (ParserState::Runtime, Field::Runtime, runtime, ParserState::Store);
-         (ParserState::Store, Field::Store, stores, ParserState::Hints);
-         (ParserState::Hints, Field::Hints, hints, ParserState::Genre);
-         (ParserState::Genre, Field::Genres, genres, ParserState::Tags);
-         (ParserState::Tags, Field::Tags, tags, ParserState::Year);
-         (ParserState::Year, Field::Year, year, ParserState::Dev);
-         (ParserState::Dev, Field::Dev, devs, ParserState::Pub);
-         (ParserState::Pub, Field::Publi, publis, ParserState::Version);
-         (ParserState::Version, Field::Version, version, ParserState::Status);
-         (ParserState::Status, Field::Status, status, ParserState::Added);
-         (ParserState::Added, Field::Added, added, ParserState::Updated);
-         (ParserState::Updated, Field::Updated, updated, ParserState::IgdbId);
-         (ParserState::IgdbId, Field::IgdbId, igdb_id, ParserState::Game)
+    impl_parse![Field::Game, name;
+         (Field::Cover, cover);
+         (Field::Engine, engine);
+         (Field::Setup, setup);
+         (Field::Runtime, runtime);
+         (Field::Store, stores);
+         (Field::Hints, hints);
+         (Field::Genres, genres);
+         (Field::Tags, tags);
+         (Field::Year, year);
+         (Field::Dev, devs);
+         (Field::Publi, publis);
+         (Field::Version, version);
+         (Field::Status, status);
+         (Field::Added, added);
+         (Field::Updated, updated);
+         (Field::IgdbId, igdb_id)
     ];
 }
 #[cfg(test)]

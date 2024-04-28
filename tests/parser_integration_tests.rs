@@ -81,7 +81,7 @@ fn test_parser_returned_lines_with_error_with_faulty_database_relaxed_mode() {
         }
         ParserResult::WithError(games, lines) => (games, lines),
     };
-    assert_eq!(vec![20, 51, 97, 120], lines);
+    assert_eq!(vec![20, 51, 97, 120, 138], lines);
 }
 
 #[test]
