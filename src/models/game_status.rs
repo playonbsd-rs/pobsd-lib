@@ -60,6 +60,12 @@ impl Into<GameStatus> for Status {
     }
 }
 
+impl AsRef<Status> for Status {
+    fn as_ref(&self) -> &Status {
+        self
+    }
+}
+
 #[derive(Clone, Debug, Default, Eq, PartialOrd, Ord)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 /// Represent the GameStatus comprising the Status itself plus

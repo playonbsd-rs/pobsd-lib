@@ -2,7 +2,7 @@
 use crate::models::field::Field;
 use crate::models::game_status::GameStatus;
 use crate::models::store_links::StoreLinks;
-use crate::SearchType;
+use crate::{SearchType, Store};
 
 use chrono::NaiveDate;
 use paste::paste;
@@ -142,17 +142,17 @@ impl<'a> Game {
     pub fn new() -> Self {
         Self::default()
     }
-    fn get_ordering_name(&'a self) -> &str {
+    fn get_ordering_name(&'a self) -> String {
         if let Some(name) = self.name.strip_prefix("the ") {
-            name
+            name.to_lowercase()
         } else if let Some(name) = self.name.strip_prefix("The ") {
-            name
+            name.to_lowercase()
         } else if let Some(name) = self.name.strip_prefix("a ") {
-            name
+            name.to_lowercase()
         } else if let Some(name) = self.name.strip_prefix("A ") {
-            name
+            name.to_lowercase()
         } else {
-            &self.name
+            self.name.to_lowercase()
         }
     }
 
@@ -171,6 +171,20 @@ impl<'a> Game {
     pub fn status_is(&self, status: &Status) -> bool {
         self.status.status.eq(status)
     }
+    /// Return the Steam id of a Game if it has any
+    pub fn get_steam_id(&self) -> Option<usize> {
+        if let Some(ref stores) = self.stores {
+            if stores.has_steam() {
+                for store in stores.inner_ref() {
+                    match store.store {
+                        Store::Steam => return store.id.to_owned(),
+                        _ => continue,
+                    };
+                }
+            }
+        }
+        None
+    }
 }
 
 impl PartialOrd for Game {
@@ -178,22 +192,22 @@ impl PartialOrd for Game {
         Some(self.cmp(other))
     }
     fn lt(&self, other: &Game) -> bool {
-        self.get_ordering_name().lt(other.get_ordering_name())
+        self.get_ordering_name().lt(&other.get_ordering_name())
     }
     fn le(&self, other: &Game) -> bool {
-        self.get_ordering_name().le(other.get_ordering_name())
+        self.get_ordering_name().le(&other.get_ordering_name())
     }
     fn gt(&self, other: &Game) -> bool {
-        self.get_ordering_name().gt(other.get_ordering_name())
+        self.get_ordering_name().gt(&other.get_ordering_name())
     }
     fn ge(&self, other: &Game) -> bool {
-        self.get_ordering_name().ge(other.get_ordering_name())
+        self.get_ordering_name().ge(&other.get_ordering_name())
     }
 }
 
 impl Ord for Game {
     fn cmp(&self, other: &Game) -> Ordering {
-        self.get_ordering_name().cmp(other.get_ordering_name())
+        self.get_ordering_name().cmp(&other.get_ordering_name())
     }
 }
 
@@ -283,7 +297,7 @@ mod game_tests {
     fn test_get_ordering_name_with_a_2() {
         let mut game = create_game();
         game.name = "Achampion".into();
-        assert_eq!(game.get_ordering_name(), "Achampion");
+        assert_eq!(game.get_ordering_name(), "achampion");
         game.name = "achampion".into();
         assert_eq!(game.get_ordering_name(), "achampion");
     }
@@ -299,7 +313,7 @@ mod game_tests {
     fn test_get_ordering_name_with_the_2() {
         let mut game = create_game();
         game.name = "Thechampion".into();
-        assert_eq!(game.get_ordering_name(), "Thechampion");
+        assert_eq!(game.get_ordering_name(), "thechampion");
         game.name = "thechampion".into();
         assert_eq!(game.get_ordering_name(), "thechampion");
     }

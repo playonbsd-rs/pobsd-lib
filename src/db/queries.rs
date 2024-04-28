@@ -52,6 +52,19 @@ macro_rules! get_all {
     };
 }
 
+macro_rules! get_all_with_ids {
+    ($field:ident) => {
+        paste! {
+            /// Return all the chosen items of the database
+            pub fn [<get_all_ $field _with_ids>](&self) -> Vec<(String, Vec<u32>)> {
+                let mut items: Vec<(String, Vec<u32>)> = self.$field.iter().map(|a| (a.0.clone(), a.1.clone())).collect();
+                items.sort_by(|a,b| a.0.cmp(&b.0));
+                items
+            }
+        }
+    };
+}
+
 impl GameDataBase {
     /// Return the game with the given id
     pub fn get_game_by_id(&self, game_id: u32) -> Option<&Game> {
@@ -129,4 +142,12 @@ impl GameDataBase {
     get_all!(years);
     get_all!(devs);
     get_all!(publis);
+
+    get_all_with_ids!(tags);
+    get_all_with_ids!(engines);
+    get_all_with_ids!(runtimes);
+    get_all_with_ids!(genres);
+    get_all_with_ids!(years);
+    get_all_with_ids!(devs);
+    get_all_with_ids!(publis);
 }
