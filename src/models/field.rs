@@ -62,42 +62,24 @@ pub enum Field {
 impl fmt::Display for Field {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            Field::Game(name) => match name {
-                Some(name) => write!(f, "Game\t{}", name),
-                None => write!(f, "Game"),
+            Field::Game(name)
+            | Field::Cover(name)
+            | Field::Engine(name)
+            | Field::Setup(name)
+            | Field::Hints(name)
+            | Field::Runtime(name)
+            | Field::Version(name)
+            | Field::Year(name)
+            | Field::IgdbId(name) => match name {
+                Some(name) => write!(f, "{}\t{}", self.field_name(), name),
+                None => write!(f, "{}", self.field_name()),
             },
-            Field::Cover(name) => match name {
-                Some(name) => write!(f, "Cover\t{}", name),
-                None => write!(f, "Cover"),
-            },
-            Field::Engine(name) => match name {
-                Some(name) => write!(f, "Engine\t{}", name),
-                None => write!(f, "Engine"),
-            },
-            Field::Setup(name) => match name {
-                Some(name) => write!(f, "Setup\t{}", name),
-                None => write!(f, "Setup"),
-            },
-            Field::Runtime(name) => match name {
-                Some(name) => write!(f, "Runtime\t{}", name),
-                None => write!(f, "Runtime"),
-            },
-            Field::Hints(name) => match name {
-                Some(name) => write!(f, "Hints\t{}", name),
-                None => write!(f, "Hints"),
-            },
-            Field::Dev(name) => match name {
-                Some(name) => write!(f, "Dev\t{}", name.join(", ")),
-                None => write!(f, "Dev"),
-            },
-            Field::Publi(name) => match name {
-                Some(name) => write!(f, "Pub\t{}", name.join(", ")),
-                None => write!(f, "Pub"),
-            },
-            Field::Version(name) => match name {
-                Some(name) => write!(f, "Version\t{}", name),
-                None => write!(f, "Version"),
-            },
+            Field::Dev(name) | Field::Publi(name) | Field::Genres(name) | Field::Tags(name) => {
+                match name {
+                    Some(name) => write!(f, "{}\t{}", self.field_name(), name.join(", ")),
+                    None => write!(f, "{}", self.field_name()),
+                }
+            }
             Field::Status(name) => match name.status {
                 Status::Unknown => write!(f, "Status"),
                 _ => write!(f, "Status\t{}", name),
@@ -106,24 +88,8 @@ impl fmt::Display for Field {
                 Some(name) => write!(f, "Store\t{}", name),
                 None => write!(f, "Store"),
             },
-            Field::Genres(name) => match name {
-                Some(name) => write!(f, "Genre\t{}", name.join(", ")),
-                None => write!(f, "Genre"),
-            },
-            Field::Tags(name) => match name {
-                Some(name) => write!(f, "Tags\t{}", name.join(", ")),
-                None => write!(f, "Tags"),
-            },
-            Field::Year(name) => match name {
-                Some(name) => write!(f, "Year\t{}", name),
-                None => write!(f, "Year"),
-            },
             Field::Added(date) => write!(f, "Added\t{}", date.format("%Y-%m-%d")),
             Field::Updated(date) => write!(f, "Updated\t{}", date.format("%Y-%m-%d")),
-            Field::IgdbId(name) => match name {
-                Some(name) => write!(f, "IgdbId\t{}", name),
-                None => write!(f, "IgdbId"),
-            },
             Field::Unknown(field) => match field {
                 Some(field) => {
                     write!(f, "Unknown field {}", field)
@@ -253,6 +219,28 @@ impl Field {
             }
         } else {
             Field::Unknown(None)
+        }
+    }
+    pub fn field_name(&self) -> &str {
+        match self {
+            Field::Game(_) => "Game",
+            Field::Cover(_) => "Cover",
+            Field::Engine(_) => "Engine",
+            Field::Setup(_) => "Setup",
+            Field::Runtime(_) => "Runtime",
+            Field::Hints(_) => "Hints",
+            Field::Dev(_) => "Dev",
+            Field::Publi(_) => "Pub",
+            Field::Version(_) => "Version",
+            Field::Status(_) => "Status",
+            Field::Store(_) => "Store",
+            Field::Genres(_) => "Genre",
+            Field::Tags(_) => "Tags",
+            Field::Year(_) => "Year",
+            Field::Added(_) => "Added",
+            Field::Updated(_) => "Updated",
+            Field::IgdbId(_) => "IgdbId",
+            Field::Unknown(_) => "Unknown field",
         }
     }
 }
