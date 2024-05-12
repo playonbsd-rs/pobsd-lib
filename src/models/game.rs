@@ -171,9 +171,9 @@ impl<'a> Game {
     game_contains!(array publis);
 
     /// Check if the Status of the Game correspond to a given Status. Note
-    /// that the argument provided is a Status and not a GameStatus.
-    pub fn status_is(&self, status: &Status) -> bool {
-        self.status.status.eq(status)
+    /// that the argument provided can be Status or GameStatus.
+    pub fn status_is(&self, status: &impl AsRef<Status>) -> bool {
+        self.status.status.eq(status.as_ref())
     }
     /// Return the Steam id of a Game if it has any
     pub fn get_steam_id(&self) -> Option<usize> {
