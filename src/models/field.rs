@@ -1,11 +1,11 @@
 use chrono::NaiveDate;
-
-use crate::models::split_line::split_line;
-use crate::models::store_links::{StoreLink, StoreLinks};
-
 use std::fmt;
 
-use super::game_status::{GameStatus, Status};
+use crate::models::{
+    game_status::{GameStatus, Status},
+    split_line::split_line,
+    store_links::{StoreLink, StoreLinks},
+};
 
 /* ------------------------ FIELD ENUM -----------------------*/
 /// The Field enum is a representations of a line
