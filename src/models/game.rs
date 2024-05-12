@@ -1,17 +1,21 @@
 //! Provides a representations of the game in the PlayOnBSD database.
-use crate::models::field::Field;
-use crate::models::game_status::GameStatus;
-use crate::models::store_links::StoreLinks;
-use crate::{SearchType, Store};
+use crate::{
+    models::{
+        field::Field,
+        game_status::{GameStatus, Status},
+        store_links::StoreLinks,
+    },
+    SearchType, Store,
+};
 
 use chrono::NaiveDate;
 use paste::paste;
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
-use std::cmp::{Ordering, PartialOrd};
-use std::fmt;
-
-use super::game_status::Status;
+use std::{
+    cmp::{Ordering, PartialOrd},
+    fmt,
+};
 
 macro_rules! game_contains {
     (name) => {
@@ -166,7 +170,7 @@ impl<'a> Game {
     game_contains!(array devs);
     game_contains!(array publis);
 
-    /// Check if the Status of the Game correspond to a givent Status. Note
+    /// Check if the Status of the Game correspond to a given Status. Note
     /// that the argument provided is a Status and not a GameStatus.
     pub fn status_is(&self, status: &Status) -> bool {
         self.status.status.eq(status)
