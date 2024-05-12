@@ -88,8 +88,9 @@ impl fmt::Display for Field {
                 Some(name) => write!(f, "Store\t{}", name),
                 None => write!(f, "Store"),
             },
-            Field::Added(date) => write!(f, "Added\t{}", date.format("%Y-%m-%d")),
-            Field::Updated(date) => write!(f, "Updated\t{}", date.format("%Y-%m-%d")),
+            Field::Added(date) | Field::Updated(date) => {
+                write!(f, "{}\t{}", self.field_name(), date.format("%Y-%m-%d"))
+            }
             Field::Unknown(field) => match field {
                 Some(field) => {
                     write!(f, "Unknown field {}", field)
