@@ -1,6 +1,6 @@
-//! Provide a Status enum and a GameStatus struct to accurately
-//! represents the status of a Game according to the value of
-//! the status field in the OpenBSD-Game-Database.
+//! Provides a [`Status`] enum and a [`GameStatus`] struct to
+//! represent the status of a Game according to the value of
+//! the status field in the PlayOnBSD database.
 use std::fmt::Display;
 
 #[cfg(feature = "serde")]
@@ -9,7 +9,7 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Debug, Default, PartialEq, Eq, PartialOrd, Ord)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
-/// Represent the status of a Game
+/// Represents the status of a game
 pub enum Status {
     #[default]
     /// Status not provided.
@@ -68,23 +68,23 @@ impl AsRef<Status> for Status {
 
 #[derive(Clone, Debug, Default, Eq, PartialOrd, Ord)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-/// Represent the GameStatus comprising the Status itself plus
-/// the additional comment.
+/// Represents the extended status of a game comprising the status itself
+///  plus an additional comment.
 pub struct GameStatus {
-    /// Status of the Game.
+    /// Status of the game.
     pub status: Status,
     /// Additional comment.
     pub message: Option<String>,
 }
 
 impl GameStatus {
-    /// Create a new GameStatus provided a Status and an optional
+    /// Creates a new [`GameStatus`] provided a [`Status`] and an optional
     /// comment.
     pub fn new(status: Status, message: Option<String>) -> Self {
         Self { status, message }
     }
-    /// Create a new GameStatus provided a &str representing the value
-    /// of the Status field in the OpenBSD-Game-Database.
+    /// Creates a new [`GameStatus`] provided a [`&str`] representing the value
+    /// of the [`Status`] field in the PlayOnBSD database.
     pub fn from_line(line: &str) -> Self {
         if line.starts_with('0') {
             Self {

@@ -1,6 +1,6 @@
 //! Provides a representation of the query result returned when
-//! interogating the database. Query results are themselves queryable
-//! and return another query result.
+//! interogating the [`crate::GameDataBase`]. [`QueryResult`] is itself queryable
+//! and return another [`QueryResult`].
 use crate::db::Item;
 use crate::{Game, GameFilter, SearchType};
 
@@ -11,7 +11,9 @@ use serde::{Deserialize, Serialize};
 macro_rules! filter_games_by {
     ($field:ident) => {
         paste! {
-            /// Get game by field name
+            /// Returns the games which field contains the given value.
+            /// It can be case sensitive or insensitive depending on the
+            /// [`SearchType`] variant.
             pub fn [<filter_games_by_ $field>](self, field: &str, search_type: &SearchType) -> QueryResult<&'a Game> {
                 let items = GameFilter::default().[<set_ $field>](field).filter_games(self.items, search_type);
                 QueryResult::new(items)
@@ -20,19 +22,18 @@ macro_rules! filter_games_by {
     };
 }
 
-/// Queryable representation of the result of a query
+/// Queryable representation of the result of a query of the [`crate::GameDataBase`].
 #[derive(Default, Debug, Clone)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct QueryResult<T> {
-    /// Number of items in the query result
+    /// Number of items in the query result.
     pub count: usize,
-    /// Vector of items
+    /// Items returned by the query.
     pub items: Vec<T>,
 }
 
 impl<T: Ord> QueryResult<T> {
-    /// Create a new QueryResult from a vector
-
+    /// Creates a new [`QueryResult`] from a vector of items.
     pub fn new(mut items: Vec<T>) -> Self {
         items.sort();
         Self {
@@ -40,23 +41,23 @@ impl<T: Ord> QueryResult<T> {
             items,
         }
     }
-    /// Returns a reference to an element or subslice depending on the type of index
+    /// Returns a reference to an element corresponding to the given index.
     pub fn get(&self, index: usize) -> Option<&T> {
         self.items.get(index)
     }
-    /// Return the vector of items stored in the query result
+    /// Returns the items of the [`QueryResult`] as a vector.
     pub fn into_inner(self) -> Vec<T> {
         self.items
     }
 }
 
 impl<'a> QueryResult<&'a Item> {
-    /// Get item by name (case sensitive)
+    /// Returns a reference to an item corresponding to the given name (case sensitive)
     pub fn get_item_by_name<'b>(self, name: &'b str) -> Option<&'a Item> {
         let mut items: Vec<&Item> = self.items.into_iter().filter(|a| a.eq(&name)).collect();
         items.pop()
     }
-    /// Search items by name (case insensitive)
+    /// Returns a [`QueryResult`] from items that matches the given name (case insensitive)
     pub fn filter_items_by_name<'b>(self, name: &'b str) -> QueryResult<&'a Item> {
         let items: Vec<&Item> = self
             .items
@@ -68,7 +69,9 @@ impl<'a> QueryResult<&'a Item> {
 }
 
 impl<'a> QueryResult<&'a Game> {
-    /// Get game by name (case sensitive)
+    /// Returns the game associated with the given name.
+    /// It can be case sensitive or insensitive depending on the
+    /// [`SearchType`] variant.
     pub fn get_game_by_name(self, name: &str, search_type: &SearchType) -> Option<&'a Game> {
         let mut items = GameFilter::default()
             .set_name(name)

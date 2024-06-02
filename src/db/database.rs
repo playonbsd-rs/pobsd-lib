@@ -1,5 +1,4 @@
-//! Provide a representation of the PlayOnBSD database than can be
-//! queried using a set of predefined methods.
+//! Provides a queryable representation of the PlayOnBSD database.
 use crate::models::Game;
 
 use paste::paste;
@@ -10,7 +9,7 @@ use std::collections::HashMap;
 macro_rules! load_game {
     (items: $($item:ident),+; arrays: $($array:ident),+) => {
         paste! {
-            /// Load the given game in the database
+            /// Load game into the database
             pub fn load_game(&mut self, game: Game) {
                 let uid = game.uid;
                 self.add_game(game);
@@ -70,7 +69,7 @@ pub struct GameDataBase {
 }
 
 impl GameDataBase {
-    /// Create a database for the given vector of games
+    /// Create a database from a vector of games
     pub fn new(games: Vec<Game>) -> Self {
         let mut db = GameDataBase::default();
         for game in games {

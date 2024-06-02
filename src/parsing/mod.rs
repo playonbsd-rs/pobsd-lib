@@ -1,6 +1,6 @@
 //! Provides a simplistic [`Parser`] that converts
 //! the [PlayOnBSD Database](https://github.com/playonbsd/OpenBSD-Games-Database)
-//! (either provided as a string or as a file) into a vector of [`Game`].
+//! (either provided as a string or as a file) into a vector of [`Game`]s.
 //!
 //! ### Examples
 //! Here is a first example loading a file in relaxed mode (by default).
@@ -97,21 +97,19 @@ enum ParserState {
     Error,
 }
 
-/// Represent the two parsing modes supported by [`Parser`].
+/// Represents the two parsing modes supported by [`Parser`].
 pub enum ParsingMode {
     /// In **strict mode**, the parsing will stop if a parsing error occurs
     /// returning the games processed before the error as well as the line
-    /// in the input (file or string) where the error occurred.
+    /// number at which the error occurred.
     Strict,
-    /// In **relaxed mode**, the parsing will continue even after an error
-    /// is encountered, the parsing resuming when reaching the next game
-    /// after the parsing error, and returning all the games that have been
-    /// parsed as well as the line numbers that were ignored due to parsing
-    /// errors.
+    /// In **relaxed mode**, the parsing will continue even after encountering
+    /// an error, and returning all the games that have been parsed as well as
+    /// the line numbers that were ignored due to parsing errors.
     Relaxed,
 }
 
-/// Represent the result of the parsing. When in in strict mode,
+/// Represents the result of the parsing. When in strict mode,
 /// only the games parsed before a parsing error occurred will
 /// be returned. In relaxed mode, the parser will do its best
 /// to continue parsing games.
@@ -133,9 +131,9 @@ impl From<ParserResult> for Vec<Game> {
         }
     }
 }
-/// [`Parser`] parses the PlayOnBSD database provided as a [`&str`] or from
-/// a file and returns a [`ParserResult`] holding a vector of [`Game`] contained
-/// in the PlayOnBSD database.
+/// Parses the PlayOnBSD database provided as a [`&str`] or from
+/// a file and returns a [`ParserResult`] holding a vector of
+/// [`Game`] contained in the PlayOnBSD database.
 pub struct Parser {
     state: ParserState,
     games: Vec<Game>,
@@ -156,7 +154,7 @@ impl Default for Parser {
     }
 }
 impl Parser {
-    /// Crate a [`Parser`] set to the given parsing mode.
+    /// Creates a [`Parser`] set to the given [`ParsingMode`].
     pub fn new(mode: ParsingMode) -> Self {
         Self {
             state: ParserState::Parsing,
@@ -166,7 +164,7 @@ impl Parser {
             mode,
         }
     }
-    /// Load the database from a file.
+    /// Load the PlayOnBSD database from a file.
     pub fn load_from_file(self, file: impl AsRef<Path>) -> Result<ParserResult, std::io::Error> {
         let file: &Path = file.as_ref();
         if file.is_file() {
@@ -179,7 +177,7 @@ impl Parser {
             ))
         }
     }
-    /// Load the database from a string.
+    /// Load the database from a [`&str`].
     pub fn load_from_string(mut self, data: &str) -> ParserResult {
         for line in data.lines() {
             self.current_line += 1;

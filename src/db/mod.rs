@@ -1,16 +1,16 @@
-//! Povides a [`GameDataBase`], [`GameFilter`] and a [`QueryResult`]
+//! Povides a [`GameDataBase`], [`GameFilter`] and a [`QueryResult`] structs,
 //! each struct providing a set of methods to interrogate the PlayOnBSD
 //! database in a friendly manner, without having to deal with a SQL
 //! database.
 //!
-//! The [`GameDataBase`] is created from a vector of [`crate::Game`]
-//! that can be obtained from the PlayOnBSD database using the [`crate::Parser`].
+//! The [`GameDataBase`] is created from a vector of [`models::Game`]
+//! usually obtained from the PlayOnBSD database using the [`parsing::Parser`].
 //!
 //! ## Examples
 //! Create a GameDataBase from the PlayOnBSD database.
 //! ```no_run
-//! use libpobsd::{GameDataBase, Game, Parser, ParserResult, ParsingMode, SearchType};
-//! // loading the games from the database
+//! use libpobsd::{GameDataBase, Game, Parser, ParserResult, ParsingMode};
+//! // loading the games from the PlayOnBSD database
 //! let games = match Parser::new(ParsingMode::Strict)
 //!        .load_from_file("games.db")
 //!        .expect("Could not open the file")
@@ -22,7 +22,7 @@
 //!```
 //! Get a game by name.
 //! ```no_run
-//! # use libpobsd::{GameDataBase, Game, Parser, ParserResult, ParsingMode, SearchType};
+//! # use libpobsd::{GameDataBase, Game, Parser, ParserResult, ParsingMode};
 //! # let games = match Parser::new(ParsingMode::Strict)
 //! #       .load_from_file("games.db")
 //! #       .expect("Could not open the file")
@@ -31,6 +31,7 @@
 //! #       ParserResult::WithError(games, _) => games,
 //! #   };
 //! # let db = GameDataBase::new(games);
+//! use libpobsd::SearchType;
 //! let st = SearchType::CaseSensitive;
 //! if let Some(game) = db.get_game_by_name("My Game", &st){
 //!     assert_eq!(&game.name, "My Game");
@@ -68,7 +69,8 @@ pub use query_result::QueryResult;
 pub type Item = String;
 
 #[derive(Debug, Default, Clone)]
-/// Define the type of search performed. It can be either case sensitive or not.
+/// Define the type of search performed. It can be either case sensitive or
+/// cas insensitive (default).
 pub enum SearchType {
     /// Correspond to a case sensitive search
     CaseSensitive,

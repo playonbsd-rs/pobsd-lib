@@ -1,5 +1,5 @@
-//! Provide a [`GameFilter`] than can be used to filter games
-//! according to the value of their fields.
+//! Provide a [`GameFilter`] struct than can be used to filter games
+//! based on the value of their fields.
 use crate::{Game, SearchType, Status};
 
 use paste::paste;
@@ -9,7 +9,7 @@ use serde::{Deserialize, Serialize};
 macro_rules! gf_setter {
     ($field:ident) => {
         paste! {
-            /// Set field value based on which the filtering will be done.
+            /// Sets the value of the field on which the filtering will be done.
             pub fn [<set_ $field>](&mut self, value: &str) -> &mut Self {
                 self.$field = Some(value.into());
                 self
@@ -20,8 +20,7 @@ macro_rules! gf_setter {
 
 #[derive(Clone, Default, Debug, PartialEq, Eq)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-/// The [`GameFilter`] allows for easy game filtering based on field
-/// values
+/// Allows for easy game filtering based on field values.
 pub struct GameFilter {
     /// The name of the game.
     pub name: Option<String>,
@@ -45,7 +44,7 @@ pub struct GameFilter {
 
 impl GameFilter {
     #[allow(clippy::too_many_arguments)]
-    /// Create a new GameFilter
+    /// Create a new GameFilter.
     pub fn new(
         name: Option<String>,
         engine: Option<String>,
@@ -77,13 +76,15 @@ impl GameFilter {
     gf_setter!(year);
     gf_setter!(dev);
     gf_setter!(publi);
-    /// Set the status field. It takes a [`GameStatus`] as argument.
+
+    /// Set the status field on which the filtering will be done.
+    /// It takes a [`crate::GameStatus`] or [`Status`] as argument.
     pub fn set_status<T: AsRef<Status>>(&mut self, status: T) -> &mut Self {
         self.status = Some(status.as_ref().clone());
         self
     }
 
-    /// Check if a [`crate::Game`] matches a given filter.
+    /// Check if a given [`Game`] matches the filtering rules.
     pub fn check_game<T: AsRef<Game>>(
         &self,
         game: T,
@@ -136,14 +137,14 @@ impl GameFilter {
             || check_publi
             || check_status
     }
-    /// Filter a vector of [`crate::Game`] based on the [`GameFilter`] used.
+    /// Filter a vector of [`Game`] based on the filtering rules.
     pub fn filter_games<T: AsRef<Game>>(&self, games: Vec<T>, search_type: &SearchType) -> Vec<T> {
         games
             .into_iter()
             .filter(|x| self.check_game(x, search_type))
             .collect()
     }
-    /// Check if at least one field of the GameFilter is different from None.
+    /// Check if at least one field of the [`GameFilter`] is different from None.
     pub fn is_empty(&self) -> bool {
         self.name.is_none()
             && self.engine.is_none()

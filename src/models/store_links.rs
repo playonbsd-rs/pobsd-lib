@@ -4,7 +4,7 @@ use regex::Regex;
 use serde::{Deserialize, Serialize};
 use std::fmt::Display;
 
-/// Represents the store in which the game is available
+/// Represents the store in which the game is available.
 #[derive(Clone, Default, Debug, PartialEq, Eq)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub enum Store {
@@ -23,7 +23,7 @@ pub enum Store {
     Unknown,
 }
 
-/// Represent a store link
+/// Represents a store link.
 #[derive(Clone, Default, Debug, PartialEq, Eq)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct StoreLink {
@@ -36,8 +36,7 @@ pub struct StoreLink {
 }
 
 impl StoreLink {
-    /// Create a StoreLink given an url.
-    /// At the moment, it only handles Gog and Steam games.
+    /// Creates a StoreLink given an url.
     pub fn from(url: &str) -> Self {
         if url.contains("steampowered") {
             Self {
@@ -85,7 +84,7 @@ impl Display for StoreLink {
     }
 }
 
-// Return the steam id from a store url
+// Returns the steam id from a store url
 fn get_steam_id(url: &str) -> Option<usize> {
     let re = Regex::new(r"https://store.steampowered.com/app/(\d+)(/?.+)?").unwrap();
     if let Some(cap) = re.captures(url) {
@@ -96,39 +95,39 @@ fn get_steam_id(url: &str) -> Option<usize> {
     None
 }
 
-/// Represent a collection of store links
+/// Represents a collection of [`StoreLink`]s.
 #[derive(Clone, Default, Debug, PartialEq, Eq)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct StoreLinks(pub Vec<StoreLink>);
 
 impl StoreLinks {
-    /// Create a StoreLinks with the given items
+    /// Creates a StoreLinks with the given items.
     pub fn new(items: Vec<StoreLink>) -> Self {
         Self(items)
     }
-    /// Add a StoreLink to the collection
+    /// Adds a [`StoreLink`] to the collection.
     pub fn push(&mut self, store: StoreLink) {
         self.0.push(store)
     }
-    /// Return a imutable reference to the vector of StoreLink.
+    /// Returns a imutable reference to the vector of [`StoreLink`].
     pub fn inner_ref(&self) -> &Vec<StoreLink> {
         &self.0
     }
-    /// Return a mutable reference to the vector of StoreLink.
+    /// Returns a mutable reference to the vector of [`StoreLink`].
     pub fn inner_mut_ref(&mut self) -> &mut Vec<StoreLink> {
         &mut self.0
     }
-    /// Return the vector of StoreLink.
+    /// Returns the vector of [`StoreLink`].
     pub fn into_inner(self) -> Vec<StoreLink> {
         self.0
     }
-    /// Return true if a Steam game is present, false otherwise
+    /// Returns true if a Steam game is present, false otherwise.
     pub fn has_steam(&self) -> bool {
         let links = self.inner_ref();
         let res: Vec<&StoreLink> = links.iter().filter(|a| a.store.eq(&Store::Steam)).collect();
         !res.is_empty()
     }
-    /// Return true if a Steam game is present, false otherwise
+    /// Returns true if a Gog game is present, false otherwise.
     pub fn has_gog(&self) -> bool {
         let links = self.inner_ref();
         let res: Vec<&StoreLink> = links.iter().filter(|a| a.store.eq(&Store::Gog)).collect();

@@ -7,7 +7,7 @@ use paste::paste;
 macro_rules! match_games_by {
     ($field:ident) => {
         paste! {
-            /// Return the games having the chosen field equal to the given value
+            /// Returns the games for which the searched field exactly matches the given value.
             pub fn [<match_games_by_ $field>](&self, field: &str) -> QueryResult<&Game> {
                 match self.[<$field s>].get(field) {
                     Some(game_ids) => {
@@ -29,7 +29,9 @@ macro_rules! match_games_by {
 macro_rules! search_games_by {
     ($field:ident) => {
         paste! {
-            /// Return the games having the given field containing the given value
+            /// Returns the games for which the chosen field contains the given value.
+            /// It can be case sensitive or insensitive depending on the
+            /// [`SearchType`] variant.
             pub fn [<search_games_by_ $field>](&self, pattern: &str, search_type: &SearchType) -> QueryResult<&Game> {
                 let games = GameFilter::default()
                         .[<set_ $field>](pattern)
@@ -43,7 +45,7 @@ macro_rules! search_games_by {
 macro_rules! get_all {
     ($field:ident) => {
         paste! {
-            /// Return all the chosen items of the database
+            /// Returns all the items for the chosen field.
             pub fn [<get_all_ $field>](&self) -> QueryResult<&Item> {
                 let items: Vec<&Item> = self.$field.keys().collect();
                 QueryResult::new(items)
@@ -55,7 +57,8 @@ macro_rules! get_all {
 macro_rules! get_all_with_ids {
     ($field:ident) => {
         paste! {
-            /// Return all the chosen items of the database
+            /// Returns all the items for the chosen field as well as the game ids
+            /// associated to each item.
             pub fn [<get_all_ $field _with_ids>](&self) -> Vec<(String, Vec<u32>)> {
                 let mut items: Vec<(String, Vec<u32>)> = self.$field.iter().map(|a| (a.0.clone(), a.1.clone())).collect();
                 items.sort_by(|a,b| a.0.cmp(&b.0));
@@ -66,11 +69,13 @@ macro_rules! get_all_with_ids {
 }
 
 impl GameDataBase {
-    /// Return the game with the given id
+    /// Returns the game with the given id.
     pub fn get_game_by_id(&self, game_id: u32) -> Option<&Game> {
         self.games.get(&game_id)
     }
-    /// Return the first game found with the given name
+    /// Returns the first game found which names contains the given name.
+    /// It can be case sensitive or insensitive depending on the
+    /// [`SearchType`] variant.
     pub fn get_game_by_name(&self, name: &str, search_type: &SearchType) -> Option<&Game> {
         let mut filter = GameFilter::default();
         filter.set_name(name);
@@ -78,7 +83,7 @@ impl GameDataBase {
             .values()
             .find(|game| filter.check_game(game, search_type))
     }
-    /// Return the game with the given steam_id (case sensitive)
+    /// Returns the game with the given steam_id.
     pub fn get_game_by_steam_id(&self, steam_id: usize) -> Option<&Game> {
         for game in self.games.values() {
             if let Some(stores) = &game.stores {
@@ -92,7 +97,7 @@ impl GameDataBase {
         None
     }
 
-    /// Return the games with the given ids
+    /// Returns all games matching the given vector of game ids.
     pub fn match_games_by_ids(&self, game_ids: Vec<u32>) -> QueryResult<&Game> {
         let mut games: Vec<&Game> = Vec::new();
         for game_id in game_ids {
@@ -119,7 +124,7 @@ impl GameDataBase {
     search_games_by!(dev);
     search_games_by!(publi);
 
-    /// Perform a search based on a GameFilter
+    /// Returns the games filtered using the [`GameFilter`].
     pub fn search_game_by_filter(
         &self,
         search_type: &SearchType,
@@ -129,7 +134,7 @@ impl GameDataBase {
         QueryResult::new(games)
     }
 
-    /// Return all games as a QueryResult.
+    /// Returns all games as a QueryResult.
     pub fn get_all_games(&self) -> QueryResult<&Game> {
         let mut games: Vec<&Game> = self.games.values().collect();
         games.sort();

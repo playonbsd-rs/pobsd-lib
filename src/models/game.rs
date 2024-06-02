@@ -19,8 +19,8 @@ use std::{
 
 macro_rules! game_contains {
     (name) => {
-        /// Check if the name field of a Game contains the given pattern. The search can
-        /// be case sensitive or not depending on the search_type value.
+        /// Returns true if the name field of a [`Game`] contains the given pattern, false otherwise.
+        /// The search can be case sensitive or not depending on the [`SearchType`] variant.
         pub fn name_contains(&self, pattern: &str, search_type: &SearchType) -> bool {
             match search_type {
                 SearchType::CaseSensitive => self.name.contains(pattern),
@@ -32,8 +32,8 @@ macro_rules! game_contains {
     };
     ($field:ident) => {
         paste! {
-            /// Check if the given field of a Game contains the given pattern. The search can
-            /// be case sensitive or not depending on the search_type value.
+            /// Returns true if the chosen field of a [`Game`] contains the given pattern, false otherwise.
+            /// The search can be case sensitive or not depending on the [`SearchType`] variant.
             pub fn [<$field _contains>](&self, pattern: &str, search_type: &SearchType) -> bool {
             match search_type {
                 SearchType::CaseSensitive => self.[<$field>].as_ref().is_some_and(|v| v.contains(pattern)),
@@ -47,8 +47,8 @@ macro_rules! game_contains {
     };
     (array $field:ident) => {
         paste! {
-            /// Check if the given field of a Game contains the given pattern. The search can
-            /// be case sensitive or not depending on the search_type value.
+            /// Returns true if the chosen field of a [`Game`] contains the given pattern, false otherwise.
+            /// The search can be case sensitive or not depending on the [`SearchType`] variant.
             pub fn [<$field _contains>](&self, value: &str, search_type: &SearchType) -> bool {
                 match search_type {
                     SearchType::CaseSensitive => match self.[<$field>].as_ref() {
@@ -75,13 +75,13 @@ macro_rules! game_contains {
     };
 }
 
-/// Represents a game from the database.
+/// Representation of a game of the PlayOnBSD database.
 ///
 /// It also includes an additional [`Game::uid`] field
 /// derived from the name of the game as well as the date to
 /// which the game was added to the database. It therefore
 /// provides an unique identifier under the assumption that no
-/// game with the same name will be added the same dat into
+/// game with the same name will be added the same date into
 /// the database.
 ///
 /// The name of some fields differs from the one used
@@ -98,28 +98,29 @@ macro_rules! game_contains {
 /// ### PartialOrd
 /// The [`Game`] struct implements the [`core::cmp::PartialOrd`] trait
 /// and [`Game`] objects are ordered according to their name (without The or A).
+
 #[derive(Clone, Default, Debug, PartialEq, Eq)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct Game {
-    /// An unique identifier generated from the name and added fields
+    /// Unique identifier generated from the name and added fields
     pub uid: u32,
-    /// The name of the game.
+    /// Name of the game.
     pub name: String,
-    /// The cover of the game.
+    /// Cover of the game.
     pub cover: Option<String>,
-    /// The engine used by the game.
+    /// Engine used by the game.
     pub engine: Option<String>,
     /// Step(s) to setup the game.
     pub setup: Option<String>,
-    /// The executable in the package.
+    /// Executable in the package.
     pub runtime: Option<String>,
-    /// A vector with store urls.
+    /// Vector with store urls.
     pub stores: Option<StoreLinks>,
     /// Hints (as the name imply).
     pub hints: Option<String>,
-    /// A vector of genres associated with the game.
+    /// Vector of genres associated with the game.
     pub genres: Option<Vec<String>>,
-    /// A vector of tags associated with the game.
+    /// Vector of tags associated with the game.
     pub tags: Option<Vec<String>>,
     /// Released year (can be text such as "early access".
     pub year: Option<String>,
@@ -137,12 +138,12 @@ pub struct Game {
     pub added: NaiveDate,
     /// When updated
     pub updated: NaiveDate,
-    /// The IGDB Id of the game
+    /// IGDB Id of the game
     pub igdb_id: Option<String>,
 }
 
 impl<'a> Game {
-    /// Create a new Game. Equivalent to Default.
+    /// Create a new [`Game`]. Equivalent to Default.
     pub fn new() -> Self {
         Self::default()
     }
@@ -170,12 +171,13 @@ impl<'a> Game {
     game_contains!(array devs);
     game_contains!(array publis);
 
-    /// Check if the Status of the Game correspond to a given Status. Note
-    /// that the argument provided can be Status or GameStatus.
+    /// Return true if the [`Status`] of the [`Game`] correspond to a given [`Status`],
+    /// false otherwise. Note that the argument provided can be [`Status`] or
+    /// [`crate::models::GameStatus`].
     pub fn status_is(&self, status: &impl AsRef<Status>) -> bool {
         self.status.status.eq(status.as_ref())
     }
-    /// Return the Steam id of a Game if it has any
+    /// Returns the Steam id of a [`Game`] if it has any.
     pub fn get_steam_id(&self) -> Option<usize> {
         if let Some(ref stores) = self.stores {
             if stores.has_steam() {
@@ -221,7 +223,7 @@ impl AsRef<Game> for Game {
     }
 }
 
-/// Display the game as it would appears in the database.
+/// Displays the game as it would appears in the database.
 /// See <https://github.com/playonbsd/OpenBSD-Games-Database>
 /// for details.
 impl fmt::Display for Game {
