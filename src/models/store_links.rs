@@ -23,6 +23,20 @@ pub enum Store {
     Unknown,
 }
 
+impl Display for Store {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let content: &str = match self {
+            Store::Steam => "Steam",
+            Store::Gog => "Gog",
+            Store::HumbleBundle => "HumbleBundle",
+            Store::ItchIo => "itch.io",
+            Store::Epic => "Epic",
+            Store::Unknown => "Unknown store",
+        };
+        write!(f, "{}", content)
+    }
+}
+
 /// Represents a store link.
 #[derive(Clone, Default, Debug, PartialEq, Eq)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
