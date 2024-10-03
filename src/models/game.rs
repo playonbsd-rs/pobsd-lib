@@ -139,7 +139,7 @@ pub struct Game {
     /// When updated
     pub updated: NaiveDate,
     /// IGDB Id of the game
-    pub igdb_id: Option<String>,
+    pub igdb_id: Option<usize>,
 }
 
 impl<'a> Game {
@@ -433,7 +433,7 @@ IgdbId\t1234";
             status: GameStatus::new(Status::DoesNotRun, Some("fine".to_string())),
             added: NaiveDate::parse_from_str("1970-01-01", "%Y-%m-%d").unwrap(),
             updated: NaiveDate::parse_from_str("1970-01-02", "%Y-%m-%d").unwrap(),
-            igdb_id: Some("1234".to_string()),
+            igdb_id: Some(1234),
         };
         assert_eq!(format!("{}", game), game_str);
     }

@@ -52,7 +52,7 @@ pub enum Field {
     /// When the game was last updated
     Updated(NaiveDate),
     /// The id of the game in the IGDB database
-    IgdbId(Option<String>),
+    IgdbId(Option<usize>),
     /// Store the result of a unknown line of the database
     /// The left hand side and the right hand side (if
     /// any) are stores separately.
@@ -69,8 +69,7 @@ impl fmt::Display for Field {
             | Field::Hints(name)
             | Field::Runtime(name)
             | Field::Version(name)
-            | Field::Year(name)
-            | Field::IgdbId(name) => match name {
+            | Field::Year(name) => match name {
                 Some(name) => write!(f, "{}\t{}", self.field_name(), name),
                 None => write!(f, "{}", self.field_name()),
             },
@@ -98,6 +97,10 @@ impl fmt::Display for Field {
                 None => {
                     write!(f, "Unexpected pattern")
                 }
+            },
+            Field::IgdbId(name) => match name {
+                Some(name) => write!(f, "{}\t{}", self.field_name(), name),
+                None => write!(f, "{}", self.field_name()),
             },
         }
     }
@@ -213,7 +216,10 @@ impl Field {
                     None => Field::Updated(NaiveDate::default()),
                 },
                 "IgdbId" => match right {
-                    Some(right) => Field::IgdbId(Some(right.into())),
+                    Some(right) => match right.parse::<usize>().ok() {
+                        Some(right) => Field::IgdbId(Some(right.into())),
+                        None => Field::IgdbId(None),
+                    },
                     None => Field::IgdbId(None),
                 },
                 _ => Field::Unknown(Some(left.into())),
@@ -498,7 +504,7 @@ mod field_tests {
     fn test_from_igdb_id_line() {
         let input = "IgdbId\t12";
         let field = Field::from(&input);
-        assert_eq!(Field::IgdbId(Some("12".into())), field);
+        assert_eq!(Field::IgdbId(Some(12)), field);
         assert_eq!(format!("{}", field), input);
         let input = "IgdbId";
         let field = Field::from(&input);
